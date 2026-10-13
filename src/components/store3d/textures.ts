@@ -166,6 +166,7 @@ export async function fontsReady() {
       document.fonts.load('italic 600 112px Fraunces'),
       document.fonts.load('500 26px "IBM Plex Mono"'),
       document.fonts.load('500 30px Fraunces'),
+      document.fonts.load('8px "Press Start 2P"'),
     ])
   } catch {
     // Si fallan, se dibuja con la fuente de reserva.
@@ -376,33 +377,6 @@ export function neonTexture(text: string, color: string) {
     ctx.shadowBlur = 0
     ctx.fillStyle = '#fff4f0'
     ctx.fillText(text, 512, 132)
-  })
-}
-
-/** Panel frontal de la gramola: lista de selección con números 1 reales. */
-export function jukeboxPanelTexture(titles: string[]) {
-  return canvasTexture(512, 512, (ctx) => {
-    ctx.fillStyle = '#f6efdc'
-    ctx.fillRect(0, 0, 512, 512)
-    ctx.fillStyle = '#d8402a'
-    ctx.font = 'italic 700 46px Fraunces, Georgia, serif'
-    ctx.textAlign = 'center'
-    ctx.fillText('Gramola', 256, 64)
-    ctx.font = '600 18px "IBM Plex Mono", monospace'
-    ctx.fillStyle = '#1f1d1a'
-    ctx.fillText('PULSA PARA QUE SUENE UN Nº 1', 256, 100)
-    ctx.textAlign = 'left'
-    titles.slice(0, 8).forEach((title, i) => {
-      const y = 150 + i * 44
-      ctx.fillStyle = '#d8402a'
-      ctx.fillRect(28, y - 22, 52, 30)
-      ctx.fillStyle = '#f6efdc'
-      ctx.font = '600 18px "IBM Plex Mono", monospace'
-      ctx.fillText(`${String.fromCharCode(65 + (i % 4))}${Math.floor(i / 4) + 1}`, 38, y)
-      ctx.fillStyle = '#1f1d1a'
-      ctx.font = '500 22px "Inter Tight", system-ui, sans-serif'
-      ctx.fillText(wrapLines(ctx, title, 390, 1)[0] ?? '', 96, y)
-    })
   })
 }
 

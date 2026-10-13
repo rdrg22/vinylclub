@@ -16,6 +16,7 @@ import { stepNavigation, type NavState } from './navigation'
 import { atlasUV, coverGeometry } from './atlas'
 import { CounterArea, Crate, Jukebox, NeonSign, Poster, VinylRug, WallRecords } from './Decor'
 import type { DecorLayout } from './decorLayout'
+import type { ScreenState } from './jukeboxScreen'
 import { floorTexture, placeholderTexture, signTexture, sleeveFor, storeSignTexture, yearTagTexture } from './textures'
 
 const CEILING = 3.3
@@ -36,7 +37,8 @@ interface SceneProps {
   turntableRecord: Album | null
   turntablePlaying: boolean
   holding: boolean
-  jukeboxTitles: string[]
+  jukeboxScreen: Omit<ScreenState, 'progress' | 'current' | 'duration'>
+  audio: HTMLAudioElement | null
   jukeboxGlowing: boolean
   onTurntable: () => void
   onJukebox: () => void
@@ -68,7 +70,8 @@ export function StoreScene(props: SceneProps) {
       />
       <Jukebox
         layout={decor}
-        titles={props.jukeboxTitles}
+        screen={props.jukeboxScreen}
+        audio={props.audio}
         glowing={props.jukeboxGlowing}
         reducedMotion={reducedMotion}
         onPlay={props.onJukebox}

@@ -30,7 +30,11 @@ Esc lo devuelve a su hueco.
 La tienda tiene además (`src/components/store3d/Decor.tsx`): un mostrador al fondo con **tocadiscos** («Ponerlo en el
 tocadiscos» lleva el disco hasta el plato y lo pone a sonar), una **gramola** en la entrada que elige un nº 1 al azar,
 **cubetas** con los nº 1 de cada año (también se pueden coger), **pósters** con el nº 1 más duradero de cada década,
-altavoces, un neón y una alfombra con forma de vinilo.
+altavoces, un neón y una alfombra con forma de vinilo. La gramola tiene una pantalla CRT pixel-art
+(`jukeboxScreen.ts`, fuente Press Start 2P) con selector, marquesina, ecualizador animado y la barra de progreso real de
+la demo. En el mostrador del DJ hay guiños de cultura pop genéricos, sin personajes ni marcas registradas
+(`CounterToys.tsx`): robot de hojalata y astronauta que cabecean al ritmo, bola de discoteca, lámpara de lava, cubo de
+colores, casete con lápiz, consola portátil y cascos.
 
 ## Favoritos
 

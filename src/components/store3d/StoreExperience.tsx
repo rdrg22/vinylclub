@@ -73,7 +73,7 @@ function toBackData(album: Album, back: AlbumBack | null | undefined): BackData 
 
 export default function StoreExperience({ decades }: { decades: DecadeInput[] }) {
   const { openAlbum } = useAlbumDetail()
-  const { state: player, toggle: togglePreview } = usePreviewPlayer()
+  const { state: player, toggle: togglePreview, audio } = usePreviewPlayer()
   const { albums: favorites } = useFavorites()
   const wrapperRef = useRef<HTMLDivElement>(null)
   const [entered, setEntered] = useState(readEntered)
@@ -215,6 +215,19 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
     if (turntableRecord) return togglePreview(turntableRecord)
     setToast('Coge un disco de la balda y ponlo en el tocadiscos')
   }, [held, placeOnTurntable, turntableRecord, togglePreview])
+
+  // Lo que muestra la pantalla de la gramola: su elección mientras suena, o el selector en reposo.
+  const jukeboxTitles = useMemo(() => numberOnes.slice(-12).map((a) => a.title), [numberOnes])
+  const jukeboxScreen = useMemo(() => {
+    const own = jukeboxPick && player.album?.id === jukeboxPick.id
+    const status = own ? player.status : 'idle'
+    return {
+      status: status === 'error' ? ('unavailable' as const) : status,
+      title: own ? (player.preview?.trackName ?? jukeboxPick.title) : undefined,
+      artist: own ? jukeboxPick.artist : undefined,
+      titles: jukeboxTitles,
+    }
+  }, [jukeboxPick, player, jukeboxTitles])
 
   const onJukebox = useCallback(() => {
     const options = numberOnes.filter((a) => a.id !== jukeboxPick?.id)
@@ -406,7 +419,8 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             turntableRecord={turntableRecord}
             turntablePlaying={isPlaying(turntableRecord)}
             holding={!!held}
-            jukeboxTitles={numberOnes.slice(-8).map((a) => a.title)}
+            jukeboxScreen={jukeboxScreen}
+            audio={audio}
             jukeboxGlowing={isPlaying(jukeboxPick)}
             onTurntable={entered ? onTurntable : () => undefined}
             onJukebox={entered && !held ? onJukebox : () => undefined}

@@ -7,12 +7,13 @@ import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import type { Album } from '@/types/music'
 import { atlasUV, coverGeometry } from './atlas'
+import { CounterToys } from './CounterToys'
 import { COUNTER, PLATTER_Y, type CrateSpot, type DecorLayout, type PosterSpot } from './decorLayout'
+import { createScreenTexture, drawScreen, marqueeSignTexture, type ScreenState } from './jukeboxScreen'
 import { COVER_SIZE, WALL_X } from './layout'
 import {
   discLabelTexture,
   grilleTexture,
-  jukeboxPanelTexture,
   labelCardTexture,
   neonTexture,
   posterTexture,
@@ -96,6 +97,8 @@ export function CounterArea({ layout, record, playing, holding, reducedMotion, o
         onHint={onHint}
         hint={holding ? 'Pon el disco en el tocadiscos' : record ? `Tocadiscos: «${record.title}»` : 'Tocadiscos: coge un disco y ponlo aquí'}
       />
+
+      <CounterToys x={counter.x} z={counter.z} playing={playing} reducedMotion={reducedMotion} onHint={onHint} />
 
       {/* Altavoces a los lados */}
       {[-1, 1].map((side) => (
@@ -193,24 +196,50 @@ function Turntable({ position, record, playing, reducedMotion, hint, onClick, on
 
 interface JukeboxProps extends HintHandlers {
   layout: DecorLayout
-  titles: string[]
+  /** Lo que muestra la pantalla (sin el progreso, que se lee del audio en cada fotograma). */
+  screen: Omit<ScreenState, 'progress' | 'current' | 'duration'>
+  /** Elemento de audio de las demos: de él sale el progreso real. */
+  audio: HTMLAudioElement | null
   /** Suena lo que eligió la gramola: las luces laten. */
   glowing: boolean
   reducedMotion: boolean
   onPlay: () => void
 }
 
-export function Jukebox({ layout, titles, glowing, reducedMotion, onPlay, onHint }: JukeboxProps) {
-  const panel = useMemo(() => jukeboxPanelTexture(titles), [titles])
+/** Cada cuánto se redibuja la pantalla (≈ 15 fps: suficiente para el pixel-art). */
+const SCREEN_FRAME = 1 / 15
+
+export function Jukebox({ layout, screen, audio, glowing, reducedMotion, onPlay, onHint }: JukeboxProps) {
   const grille = useMemo(() => grilleTexture(), [])
+  const sign = useMemo(() => marqueeSignTexture(), [])
+  const display = useMemo(() => createScreenTexture(), [])
+  useEffect(() => () => display.texture.dispose(), [display])
+  const lastDraw = useRef(-1)
   const bands = useRef<THREE.MeshBasicMaterial[]>([])
   const colors = ['#ff6a2b', '#ffc34d', '#ff2f6d']
 
   useFrame(({ clock }) => {
+    const t = clock.elapsedTime
     bands.current.forEach((material, i) => {
-      const pulse = glowing && !reducedMotion ? 0.65 + 0.35 * Math.sin(clock.elapsedTime * 4 + i) : glowing ? 1 : 0.55
+      const pulse = glowing && !reducedMotion ? 0.65 + 0.35 * Math.sin(t * 4 + i) : glowing ? 1 : 0.55
       material.color.set(colors[i] ?? '#ffffff').multiplyScalar(pulse)
     })
+    if (!display.ctx || t - lastDraw.current < SCREEN_FRAME) return
+    lastDraw.current = t
+    const playingNow = screen.status === 'playing' || screen.status === 'paused'
+    const duration = audio && Number.isFinite(audio.duration) ? audio.duration : 30
+    drawScreen(
+      display.ctx,
+      {
+        ...screen,
+        current: playingNow && audio ? audio.currentTime : 0,
+        duration,
+        progress: playingNow && audio ? audio.currentTime / duration : 0,
+      },
+      // Con movimiento reducido, la pantalla no se anima (ni marquesina ni ecualizador).
+      reducedMotion ? 0 : t,
+    )
+    display.texture.needsUpdate = true
   })
 
   const { x, z, rotationY } = layout.jukebox
@@ -239,12 +268,28 @@ export function Jukebox({ layout, titles, glowing, reducedMotion, onPlay, onHint
       ))}
       <mesh position={[0, 1.15, 0.302]}>
         <circleGeometry args={[0.25, 32, 0, Math.PI]} />
-        <meshStandardMaterial map={panel} roughness={0.6} />
+        <meshBasicMaterial map={sign} toneMapped={false} />
       </mesh>
-      <mesh position={[0, 0.78, 0.302]}>
-        <planeGeometry args={[0.6, 0.4]} />
-        <meshStandardMaterial map={panel} roughness={0.6} />
-      </mesh>
+      {/* Monitor CRT: carcasa beige, cristal y pantalla pixel-art que se ilumina sola. */}
+      <group position={[0, 0.8, 0.31]}>
+        <mesh position={[0, 0, -0.005]}>
+          <boxGeometry args={[0.6, 0.47, 0.03]} />
+          <meshStandardMaterial color="#d9cdb4" roughness={0.7} />
+        </mesh>
+        <mesh position={[0, 0.01, 0.011]}>
+          <planeGeometry args={[0.52, 0.39]} />
+          <meshBasicMaterial color="#120c07" />
+        </mesh>
+        <mesh position={[0, 0.01, 0.013]}>
+          <planeGeometry args={[0.48, 0.36]} />
+          <meshBasicMaterial map={display.texture} toneMapped={false} />
+        </mesh>
+        {/* Piloto de encendido */}
+        <mesh position={[0.24, -0.205, 0.012]}>
+          <circleGeometry args={[0.008, 12]} />
+          <meshBasicMaterial color={glowing ? '#ff3b26' : '#7a2a1a'} />
+        </mesh>
+      </group>
       <mesh position={[0, 0.32, 0.302]}>
         <planeGeometry args={[0.7, 0.42]} />
         <meshStandardMaterial map={grille} roughness={1} />
