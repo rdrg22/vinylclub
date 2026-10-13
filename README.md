@@ -24,7 +24,18 @@ la rueda avanza; en móvil, arrastrar y los botones ▲ ▼.
 Al pulsar una portada **se coge el disco**: sale de la balda y queda en la mano, se gira arrastrando y se le da la vuelta
 (botón o tecla F). El reverso es la contraportada original si Cover Art Archive la tiene; si no, se compone con la lista
 de canciones, sello y fecha de la edición en MusicBrainz (`src/services/albumBack.ts`). Debajo, una cartela con la demo,
-los enlaces y «Ficha completa». Mientras suena la demo, el vinilo asoma de la funda y gira. Esc lo devuelve a su hueco.
+los enlaces, la estrella de favoritos y «Ficha completa». Mientras suena la demo, el vinilo asoma de la funda y gira.
+Esc lo devuelve a su hueco.
+
+La tienda tiene además (`src/components/store3d/Decor.tsx`): un mostrador al fondo con **tocadiscos** («Ponerlo en el
+tocadiscos» lleva el disco hasta el plato y lo pone a sonar), una **gramola** en la entrada que elige un nº 1 al azar,
+**cubetas** con los nº 1 de cada año (también se pueden coger), **pósters** con el nº 1 más duradero de cada década,
+altavoces, un neón y una alfombra con forma de vinilo.
+
+## Favoritos
+
+La estrella de cada disco lo guarda en `/favoritos`. De momento son temporales: viven en memoria y se borran al recargar
+la página (`src/components/favorites/`). Con cuentas de usuario (Supabase) pasarán a guardarse.
 
 - three.js se descarga aparte (carga diferida) y la escena se pausa fuera de pantalla.
 - Las portadas de la tienda salen de 8 imágenes (una por década, `public/atlas/`) que se generan con
@@ -107,4 +118,4 @@ src/
   utils/        Funciones puras (resumen de filtros, hash, clases)
 ```
 
-Rutas: `/` (tienda 3D), `/estanterias` (lista), `/buscar?q=&tipo=artistas|ediciones&page=`, `/artista/:mbid`, `/estanteria/:id`, `/estanterias/nueva`, `/coleccion?tab=favoritos|coleccion`.
+Rutas: `/` (tienda 3D), `/estanterias` (lista), `/favoritos`, `/buscar?q=&tipo=artistas|ediciones&page=`, `/artista/:mbid`, `/estanteria/:id`.

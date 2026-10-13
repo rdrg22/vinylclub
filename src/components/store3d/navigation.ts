@@ -15,8 +15,8 @@ export interface NavState {
   keys: Set<string>
   /** −1 / 0 / 1 desde los botones táctiles de caminar. */
   walk: number
-  /** Destino de un «ir a la década»: la cámara se desliza hasta él. */
-  fly: { x: number; y: number; z: number; yaw: number } | null
+  /** Destino de un «ir a…»: la cámara se desliza hasta él (inclinación opcional). */
+  fly: { x: number; y: number; z: number; yaw: number; pitch?: number } | null
   /** Pantalla de inicio: la cámara se mece sola y no responde a la entrada. */
   intro: boolean
   /** Con un disco en la mano la cámara se queda quieta (el arrastre gira el disco). */
@@ -43,11 +43,26 @@ export const NAV_KEYS = new Set([...FORWARD, ...BACK, ...STRAFE_LEFT, ...STRAFE_
 
 const pressed = (nav: NavState, codes: string[]) => codes.some((c) => nav.keys.has(c))
 
+/** Muebles del pasillo que no se pueden atravesar (círculos en planta). */
+export interface Obstacle {
+  x: number
+  z: number
+  r: number
+}
+
+export interface WalkArea {
+  minX: number
+  maxX: number
+  minZ: number
+  maxZ: number
+  obstacles?: Obstacle[]
+}
+
 /** Avanza la simulación `dt` segundos dentro de los límites del pasillo. */
 export function stepNavigation(
   nav: NavState,
   dt: number,
-  bounds: { minX: number; maxX: number; minZ: number; maxZ: number },
+  bounds: WalkArea,
   reducedMotion: boolean,
   time = 0,
 ) {
@@ -56,7 +71,6 @@ export function stepNavigation(
     if (!reducedMotion) nav.yaw = Math.sin(time * 0.22) * 0.16
     return
   }
-  if (nav.locked) return
   if (nav.fly) {
     const t = reducedMotion ? 1 : Math.min(1, dt * 3.2)
     nav.x += (nav.fly.x - nav.x) * t
@@ -65,10 +79,11 @@ export function stepNavigation(
     // Giro por el camino más corto.
     const diff = Math.atan2(Math.sin(nav.fly.yaw - nav.yaw), Math.cos(nav.fly.yaw - nav.yaw))
     nav.yaw += diff * t
-    nav.pitch += (-0.06 - nav.pitch) * t
+    nav.pitch += ((nav.fly.pitch ?? -0.06) - nav.pitch) * t
     if (Math.abs(nav.fly.x - nav.x) + Math.abs(nav.fly.z - nav.z) + Math.abs(diff) < 0.01) nav.fly = null
     return
   }
+  if (nav.locked) return
 
   if (pressed(nav, TURN_LEFT)) nav.yaw += TURN_SPEED * dt
   if (pressed(nav, TURN_RIGHT)) nav.yaw -= TURN_SPEED * dt
@@ -89,5 +104,15 @@ export function stepNavigation(
   }
   nav.x = Math.min(bounds.maxX, Math.max(bounds.minX, nav.x))
   nav.z = Math.min(bounds.maxZ, Math.max(bounds.minZ, nav.z))
+  // Si se choca con un mueble, se le empuja hasta su borde.
+  for (const o of bounds.obstacles ?? []) {
+    const dx = nav.x - o.x
+    const dz = nav.z - o.z
+    const distance = Math.hypot(dx, dz)
+    if (distance < o.r && distance > 0.0001) {
+      nav.x = o.x + (dx / distance) * o.r
+      nav.z = o.z + (dz / distance) * o.r
+    }
+  }
   nav.y += (EYE_HEIGHT - nav.y) * Math.min(1, dt * 4)
 }

@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import { useFavorites } from '@/components/favorites/favoritesContext'
 import { cn } from '@/utils/cn'
 
 // «Buscar» se oculta en móvil: allí el buscador ya ocupa su propia fila en la cabecera.
@@ -6,10 +7,11 @@ const ITEMS = [
   { to: '/', label: 'Tienda', end: true, desktopOnly: false },
   { to: '/estanterias', label: 'Estanterías', end: false, desktopOnly: false },
   { to: '/buscar', label: 'Buscar', end: false, desktopOnly: true },
-  { to: '/coleccion', label: 'Colección', end: false, desktopOnly: false },
+  { to: '/favoritos', label: 'Favoritos', end: false, desktopOnly: false },
 ] as const
 
 export function MainNav({ className }: { className?: string }) {
+  const { albums: favorites } = useFavorites()
   return (
     <nav aria-label="Principal" className={className}>
       <ul className="flex items-center gap-5 sm:gap-7">
@@ -27,6 +29,9 @@ export function MainNav({ className }: { className?: string }) {
               }
             >
               {item.label}
+              {item.to === '/favoritos' && favorites.length > 0 && (
+                <span className="ml-1.5 rounded-full bg-signal px-1.5 py-px text-[0.6rem] text-paper">{favorites.length}</span>
+              )}
             </NavLink>
           </li>
         ))}

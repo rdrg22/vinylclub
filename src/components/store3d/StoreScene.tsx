@@ -14,6 +14,8 @@ import {
 } from './layout'
 import { stepNavigation, type NavState } from './navigation'
 import { atlasUV, coverGeometry } from './atlas'
+import { CounterArea, Crate, Jukebox, NeonSign, Poster, VinylRug, WallRecords } from './Decor'
+import type { DecorLayout } from './decorLayout'
 import { floorTexture, placeholderTexture, signTexture, sleeveFor, storeSignTexture, yearTagTexture } from './textures'
 
 const CEILING = 3.3
@@ -27,12 +29,23 @@ interface SceneProps {
   onHover: (album: Album | null) => void
   /** Se pasa el objeto de la portada para que el disco salga de su posición exacta. */
   onSelect: (album: Album, object: THREE.Object3D) => void
-  /** Disco que está en la mano: su hueco en la balda queda vacío. */
-  heldId: string | null
+  /** Discos fuera de su sitio (en la mano o en el tocadiscos): su hueco queda vacío. */
+  takenIds: string[]
+  decor: DecorLayout
+  /** Disco puesto en el tocadiscos y si está sonando. */
+  turntableRecord: Album | null
+  turntablePlaying: boolean
+  holding: boolean
+  jukeboxTitles: string[]
+  jukeboxGlowing: boolean
+  onTurntable: () => void
+  onJukebox: () => void
+  onHint: (hint: string | null) => void
 }
 
-export function StoreScene({ units, atlases, nav, reducedMotion, onHover, onSelect, heldId }: SceneProps) {
-  const bounds = useMemo(() => walkBounds(units), [units])
+export function StoreScene(props: SceneProps) {
+  const { units, atlases, nav, reducedMotion, onHover, onSelect, takenIds, decor, onHint } = props
+  const bounds = useMemo(() => ({ ...walkBounds(units), obstacles: decor.obstacles }), [units, decor])
   return (
     <>
       <color attach="background" args={['#1b130c']} />
@@ -42,8 +55,34 @@ export function StoreScene({ units, atlases, nav, reducedMotion, onHover, onSele
       <CameraRig nav={nav} bounds={bounds} reducedMotion={reducedMotion} />
       <Room units={units} />
       {units.map((unit) => (
-        <ShelfUnit key={unit.decade} unit={unit} atlas={atlases[unit.decade] ?? null} heldId={heldId} onHover={onHover} onSelect={onSelect} />
+        <ShelfUnit key={unit.decade} unit={unit} atlas={atlases[unit.decade] ?? null} takenIds={takenIds} onHover={onHover} onSelect={onSelect} />
       ))}
+      <CounterArea
+        layout={decor}
+        record={props.turntableRecord}
+        playing={props.turntablePlaying}
+        holding={props.holding}
+        reducedMotion={reducedMotion}
+        onTurntable={props.onTurntable}
+        onHint={onHint}
+      />
+      <Jukebox
+        layout={decor}
+        titles={props.jukeboxTitles}
+        glowing={props.jukeboxGlowing}
+        reducedMotion={reducedMotion}
+        onPlay={props.onJukebox}
+        onHint={onHint}
+      />
+      {decor.crates.map((crate) => (
+        <Crate key={crate.label} crate={crate} atlases={atlases} takenIds={takenIds} onSelect={onSelect} onHover={onHover} onHint={onHint} />
+      ))}
+      {decor.posters.map((poster) => (
+        <Poster key={poster.decadeLabel} poster={poster} atlases={atlases} />
+      ))}
+      <NeonSign z={decor.crates[0]?.z ?? 2} />
+      <VinylRug x={decor.rug.x} z={decor.rug.z} />
+      <WallRecords z={backWallZ(units)} />
     </>
   )
 }
@@ -128,7 +167,7 @@ function Room({ units }: { units: UnitLayout[] }) {
 
 // ---------------------------------------------------------------- muebles
 
-function ShelfUnit({ unit, atlas, heldId, onHover, onSelect }: { unit: UnitLayout; atlas: THREE.Texture | null } & Pick<SceneProps, 'onHover' | 'onSelect' | 'heldId'>) {
+function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect }: { unit: UnitLayout; atlas: THREE.Texture | null } & Pick<SceneProps, 'onHover' | 'onSelect' | 'takenIds'>) {
   // Un único material para todas las portadas del mueble: una textura, un shader.
   const atlasMaterial = useMemo(() => (atlas ? new THREE.MeshStandardMaterial({ map: atlas, roughness: 0.55 }) : null), [atlas])
   useEffect(() => () => atlasMaterial?.dispose(), [atlasMaterial])
@@ -167,7 +206,7 @@ function ShelfUnit({ unit, atlas, heldId, onHover, onSelect }: { unit: UnitLayou
         <YearTag key={tag.year} year={tag.year} x={tag.x} y={tag.y - COVER_SIZE / 2 - 0.035} />
       ))}
       {unit.slots.map((slot) => (
-        <Cover key={slot.album.id} slot={slot} atlasMaterial={atlasMaterial} hidden={slot.album.id === heldId} onHover={onHover} onSelect={onSelect} />
+        <Cover key={slot.album.id} slot={slot} atlasMaterial={atlasMaterial} hidden={takenIds.includes(slot.album.id)} onHover={onHover} onSelect={onSelect} />
       ))}
     </group>
   )

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { AlbumDetailProvider } from '@/components/album/AlbumDetailProvider'
+import { FavoritesProvider } from '@/components/favorites/FavoritesProvider'
 import { NowPlayingBar } from '@/components/player/NowPlayingBar'
 import { PreviewPlayerProvider } from '@/components/player/PreviewPlayerProvider'
 
@@ -17,11 +18,13 @@ export function RootLayout() {
   }, [pathname])
 
   return (
-    <PreviewPlayerProvider>
-      <AlbumDetailProvider>
-        <Outlet />
-        <NowPlayingBar />
-      </AlbumDetailProvider>
-    </PreviewPlayerProvider>
+    <FavoritesProvider>
+      <PreviewPlayerProvider>
+        <AlbumDetailProvider>
+          <Outlet />
+          <NowPlayingBar />
+        </AlbumDetailProvider>
+      </PreviewPlayerProvider>
+    </FavoritesProvider>
   )
 }

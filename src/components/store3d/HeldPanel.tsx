@@ -1,3 +1,4 @@
+import { FavoriteButton } from '@/components/favorites/FavoriteButton'
 import { ListenLinks } from '@/components/listen/ListenLinks'
 import { PlayButton } from '@/components/player/PlayButton'
 import { usePreviewPlayer } from '@/components/player/previewPlayerContext'
@@ -12,6 +13,7 @@ interface HeldPanelProps {
   backNote: string
   onFlip: () => void
   onReturn: () => void
+  onTurntable: () => void
   onDetails: () => void
 }
 
@@ -19,7 +21,7 @@ const button =
   'label-mono rounded-sm border border-[#e8c98f]/50 px-3 py-2 text-[#f3e4c3] transition-colors hover:border-[#e8c98f] hover:bg-[#e8c98f]/10'
 
 /** Cartela del disco que se tiene en la mano, con el estilo de los carteles de la tienda. */
-export function HeldPanel({ album, flipped, backNote, onFlip, onReturn, onDetails }: HeldPanelProps) {
+export function HeldPanel({ album, flipped, backNote, onFlip, onReturn, onTurntable, onDetails }: HeldPanelProps) {
   const { state } = usePreviewPlayer()
   const current = state.album?.id === album.id
   const status = current ? state.status : 'idle'
@@ -62,6 +64,7 @@ export function HeldPanel({ album, flipped, backNote, onFlip, onReturn, onDetail
             {[album.year, types].filter(Boolean).join(' · ') || 'Disco de la lista de Billboard'}
           </p>
         </div>
+        <FavoriteButton album={album} tone="dark" />
         <button type="button" onClick={onReturn} className={cn(button, 'shrink-0')} aria-keyshortcuts="Escape">
           Devolver <span aria-hidden>✕</span>
         </button>
@@ -79,9 +82,12 @@ export function HeldPanel({ album, flipped, backNote, onFlip, onReturn, onDetail
       </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[#e8c98f]/25 pt-3">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button type="button" onClick={onFlip} className={button} aria-keyshortcuts="F" aria-pressed={flipped}>
             <span aria-hidden>↻</span> {flipped ? 'Ver la portada' : 'Dar la vuelta'}
+          </button>
+          <button type="button" onClick={onTurntable} className={cn(button, 'border-signal bg-signal/90 hover:bg-signal')}>
+            Ponerlo en el tocadiscos
           </button>
           <button type="button" onClick={onDetails} className={button}>
             Ficha completa

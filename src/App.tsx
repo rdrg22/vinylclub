@@ -1,14 +1,13 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
 import { RootLayout } from '@/components/layout/RootLayout'
 import { ArtistPage } from '@/pages/ArtistPage'
 import { ShelvesPage } from '@/pages/ShelvesPage'
 import { StorePage } from '@/pages/StorePage'
-import { LibraryPage } from '@/pages/LibraryPage'
+import { FavoritesPage } from '@/pages/FavoritesPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { SearchPage } from '@/pages/SearchPage'
 import { ShelfDetailPage } from '@/pages/ShelfDetailPage'
-import { ShelfEditorPage } from '@/pages/ShelfEditorPage'
 
 const router = createBrowserRouter([
   {
@@ -23,8 +22,9 @@ const router = createBrowserRouter([
           { path: 'buscar', element: <SearchPage /> },
           { path: 'artista/:artistId', element: <ArtistPage /> },
           { path: 'estanteria/:shelfId', element: <ShelfDetailPage /> },
-          { path: 'estanterias/nueva', element: <ShelfEditorPage /> },
-          { path: 'coleccion', element: <LibraryPage /> },
+          { path: 'favoritos', element: <FavoritesPage /> },
+          // La antigua «Colección» se convirtió en «Favoritos».
+          { path: 'coleccion', element: <Navigate to="/favoritos" replace /> },
           { path: '*', element: <NotFoundPage /> },
         ],
       },

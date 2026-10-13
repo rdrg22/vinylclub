@@ -5,6 +5,7 @@ import { SourceNote } from '@/components/ui/SourceNote'
 import { AlbumCover } from './AlbumCover'
 import { AlbumDemo } from './AlbumDemo'
 import { AlbumMetadata } from './AlbumMetadata'
+import { FavoriteButton } from '@/components/favorites/FavoriteButton'
 import { ListenLinks } from '@/components/listen/ListenLinks'
 
 interface AlbumDialogProps {
@@ -41,13 +42,16 @@ export function AlbumDialog({ album, onClose }: AlbumDialogProps) {
                 {album.releaseType ? RELEASE_TYPE_LABEL[album.releaseType] : 'Lanzamiento'}
                 {album.year ? ` · ${album.year}` : ''}
               </p>
-              <button
-                type="button"
-                onClick={onClose}
-                className="label-mono -mt-1 -mr-2 px-2 py-1 text-ink-soft transition-colors hover:text-signal"
-              >
-                Cerrar ✕
-              </button>
+              <div className="-mt-1 -mr-2 flex items-center gap-1">
+                <FavoriteButton album={album} />
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="label-mono px-2 py-1 text-ink-soft transition-colors hover:text-signal"
+                >
+                  Cerrar ✕
+                </button>
+              </div>
             </div>
 
             <div>

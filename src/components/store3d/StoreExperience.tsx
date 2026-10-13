@@ -8,12 +8,14 @@ import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as
 import { Link } from 'react-router-dom'
 import * as THREE from 'three'
 import { useAlbumDetail } from '@/components/album/albumDetailContext'
+import { useFavorites } from '@/components/favorites/favoritesContext'
 import { usePreviewPlayer } from '@/components/player/previewPlayerContext'
 import { useAsyncResource } from '@/hooks/useAsyncResource'
 import { formatLength, getAlbumBack, type AlbumBack } from '@/services/albumBack'
 import type { Album } from '@/types/music'
 import { cn } from '@/utils/cn'
 import { loadAtlas } from './atlas'
+import { buildDecorLayout } from './decorLayout'
 import { buildStoreLayout, ENTER, START, UNIT_WIDTH, WALL_X, type DecadeInput, type UnitLayout } from './layout'
 import { createNavState, LOOK_SENSITIVITY, MAX_PITCH, NAV_KEYS } from './navigation'
 import { HeldPanel } from './HeldPanel'
@@ -71,11 +73,18 @@ function toBackData(album: Album, back: AlbumBack | null | undefined): BackData 
 
 export default function StoreExperience({ decades }: { decades: DecadeInput[] }) {
   const { openAlbum } = useAlbumDetail()
-  const { state: player } = usePreviewPlayer()
+  const { state: player, toggle: togglePreview } = usePreviewPlayer()
+  const { albums: favorites } = useFavorites()
   const wrapperRef = useRef<HTMLDivElement>(null)
   const [entered, setEntered] = useState(readEntered)
   const nav = useRef(createNavState(!entered)).current
   const units = useMemo(() => buildStoreLayout(decades), [decades])
+  const decor = useMemo(
+    () => buildDecorLayout(units, Object.fromEntries(decades.map((d) => [d.decade, d.albums.map((a) => a.album)]))),
+    [units, decades],
+  )
+  const numberOnes = useMemo(() => decor.crates.flatMap((c) => c.albums), [decor])
+  const [hint, setHint] = useState<string | null>(null)
   const { atlases, loaded } = useAtlases(units)
   const [hovered, setHovered] = useState<Album | null>(null)
   const [fonts, setFonts] = useState(false)
@@ -155,11 +164,66 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
     control.rotX = 0
     setFlipped(control.flipped)
   }, [control])
+  // ---------- tocadiscos y gramola
+  const [turntableRecord, setTurntableRecord] = useState<Album | null>(null)
+  const [toTurntable, setToTurntable] = useState<{ position: THREE.Vector3; quaternion: THREE.Quaternion } | null>(null)
+  const [jukeboxPick, setJukeboxPick] = useState<Album | null>(null)
+  const [toast, setToast] = useState<string | null>(null)
+  useEffect(() => {
+    if (!toast) return
+    const timer = setTimeout(() => setToast(null), 4500)
+    return () => clearTimeout(timer)
+  }, [toast])
+
+  const isPlaying = (album: Album | null) => !!album && player.album?.id === album.id && player.status === 'playing'
+
+  /** Lleva el disco de la mano al mostrador y lo pone a sonar en el tocadiscos. */
+  const placeOnTurntable = useCallback(() => {
+    if (!held || leaving) return
+    control.rotY = 0
+    control.rotX = 0
+    control.flipped = false
+    setFlipped(false)
+    const view = decor.counterView
+    nav.fly = { x: view.x, y: view.y, z: view.z, yaw: view.yaw, pitch: view.pitch }
+    const { x, y, z } = decor.turntable
+    const pose = {
+      position: new THREE.Vector3(x - 0.04, y + 0.012, z),
+      // Tumbado sobre el plato, con la portada hacia arriba.
+      quaternion: new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0)),
+    }
+    // Primero se camina hasta el mostrador con el disco en la mano; luego se suelta en el plato.
+    setTimeout(() => {
+      setToTurntable(pose)
+      setLeaving(true)
+    }, reducedMotion ? 0 : 1300)
+  }, [held, leaving, control, decor, nav, reducedMotion])
+
   const onLeft = useCallback(() => {
+    if (toTurntable && held) {
+      setTurntableRecord(held.album)
+      if (!isPlaying(held.album)) togglePreview(held.album)
+    }
+    setToTurntable(null)
     setHeld(null)
     setLeaving(false)
     nav.locked = false
-  }, [nav])
+  }, [nav, toTurntable, held, togglePreview, player])
+
+  const onTurntable = useCallback(() => {
+    if (held) return placeOnTurntable()
+    if (turntableRecord) return togglePreview(turntableRecord)
+    setToast('Coge un disco de la balda y ponlo en el tocadiscos')
+  }, [held, placeOnTurntable, turntableRecord, togglePreview])
+
+  const onJukebox = useCallback(() => {
+    const options = numberOnes.filter((a) => a.id !== jukeboxPick?.id)
+    const pick = options[Math.floor(Math.random() * options.length)]
+    if (!pick) return
+    setJukeboxPick(pick)
+    togglePreview(pick)
+    setToast(`La gramola elige «${pick.title}» · ${pick.artist}`)
+  }, [numberOnes, jukeboxPick, togglePreview])
 
   // Los manejadores de teclado se registran una vez: leen las acciones actuales por referencia.
   const putBackRef = useRef(putBack)
@@ -337,7 +401,16 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             reducedMotion={reducedMotion}
             onHover={entered && !held ? setHovered : () => undefined}
             onSelect={entered ? pickUp : () => undefined}
-            heldId={held?.album.id ?? null}
+            takenIds={[held?.album.id, turntableRecord?.id].filter((id): id is string => !!id)}
+            decor={decor}
+            turntableRecord={turntableRecord}
+            turntablePlaying={isPlaying(turntableRecord)}
+            holding={!!held}
+            jukeboxTitles={numberOnes.slice(-8).map((a) => a.title)}
+            jukeboxGlowing={isPlaying(jukeboxPick)}
+            onTurntable={entered ? onTurntable : () => undefined}
+            onJukebox={entered && !held ? onJukebox : () => undefined}
+            onHint={entered ? setHint : () => undefined}
           />
           {held && (
             <HeldRecord
@@ -351,6 +424,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
               playing={player.album?.id === held.album.id && player.status === 'playing'}
               reducedMotion={reducedMotion}
               coveredBottom={coveredBottom}
+              toPose={toTurntable ?? undefined}
               onLeft={onLeft}
             />
           )}
@@ -415,6 +489,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             backNote={backNote}
             onFlip={flip}
             onReturn={putBack}
+            onTurntable={placeOnTurntable}
             onDetails={() => openAlbum(held.album)}
           />
         </div>
@@ -445,11 +520,34 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
           <Link to="/estanterias" className={cn(chip, chipIdle)}>
             Lista
           </Link>
+          <Link to="/favoritos" className={cn(chip, chipIdle)}>
+            <span aria-hidden className="text-[#f2b01e]">★</span> Favoritos
+            {favorites.length > 0 && <span className="ml-1 rounded-full bg-signal px-1.5 text-paper">{favorites.length}</span>}
+          </Link>
           <button type="button" onClick={toggleFullscreen} className={cn(chip, chipIdle, 'hidden sm:block')}>
             Pantalla completa
           </button>
         </nav>
       </div>
+
+      {entered && !held && !hovered && hint && (
+        <div
+          data-hud
+          aria-live="polite"
+          className="label-mono pointer-events-none absolute top-20 left-1/2 z-10 max-w-[80%] -translate-x-1/2 rounded bg-[#1b130c]/85 px-4 py-2 text-center text-[#f3e4c3] shadow-xl"
+        >
+          {hint}
+        </div>
+      )}
+
+      {toast && (
+        <div
+          role="status"
+          className="pointer-events-none absolute top-32 left-1/2 z-30 max-w-[86%] -translate-x-1/2 animate-[bar-in_320ms_var(--ease-out-soft)] rounded-sm border-2 border-[#e8c98f] bg-[#3e2716]/95 px-5 py-3 text-center font-display text-lg text-[#f3e4c3] italic shadow-2xl"
+        >
+          {toast}
+        </div>
+      )}
 
       {entered && !held && hovered && (
         <div

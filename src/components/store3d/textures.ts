@@ -310,3 +310,161 @@ export function discLabelTexture(album: Album) {
     ctx.fill()
   })
 }
+
+// ---------------------------------------------------------------- decoración
+
+/** Dibuja en un canvas la portada de un disco recortada del atlas de su década. */
+function drawAtlasCover(
+  ctx: CanvasRenderingContext2D,
+  atlas: THREE.Texture | null,
+  uv: [number, number, number, number] | null,
+  dx: number,
+  dy: number,
+  size: number,
+) {
+  const image = atlas?.image as (CanvasImageSource & { width: number; height: number }) | undefined
+  if (!image?.width || !uv) {
+    ctx.fillStyle = '#3e2716'
+    ctx.fillRect(dx, dy, size, size)
+    return
+  }
+  const [u0, v0, u1, v1] = uv
+  ctx.drawImage(image, u0 * image.width, (1 - v1) * image.height, (u1 - u0) * image.width, (v1 - v0) * image.height, dx, dy, size, size)
+}
+
+/** Póster enmarcado con el nº 1 más duradero de una década. */
+export function posterTexture(
+  album: Album,
+  year: number,
+  decadeLabel: string,
+  atlas: THREE.Texture | null,
+  uv: [number, number, number, number] | null,
+) {
+  return canvasTexture(512, 768, (ctx) => {
+    ctx.fillStyle = '#efe6d2'
+    ctx.fillRect(0, 0, 512, 768)
+    ctx.fillStyle = '#d8402a'
+    ctx.font = '600 26px "IBM Plex Mono", monospace'
+    ctx.fillText(decadeLabel.toUpperCase(), 40, 62)
+    drawAtlasCover(ctx, atlas, uv, 40, 88, 432)
+    ctx.fillStyle = '#1f1d1a'
+    ctx.font = 'italic 700 64px Fraunces, Georgia, serif'
+    ctx.fillText(`Nº 1 en ${year}`, 40, 600)
+    ctx.font = '600 30px "Inter Tight", system-ui, sans-serif'
+    ctx.fillText(wrapLines(ctx, album.title, 432, 1)[0] ?? '', 40, 652)
+    ctx.fillStyle = '#6b6258'
+    ctx.font = '500 22px "IBM Plex Mono", monospace'
+    ctx.fillText(album.artist.toUpperCase().slice(0, 34), 40, 692)
+    ctx.font = '500 16px "IBM Plex Mono", monospace'
+    ctx.fillText('LISTA ANUAL DE BILLBOARD', 40, 736)
+  })
+}
+
+/** Rótulo de neón con resplandor (fondo transparente). */
+export function neonTexture(text: string, color: string) {
+  return canvasTexture(1024, 256, (ctx) => {
+    ctx.clearRect(0, 0, 1024, 256)
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = 'italic 600 150px Fraunces, Georgia, serif'
+    ctx.shadowColor = color
+    for (const blur of [60, 30, 12]) {
+      ctx.shadowBlur = blur
+      ctx.fillStyle = color
+      ctx.fillText(text, 512, 132)
+    }
+    ctx.shadowBlur = 0
+    ctx.fillStyle = '#fff4f0'
+    ctx.fillText(text, 512, 132)
+  })
+}
+
+/** Panel frontal de la gramola: lista de selección con números 1 reales. */
+export function jukeboxPanelTexture(titles: string[]) {
+  return canvasTexture(512, 512, (ctx) => {
+    ctx.fillStyle = '#f6efdc'
+    ctx.fillRect(0, 0, 512, 512)
+    ctx.fillStyle = '#d8402a'
+    ctx.font = 'italic 700 46px Fraunces, Georgia, serif'
+    ctx.textAlign = 'center'
+    ctx.fillText('Gramola', 256, 64)
+    ctx.font = '600 18px "IBM Plex Mono", monospace'
+    ctx.fillStyle = '#1f1d1a'
+    ctx.fillText('PULSA PARA QUE SUENE UN Nº 1', 256, 100)
+    ctx.textAlign = 'left'
+    titles.slice(0, 8).forEach((title, i) => {
+      const y = 150 + i * 44
+      ctx.fillStyle = '#d8402a'
+      ctx.fillRect(28, y - 22, 52, 30)
+      ctx.fillStyle = '#f6efdc'
+      ctx.font = '600 18px "IBM Plex Mono", monospace'
+      ctx.fillText(`${String.fromCharCode(65 + (i % 4))}${Math.floor(i / 4) + 1}`, 38, y)
+      ctx.fillStyle = '#1f1d1a'
+      ctx.font = '500 22px "Inter Tight", system-ui, sans-serif'
+      ctx.fillText(wrapLines(ctx, title, 390, 1)[0] ?? '', 96, y)
+    })
+  })
+}
+
+/** Etiqueta escrita a mano para cubetas y mostrador. */
+export function labelCardTexture(text: string, sub?: string) {
+  return canvasTexture(512, 160, (ctx) => {
+    ctx.fillStyle = '#f6efdc'
+    ctx.fillRect(0, 0, 512, 160)
+    ctx.strokeStyle = '#d8402a'
+    ctx.lineWidth = 6
+    ctx.strokeRect(10, 10, 492, 140)
+    ctx.fillStyle = '#1f1d1a'
+    ctx.textAlign = 'center'
+    ctx.font = 'italic 600 46px Fraunces, Georgia, serif'
+    ctx.fillText(text, 256, sub ? 78 : 96)
+    if (sub) {
+      ctx.font = '500 20px "IBM Plex Mono", monospace'
+      ctx.fillStyle = '#6b6258'
+      ctx.fillText(sub.toUpperCase(), 256, 120)
+    }
+  })
+}
+
+/** Rejilla de altavoz. */
+export function grilleTexture() {
+  const texture = canvasTexture(128, 128, (ctx) => {
+    ctx.fillStyle = '#1c1a18'
+    ctx.fillRect(0, 0, 128, 128)
+    ctx.fillStyle = '#2c2925'
+    for (let y = 4; y < 128; y += 8) for (let x = 4; x < 128; x += 8) ctx.fillRect(x, y, 3, 3)
+  })
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+  return texture
+}
+
+/** Alfombra con forma de disco: surcos y galleta roja. */
+export function rugTexture() {
+  return canvasTexture(512, 512, (ctx) => {
+    ctx.clearRect(0, 0, 512, 512)
+    ctx.fillStyle = '#1a1714'
+    ctx.beginPath()
+    ctx.arc(256, 256, 254, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)'
+    for (let r = 110; r < 250; r += 6) {
+      ctx.beginPath()
+      ctx.arc(256, 256, r, 0, Math.PI * 2)
+      ctx.stroke()
+    }
+    ctx.fillStyle = '#d8402a'
+    ctx.beginPath()
+    ctx.arc(256, 256, 90, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#f3e4c3'
+    ctx.textAlign = 'center'
+    ctx.font = 'italic 600 34px Fraunces, Georgia, serif'
+    ctx.fillText('Vinyl Club', 256, 250)
+    ctx.font = '500 14px "IBM Plex Mono", monospace'
+    ctx.fillText('33⅓ RPM', 256, 280)
+    ctx.fillStyle = '#efe6d2'
+    ctx.beginPath()
+    ctx.arc(256, 256, 8, 0, Math.PI * 2)
+    ctx.fill()
+  })
+}

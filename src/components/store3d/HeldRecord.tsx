@@ -44,6 +44,8 @@ interface HeldRecordProps {
   reducedMotion: boolean
   /** Fracción inferior de la pantalla tapada por la cartela: el disco se coloca en el hueco de arriba. */
   coveredBottom: number
+  /** Si se indica, al soltarlo va aquí (el plato del tocadiscos) en vez de a su hueco. */
+  toPose?: { position: THREE.Vector3; quaternion: THREE.Quaternion }
   onLeft: () => void
 }
 
@@ -52,7 +54,7 @@ const PICK_SECONDS = 0.65
 const SIZE = COVER_SIZE * 1.02
 const smooth = (t: number) => t * t * (3 - 2 * t)
 
-export function HeldRecord({ held, leaving, control, atlas, back, backImage, playing, reducedMotion, coveredBottom, onLeft }: HeldRecordProps) {
+export function HeldRecord({ held, leaving, control, atlas, back, backImage, playing, reducedMotion, coveredBottom, toPose, onLeft }: HeldRecordProps) {
   const group = useRef<THREE.Group>(null)
   const turn = useRef<THREE.Group>(null)
   const disc = useRef<THREE.Mesh>(null)
@@ -134,8 +136,9 @@ export function HeldRecord({ held, leaving, control, atlas, back, backImage, pla
     target.quaternion.copy(camera.quaternion)
 
     const p = smooth(progress.current)
-    g.position.lerpVectors(held.fromPosition, target.position, p)
-    g.quaternion.slerpQuaternions(held.fromQuaternion, target.quaternion, p)
+    const rest = leaving && toPose ? toPose : { position: held.fromPosition, quaternion: held.fromQuaternion }
+    g.position.lerpVectors(rest.position, target.position, p)
+    g.quaternion.slerpQuaternions(rest.quaternion, target.quaternion, p)
 
     // Giro del usuario y vuelta completa, suavizados.
     const v = view.current

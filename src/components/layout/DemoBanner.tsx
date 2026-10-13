@@ -8,11 +8,11 @@ export function DemoBanner() {
       <p className="label-mono mx-auto flex max-w-7xl items-center gap-2 px-4 py-2 sm:px-8">
         <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-signal" />
         <span>
-          <strong className="font-medium">Sin cuentas todavía</strong>
+          <strong className="font-medium">Favoritos temporales</strong>
           <span className="text-paper/70">
             {' · '}
-            <span className="hidden sm:inline">Puedes recorrer la tienda; favoritos y colección llegarán con el inicio de sesión.</span>
-            <span className="sm:hidden">Favoritos y colección, próximamente</span>
+            <span className="hidden sm:inline">Aún no hay cuentas: los favoritos se borran al recargar la página.</span>
+            <span className="sm:hidden">Se borran al recargar</span>
           </span>
         </span>
       </p>

@@ -112,5 +112,5 @@ export function walkBounds(units: UnitLayout[]) {
   return { minX: -WALL_X + 0.9, maxX: WALL_X - 0.9, minZ: lastZ - UNIT_WIDTH / 2 - 1.2, maxZ: START.position[2] + 1 }
 }
 
-/** Fondo de la tienda (pared del cartel principal). */
-export const backWallZ = (units: UnitLayout[]) => walkBounds(units).minZ - 1.2
+/** Fondo de la tienda (pared del cartel principal); deja sitio al mostrador. */
+export const backWallZ = (units: UnitLayout[]) => walkBounds(units).minZ - 3
