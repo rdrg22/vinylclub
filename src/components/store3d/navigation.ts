@@ -19,11 +19,13 @@ export interface NavState {
   fly: { x: number; y: number; z: number; yaw: number } | null
   /** Pantalla de inicio: la cámara se mece sola y no responde a la entrada. */
   intro: boolean
+  /** Con un disco en la mano la cámara se queda quieta (el arrastre gira el disco). */
+  locked: boolean
 }
 
 export function createNavState(intro: boolean): NavState {
   const [x, y, z] = (intro ? INTRO : START).position
-  return { x, y, z, yaw: START.yaw, pitch: intro ? 0.04 : -0.04, keys: new Set(), walk: 0, fly: null, intro }
+  return { x, y, z, yaw: START.yaw, pitch: intro ? 0.04 : -0.04, keys: new Set(), walk: 0, fly: null, intro, locked: false }
 }
 
 export const WALK_SPEED = 2.4 // m/s
@@ -54,6 +56,7 @@ export function stepNavigation(
     if (!reducedMotion) nav.yaw = Math.sin(time * 0.22) * 0.16
     return
   }
+  if (nav.locked) return
   if (nav.fly) {
     const t = reducedMotion ? 1 : Math.min(1, dt * 3.2)
     nav.x += (nav.fly.x - nav.x) * t

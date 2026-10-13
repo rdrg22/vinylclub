@@ -171,3 +171,142 @@ export async function fontsReady() {
     // Si fallan, se dibuja con la fuente de reserva.
   }
 }
+
+// ---------------------------------------------------------------- disco en la mano
+
+/** Portada inmediata recortada del atlas (misma imagen, sin esperar a la de alta resolución). */
+export function frontFromAtlas(atlas: THREE.Texture, uv: [number, number, number, number]): THREE.Texture | null {
+  const image = atlas.image as CanvasImageSource & { width: number; height: number }
+  if (!image?.width) return null
+  const [u0, v0, u1, v1] = uv
+  return canvasTexture(256, 256, (ctx) => {
+    ctx.drawImage(image, u0 * image.width, (1 - v1) * image.height, (u1 - u0) * image.width, (v1 - v0) * image.height, 0, 0, 256, 256)
+  })
+}
+
+const loaderHiRes = new THREE.TextureLoader()
+loaderHiRes.setCrossOrigin('anonymous')
+
+/** Imagen remota como textura (portada grande o contraportada real); `null` si no carga. */
+export function loadRemoteTexture(url: string): Promise<THREE.Texture | null> {
+  return new Promise((resolve) => {
+    loaderHiRes.load(
+      url,
+      (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace
+        texture.anisotropy = 8
+        resolve(texture)
+      },
+      undefined,
+      () => resolve(null),
+    )
+  })
+}
+
+export interface BackData {
+  tracks: Array<{ number: string; title: string; length?: string }>
+  footer: string[]
+  note: string
+}
+
+/** Contraportada compuesta con datos reales: título, lista de canciones y datos de la edición. */
+export function composedBackTexture(album: Album, data: BackData | null) {
+  return canvasTexture(1024, 1024, (ctx) => {
+    ctx.fillStyle = '#efe6d2'
+    ctx.fillRect(0, 0, 1024, 1024)
+    // Papel ligeramente envejecido en los bordes.
+    const vignette = ctx.createRadialGradient(512, 512, 380, 512, 512, 760)
+    vignette.addColorStop(0, 'rgba(0,0,0,0)')
+    vignette.addColorStop(1, 'rgba(90,60,30,0.22)')
+    ctx.fillStyle = vignette
+    ctx.fillRect(0, 0, 1024, 1024)
+
+    ctx.fillStyle = '#1f1d1a'
+    ctx.font = '500 26px "IBM Plex Mono", monospace'
+    ctx.fillText(album.artist.toUpperCase().slice(0, 48), 64, 96)
+    ctx.font = 'italic 600 58px Fraunces, Georgia, serif'
+    wrapLines(ctx, album.title, 896, 2).forEach((line, i) => ctx.fillText(line, 64, 168 + i * 62))
+    ctx.fillStyle = '#d8402a'
+    ctx.fillRect(64, 252, 120, 6)
+
+    const tracks = data?.tracks ?? []
+    if (!data) {
+      ctx.fillStyle = '#6b6258'
+      ctx.font = '500 24px "IBM Plex Mono", monospace'
+      ctx.fillText('CARGANDO LA LISTA DE CANCIONES…', 64, 330)
+    } else if (tracks.length === 0) {
+      ctx.fillStyle = '#6b6258'
+      ctx.font = '500 24px "IBM Plex Mono", monospace'
+      ctx.fillText('SIN LISTA DE CANCIONES EN MUSICBRAINZ', 64, 330)
+    } else {
+      const perColumn = Math.ceil(tracks.length / 2)
+      const lineHeight = Math.min(44, Math.floor(560 / perColumn))
+      const size = Math.max(16, Math.min(26, lineHeight - 12))
+      tracks.forEach((track, i) => {
+        const column = i < perColumn ? 0 : 1
+        const x = 64 + column * 464
+        const y = 330 + (i % perColumn) * lineHeight
+        ctx.fillStyle = '#8a8378'
+        ctx.font = `500 ${size}px "IBM Plex Mono", monospace`
+        ctx.fillText(track.number.padStart(2, ' '), x, y)
+        ctx.fillStyle = '#1f1d1a'
+        ctx.font = `500 ${size + 2}px "Inter Tight", system-ui, sans-serif`
+        const title = wrapLines(ctx, track.title, 300, 1)[0] ?? ''
+        ctx.fillText(title, x + size * 2.4, y)
+        ctx.fillStyle = '#8a8378'
+        ctx.font = `500 ${size}px "IBM Plex Mono", monospace`
+        ctx.textAlign = 'right'
+        ctx.fillText(track.length ?? '', x + 420, y)
+        ctx.textAlign = 'left'
+      })
+    }
+
+    ctx.fillStyle = '#1f1d1a'
+    ctx.fillRect(64, 900, 896, 2)
+    ctx.font = '500 20px "IBM Plex Mono", monospace'
+    ;(data?.footer ?? []).slice(0, 2).forEach((line, i) => ctx.fillText(line.toUpperCase().slice(0, 70), 64, 936 + i * 28))
+    if (data?.note) {
+      ctx.fillStyle = '#8a8378'
+      ctx.font = '500 16px "IBM Plex Mono", monospace'
+      ctx.textAlign = 'right'
+      ctx.fillText(data.note.toUpperCase(), 960, 994)
+      ctx.textAlign = 'left'
+    }
+  })
+}
+
+/** Galleta del vinilo: color de la funda, título y agujero central. */
+export function discLabelTexture(album: Album) {
+  const { bg, fg } = sleeveFor(album)
+  return canvasTexture(512, 512, (ctx) => {
+    // Surcos.
+    ctx.fillStyle = '#141210'
+    ctx.fillRect(0, 0, 512, 512)
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)'
+    for (let r = 120; r < 254; r += 4) {
+      ctx.beginPath()
+      ctx.arc(256, 256, r, 0, Math.PI * 2)
+      ctx.stroke()
+    }
+    // Brillo que delata el giro.
+    ctx.fillStyle = 'rgba(255,255,255,0.07)'
+    ctx.beginPath()
+    ctx.moveTo(256, 256)
+    ctx.arc(256, 256, 254, -0.5, -0.1)
+    ctx.fill()
+    ctx.fillStyle = bg
+    ctx.beginPath()
+    ctx.arc(256, 256, 96, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = fg
+    ctx.textAlign = 'center'
+    ctx.font = '600 22px Fraunces, Georgia, serif'
+    ctx.fillText(wrapLines(ctx, album.title, 150, 1)[0] ?? '', 256, 222)
+    ctx.font = '500 13px "IBM Plex Mono", monospace'
+    ctx.fillText(album.artist.toUpperCase().slice(0, 22), 256, 306)
+    ctx.fillStyle = '#efe6d2'
+    ctx.beginPath()
+    ctx.arc(256, 256, 7, 0, Math.PI * 2)
+    ctx.fill()
+  })
+}

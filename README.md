@@ -19,7 +19,12 @@ npm run dev
 La portada (`/`) es una tienda de discos en 3D a pantalla completa (three.js + React Three Fiber,
 `src/components/store3d/`), con pantalla de entrada: un pasillo con un mueble por década, carteles pintados y etiquetas
 de año en las baldas. La misma selección en lista está en `/estanterias`. Se camina con WASD/flechas, se mira arrastrando y
-la rueda avanza; en móvil, arrastrar y los botones ▲ ▼. Al pulsar una portada se abre su ficha.
+la rueda avanza; en móvil, arrastrar y los botones ▲ ▼.
+
+Al pulsar una portada **se coge el disco**: sale de la balda y queda en la mano, se gira arrastrando y se le da la vuelta
+(botón o tecla F). El reverso es la contraportada original si Cover Art Archive la tiene; si no, se compone con la lista
+de canciones, sello y fecha de la edición en MusicBrainz (`src/services/albumBack.ts`). Debajo, una cartela con la demo,
+los enlaces y «Ficha completa». Mientras suena la demo, el vinilo asoma de la funda y gira. Esc lo devuelve a su hueco.
 
 - three.js se descarga aparte (carga diferida) y la escena se pausa fuera de pantalla.
 - Las portadas de la tienda salen de 8 imágenes (una por década, `public/atlas/`) que se generan con

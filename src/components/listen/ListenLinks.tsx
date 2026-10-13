@@ -32,7 +32,9 @@ function ServiceIcon({ service }: { service: ListenService }) {
   )
 }
 
-function LinkButton({ link }: { link: ListenLink }) {
+type Tone = 'light' | 'dark'
+
+function LinkButton({ link, tone }: { link: ListenLink; tone: Tone }) {
   const { name, color } = SERVICES[link.service]
   const isBuy = link.service === 'amazon'
   const label = `${isBuy ? 'Comprar en' : 'Escuchar en'} ${name}${link.kind === 'search' ? ' (búsqueda del disco)' : ''}`
@@ -60,7 +62,7 @@ function LinkButton({ link }: { link: ListenLink }) {
             </span>
           )}
         </span>
-        <span className="label-mono text-[0.6rem] text-ink-soft">{name}</span>
+        <span className={cn('label-mono text-[0.6rem]', tone === 'dark' ? 'text-[#f3e4c3]/75' : 'text-ink-soft')}>{name}</span>
       </a>
     </li>
   )
@@ -70,7 +72,8 @@ function LinkButton({ link }: { link: ListenLink }) {
  * «Escuchar en» + «Comprar». Los enlaces de búsqueda se muestran al instante;
  * el de Apple Music pasa a directo cuando se verifica el álbum.
  */
-export function ListenLinks({ album, className }: { album: Album; className?: string }) {
+export function ListenLinks({ album, className, tone = 'light' }: { album: Album; className?: string; tone?: Tone }) {
+  const muted = tone === 'dark' ? 'text-[#e8c98f]/80' : 'text-ink-faint'
   const resource = useAsyncResource(`listen|${album.artist}|${album.title}`, (signal) => getListenLinks(album, signal))
   const fallback = searchLinks(album)
   const links = resource.status === 'success' ? resource.data : [fallback.apple, fallback.spotify, fallback.tidal, fallback.soundcloud, fallback.amazon]
@@ -80,22 +83,22 @@ export function ListenLinks({ album, className }: { album: Album; className?: st
   return (
     <div className={cn('flex flex-wrap items-start gap-x-8 gap-y-4', className)}>
       <div>
-        <p className="label-mono mb-2 text-ink-faint">Escuchar en</p>
+        <p className={cn('label-mono mb-2', muted)}>Escuchar en</p>
         <ul className="flex gap-3">
           {listen.map((link) => (
-            <LinkButton key={link.service} link={link} />
+            <LinkButton key={link.service} link={link} tone={tone} />
           ))}
         </ul>
       </div>
       <div>
-        <p className="label-mono mb-2 text-ink-faint">Comprar</p>
+        <p className={cn('label-mono mb-2', muted)}>Comprar</p>
         <ul className="flex gap-3">
           {buy.map((link) => (
-            <LinkButton key={link.service} link={link} />
+            <LinkButton key={link.service} link={link} tone={tone} />
           ))}
         </ul>
       </div>
-      <p className="label-mono basis-full text-[0.6rem] text-ink-faint">
+      <p className={cn('label-mono basis-full text-[0.6rem]', muted)}>
         <span aria-hidden>⌕</span> = búsqueda del disco en ese servicio
       </p>
     </div>

@@ -25,10 +25,13 @@ interface SceneProps {
   nav: NavState
   reducedMotion: boolean
   onHover: (album: Album | null) => void
-  onSelect: (album: Album) => void
+  /** Se pasa el objeto de la portada para que el disco salga de su posición exacta. */
+  onSelect: (album: Album, object: THREE.Object3D) => void
+  /** Disco que está en la mano: su hueco en la balda queda vacío. */
+  heldId: string | null
 }
 
-export function StoreScene({ units, atlases, nav, reducedMotion, onHover, onSelect }: SceneProps) {
+export function StoreScene({ units, atlases, nav, reducedMotion, onHover, onSelect, heldId }: SceneProps) {
   const bounds = useMemo(() => walkBounds(units), [units])
   return (
     <>
@@ -39,7 +42,7 @@ export function StoreScene({ units, atlases, nav, reducedMotion, onHover, onSele
       <CameraRig nav={nav} bounds={bounds} reducedMotion={reducedMotion} />
       <Room units={units} />
       {units.map((unit) => (
-        <ShelfUnit key={unit.decade} unit={unit} atlas={atlases[unit.decade] ?? null} onHover={onHover} onSelect={onSelect} />
+        <ShelfUnit key={unit.decade} unit={unit} atlas={atlases[unit.decade] ?? null} heldId={heldId} onHover={onHover} onSelect={onSelect} />
       ))}
     </>
   )
@@ -125,7 +128,7 @@ function Room({ units }: { units: UnitLayout[] }) {
 
 // ---------------------------------------------------------------- muebles
 
-function ShelfUnit({ unit, atlas, onHover, onSelect }: { unit: UnitLayout; atlas: THREE.Texture | null } & Pick<SceneProps, 'onHover' | 'onSelect'>) {
+function ShelfUnit({ unit, atlas, heldId, onHover, onSelect }: { unit: UnitLayout; atlas: THREE.Texture | null } & Pick<SceneProps, 'onHover' | 'onSelect' | 'heldId'>) {
   // Un único material para todas las portadas del mueble: una textura, un shader.
   const atlasMaterial = useMemo(() => (atlas ? new THREE.MeshStandardMaterial({ map: atlas, roughness: 0.55 }) : null), [atlas])
   useEffect(() => () => atlasMaterial?.dispose(), [atlasMaterial])
@@ -164,7 +167,7 @@ function ShelfUnit({ unit, atlas, onHover, onSelect }: { unit: UnitLayout; atlas
         <YearTag key={tag.year} year={tag.year} x={tag.x} y={tag.y - COVER_SIZE / 2 - 0.035} />
       ))}
       {unit.slots.map((slot) => (
-        <Cover key={slot.album.id} slot={slot} atlasMaterial={atlasMaterial} onHover={onHover} onSelect={onSelect} />
+        <Cover key={slot.album.id} slot={slot} atlasMaterial={atlasMaterial} hidden={slot.album.id === heldId} onHover={onHover} onSelect={onSelect} />
       ))}
     </group>
   )
@@ -186,9 +189,10 @@ interface CoverProps extends Pick<SceneProps, 'onHover' | 'onSelect'> {
   slot: CoverSlot
   /** Material compartido del mueble con el atlas de su década (null mientras carga). */
   atlasMaterial: THREE.Material | null
+  hidden: boolean
 }
 
-function Cover({ slot, atlasMaterial, onHover, onSelect }: CoverProps) {
+function Cover({ slot, atlasMaterial, hidden, onHover, onSelect }: CoverProps) {
   const { album } = slot
   const [hovered, setHovered] = useState(false)
   const uv = useMemo(() => atlasUV(album.id), [album.id])
@@ -201,6 +205,7 @@ function Cover({ slot, atlasMaterial, onHover, onSelect }: CoverProps) {
 
   return (
     <mesh
+      visible={!hidden}
       geometry={geometry}
       material={uv && atlasMaterial ? atlasMaterial : undefined}
       position={[slot.x, slot.y + (hovered ? 0.04 : 0), hovered ? 0.2 : 0.12]}
@@ -220,8 +225,11 @@ function Cover({ slot, atlasMaterial, onHover, onSelect }: CoverProps) {
       onClick={(e: ThreeEvent<MouseEvent>) => {
         e.stopPropagation()
         // Un arrastre para mirar alrededor no cuenta como clic.
-        if (e.delta > 6) return
-        onSelect(album)
+        if (e.delta > 6 || hidden) return
+        setHovered(false)
+        onHover(null)
+        document.body.style.cursor = ''
+        onSelect(album, e.object)
       }}
     >
       {!(uv && atlasMaterial) &&

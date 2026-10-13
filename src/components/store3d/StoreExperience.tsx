@@ -6,16 +6,20 @@
 import { Canvas } from '@react-three/fiber'
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { Link } from 'react-router-dom'
-import type * as THREE from 'three'
+import * as THREE from 'three'
 import { useAlbumDetail } from '@/components/album/albumDetailContext'
 import { usePreviewPlayer } from '@/components/player/previewPlayerContext'
+import { useAsyncResource } from '@/hooks/useAsyncResource'
+import { formatLength, getAlbumBack, type AlbumBack } from '@/services/albumBack'
 import type { Album } from '@/types/music'
 import { cn } from '@/utils/cn'
 import { loadAtlas } from './atlas'
 import { buildStoreLayout, ENTER, START, UNIT_WIDTH, WALL_X, type DecadeInput, type UnitLayout } from './layout'
 import { createNavState, LOOK_SENSITIVITY, MAX_PITCH, NAV_KEYS } from './navigation'
+import { HeldPanel } from './HeldPanel'
+import { HeldRecord, type HeldState, type HoldControl } from './HeldRecord'
 import { StoreScene } from './StoreScene'
-import { fontsReady } from './textures'
+import { fontsReady, type BackData } from './textures'
 
 const FOV = 62
 /** No más lejos que el borde de los muebles de enfrente. */
@@ -48,6 +52,23 @@ function useAtlases(units: UnitLayout[]) {
   return { atlases, loaded: Object.keys(atlases).length }
 }
 
+/** Década (clave del atlas) en la que está colocado un disco. */
+const decadeKey = (album: Album) => `${Math.floor((album.charts?.[0]?.year ?? 0) / 10) * 10}s`
+
+/** Lo que se pinta en el reverso a partir de los datos reales de la edición. */
+function toBackData(album: Album, back: AlbumBack | null | undefined): BackData {
+  if (album.source !== 'musicbrainz' || !back) {
+    return { tracks: [], footer: ['Lista anual de Billboard'], note: 'Sin datos de la edición en MusicBrainz' }
+  }
+  const edition = [back.labels.join(' / '), back.catalogNumbers[0]].filter(Boolean).join(' · ')
+  const details = [back.date, back.country, back.format].filter(Boolean).join(' · ')
+  return {
+    tracks: back.tracks.map((t) => ({ number: t.number, title: t.title, length: formatLength(t.length) })),
+    footer: [edition, details].filter(Boolean),
+    note: 'Reverso compuesto con datos de MusicBrainz',
+  }
+}
+
 export default function StoreExperience({ decades }: { decades: DecadeInput[] }) {
   const { openAlbum } = useAlbumDetail()
   const { state: player } = usePreviewPlayer()
@@ -63,6 +84,89 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   const drag = useRef<{ x: number; y: number; id: number } | null>(null)
   const playerOpen = player.album !== null && player.status !== 'idle'
 
+  // ---------- disco en la mano
+  const [held, setHeld] = useState<HeldState | null>(null)
+  const [leaving, setLeaving] = useState(false)
+  const [flipped, setFlipped] = useState(false)
+  // Cuánto tapa la cartela (fracción de la altura): el disco se coloca encima.
+  const [coveredBottom, setCoveredBottom] = useState(0.45)
+  const panelRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const panel = panelRef.current
+    const wrapper = wrapperRef.current
+    if (!panel || !wrapper) return
+    const measure = () => setCoveredBottom(Math.min(0.7, panel.offsetHeight / Math.max(1, wrapper.clientHeight)))
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(panel)
+    observer.observe(wrapper)
+    return () => observer.disconnect()
+  }, [held, leaving])
+  const control = useRef<HoldControl>({ rotY: 0, rotX: 0, flipped: false }).current
+  const back = useAsyncResource(held?.album.source === 'musicbrainz' ? `back|${held.album.id}` : null, (signal) =>
+    getAlbumBack(held!.album, signal),
+  )
+  const backData = useMemo(() => {
+    if (!held) return null
+    if (held.album.source === 'musicbrainz' && back.status === 'loading') return null
+    return toBackData(held.album, back.status === 'success' ? back.data : null)
+  }, [held, back])
+  const backImage = back.status === 'success' ? back.data?.backImage : undefined
+  const backNote =
+    held?.album.source !== 'musicbrainz'
+      ? 'Reverso sin datos: disco no localizado en MusicBrainz'
+      : backImage
+        ? 'Reverso: contraportada original · Cover Art Archive'
+        : back.status === 'error'
+          ? 'No se pudo cargar el reverso'
+          : 'Reverso compuesto con datos de MusicBrainz'
+
+  const pickUp = useCallback(
+    (album: Album, object: THREE.Object3D) => {
+      if (held) return
+      control.rotY = 0
+      control.rotX = 0
+      control.flipped = false
+      setFlipped(false)
+      nav.locked = true
+      nav.fly = null
+      nav.keys.clear()
+      setHovered(null)
+      setHeld({
+        album,
+        fromPosition: object.getWorldPosition(new THREE.Vector3()),
+        fromQuaternion: object.getWorldQuaternion(new THREE.Quaternion()),
+      })
+      wrapperRef.current?.focus({ preventScroll: true })
+    },
+    [held, control, nav],
+  )
+  const putBack = useCallback(() => {
+    if (!held) return
+    control.rotY = 0
+    control.rotX = 0
+    control.flipped = false
+    setFlipped(false)
+    setLeaving(true)
+  }, [held, control])
+  const flip = useCallback(() => {
+    control.flipped = !control.flipped
+    control.rotY = 0
+    control.rotX = 0
+    setFlipped(control.flipped)
+  }, [control])
+  const onLeft = useCallback(() => {
+    setHeld(null)
+    setLeaving(false)
+    nav.locked = false
+  }, [nav])
+
+  // Los manejadores de teclado se registran una vez: leen las acciones actuales por referencia.
+  const putBackRef = useRef(putBack)
+  const flipRef = useRef(flip)
+  putBackRef.current = putBack
+  flipRef.current = flip
+
   useEffect(() => {
     fontsReady().then(() => setFonts(true))
   }, [])
@@ -72,6 +176,14 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
     const el = wrapperRef.current
     if (!el) return
     const down = (e: KeyboardEvent) => {
+      if (nav.locked) {
+        if (e.code === 'Escape') putBackRef.current()
+        if (e.code === 'KeyF' || e.code === 'Space') {
+          e.preventDefault()
+          flipRef.current()
+        }
+        return
+      }
       if (!NAV_KEYS.has(e.code) || nav.intro) return
       e.preventDefault()
       nav.fly = null
@@ -126,6 +238,14 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   const onPointerMove = (e: ReactPointerEvent) => {
     const d = drag.current
     if (!d || d.id !== e.pointerId) return
+    if (held) {
+      // Con un disco en la mano, arrastrar lo gira.
+      control.rotY += (e.clientX - d.x) * 0.009
+      control.rotX = Math.max(-0.7, Math.min(0.7, control.rotX + (e.clientY - d.y) * 0.009))
+      d.x = e.clientX
+      d.y = e.clientY
+      return
+    }
     nav.fly = null
     nav.yaw += (e.clientX - d.x) * LOOK_SENSITIVITY
     nav.pitch = Math.max(-MAX_PITCH, Math.min(MAX_PITCH, nav.pitch + (e.clientY - d.y) * LOOK_SENSITIVITY))
@@ -215,9 +335,25 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             atlases={atlases}
             nav={nav}
             reducedMotion={reducedMotion}
-            onHover={entered ? setHovered : () => undefined}
-            onSelect={entered ? openAlbum : () => undefined}
+            onHover={entered && !held ? setHovered : () => undefined}
+            onSelect={entered ? pickUp : () => undefined}
+            heldId={held?.album.id ?? null}
           />
+          {held && (
+            <HeldRecord
+              key={held.album.id}
+              held={held}
+              leaving={leaving}
+              control={control}
+              atlas={atlases[decadeKey(held.album)] ?? null}
+              back={backData}
+              backImage={backImage}
+              playing={player.album?.id === held.album.id && player.status === 'playing'}
+              reducedMotion={reducedMotion}
+              coveredBottom={coveredBottom}
+              onLeft={onLeft}
+            />
+          )}
         </Canvas>
       )}
 
@@ -270,6 +406,20 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
         </div>
       </div>
 
+      {/* ---------- Cartela del disco en la mano ---------- */}
+      {held && !leaving && (
+        <div ref={panelRef} className={cn('pointer-events-none absolute inset-x-0 bottom-0 z-20 p-3 sm:p-4', playerOpen && 'pb-20 sm:pb-20')}>
+          <HeldPanel
+            album={held.album}
+            flipped={flipped}
+            backNote={backNote}
+            onFlip={flip}
+            onReturn={putBack}
+            onDetails={() => openAlbum(held.album)}
+          />
+        </div>
+      )}
+
       {/* ---------- HUD dentro de la tienda ---------- */}
       <div
         data-hud
@@ -301,7 +451,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
         </nav>
       </div>
 
-      {entered && hovered && (
+      {entered && !held && hovered && (
         <div
           data-hud
           aria-live="polite"
@@ -319,7 +469,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
         data-hud
         className={cn(
           'absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-3 p-3 transition-[opacity,padding] duration-500 sm:p-4',
-          entered ? 'opacity-100' : 'pointer-events-none opacity-0',
+          entered && !held ? 'opacity-100' : 'pointer-events-none opacity-0',
           // El reproductor de demos ocupa el borde inferior: el HUD sube por encima.
           playerOpen && 'pb-20 sm:pb-20',
         )}
