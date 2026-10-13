@@ -3,7 +3,8 @@ import { cn } from '@/utils/cn'
 
 // «Buscar» se oculta en móvil: allí el buscador ya ocupa su propia fila en la cabecera.
 const ITEMS = [
-  { to: '/', label: 'Mi tienda', end: true, desktopOnly: false },
+  { to: '/', label: 'Tienda', end: true, desktopOnly: false },
+  { to: '/estanterias', label: 'Estanterías', end: false, desktopOnly: false },
   { to: '/buscar', label: 'Buscar', end: false, desktopOnly: true },
   { to: '/coleccion', label: 'Colección', end: false, desktopOnly: false },
 ] as const

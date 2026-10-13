@@ -11,3 +11,6 @@ inspo/
 
 # Registros de los scripts de datos
 scripts/*.log
+
+# Caché de descargas de los scripts de datos
+scripts/.cache/

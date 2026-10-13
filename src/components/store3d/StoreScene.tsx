@@ -1,5 +1,5 @@
-import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useFrame, type ThreeEvent } from '@react-three/fiber'
+import { useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import type { Album } from '@/types/music'
 import {
@@ -13,21 +13,22 @@ import {
   type UnitLayout,
 } from './layout'
 import { stepNavigation, type NavState } from './navigation'
-import { floorTexture, loadCover, placeholderTexture, signTexture, sleeveFor, storeSignTexture, yearTagTexture } from './textures'
+import { atlasUV, coverGeometry } from './atlas'
+import { floorTexture, placeholderTexture, signTexture, sleeveFor, storeSignTexture, yearTagTexture } from './textures'
 
 const CEILING = 3.3
-/** Distancia a la que un mueble empieza a cargar sus portadas. */
-const ACTIVATE_DISTANCE = 13
 
 interface SceneProps {
   units: UnitLayout[]
+  /** Atlas de portadas cargados, por década. */
+  atlases: Record<string, THREE.Texture | null>
   nav: NavState
   reducedMotion: boolean
   onHover: (album: Album | null) => void
   onSelect: (album: Album) => void
 }
 
-export function StoreScene({ units, nav, reducedMotion, onHover, onSelect }: SceneProps) {
+export function StoreScene({ units, atlases, nav, reducedMotion, onHover, onSelect }: SceneProps) {
   const bounds = useMemo(() => walkBounds(units), [units])
   return (
     <>
@@ -38,15 +39,15 @@ export function StoreScene({ units, nav, reducedMotion, onHover, onSelect }: Sce
       <CameraRig nav={nav} bounds={bounds} reducedMotion={reducedMotion} />
       <Room units={units} />
       {units.map((unit) => (
-        <ShelfUnit key={unit.decade} unit={unit} onHover={onHover} onSelect={onSelect} />
+        <ShelfUnit key={unit.decade} unit={unit} atlas={atlases[unit.decade] ?? null} onHover={onHover} onSelect={onSelect} />
       ))}
     </>
   )
 }
 
 function CameraRig({ nav, bounds, reducedMotion }: { nav: NavState; bounds: ReturnType<typeof walkBounds>; reducedMotion: boolean }) {
-  useFrame(({ camera }, delta) => {
-    stepNavigation(nav, Math.min(delta, 0.1), bounds, reducedMotion)
+  useFrame(({ camera, clock }, delta) => {
+    stepNavigation(nav, Math.min(delta, 0.1), bounds, reducedMotion, clock.elapsedTime)
     camera.position.set(nav.x, nav.y, nav.z)
     camera.rotation.set(nav.pitch, nav.yaw, 0, 'YXZ')
   })
@@ -124,17 +125,10 @@ function Room({ units }: { units: UnitLayout[] }) {
 
 // ---------------------------------------------------------------- muebles
 
-function ShelfUnit({ unit, onHover, onSelect }: { unit: UnitLayout; onHover: SceneProps['onHover']; onSelect: SceneProps['onSelect'] }) {
-  const [active, setActive] = useState(false)
-  const frame = useRef(0)
-  const center = useMemo(() => new THREE.Vector3(...unit.center), [unit.center])
-  const { camera } = useThree()
-
-  // Cada medio segundo aprox. comprueba la distancia: las portadas se cargan al acercarse.
-  useFrame(() => {
-    if (active || frame.current++ % 30 !== 0) return
-    if (camera.position.distanceTo(center) < ACTIVATE_DISTANCE) setActive(true)
-  })
+function ShelfUnit({ unit, atlas, onHover, onSelect }: { unit: UnitLayout; atlas: THREE.Texture | null } & Pick<SceneProps, 'onHover' | 'onSelect'>) {
+  // Un único material para todas las portadas del mueble: una textura, un shader.
+  const atlasMaterial = useMemo(() => (atlas ? new THREE.MeshStandardMaterial({ map: atlas, roughness: 0.55 }) : null), [atlas])
+  useEffect(() => () => atlasMaterial?.dispose(), [atlasMaterial])
 
   const sign = useMemo(() => {
     const years = unit.yearTags.map((t) => t.year)
@@ -170,7 +164,7 @@ function ShelfUnit({ unit, onHover, onSelect }: { unit: UnitLayout; onHover: Sce
         <YearTag key={tag.year} year={tag.year} x={tag.x} y={tag.y - COVER_SIZE / 2 - 0.035} />
       ))}
       {unit.slots.map((slot) => (
-        <Cover key={slot.album.id} slot={slot} active={active} onHover={onHover} onSelect={onSelect} />
+        <Cover key={slot.album.id} slot={slot} atlasMaterial={atlasMaterial} onHover={onHover} onSelect={onSelect} />
       ))}
     </group>
   )
@@ -186,29 +180,29 @@ function YearTag({ year, x, y }: { year: number; x: number; y: number }) {
   )
 }
 
-const coverGeometry = new THREE.PlaneGeometry(COVER_SIZE, COVER_SIZE)
+const plainCoverGeometry = new THREE.PlaneGeometry(COVER_SIZE, COVER_SIZE)
 
-function Cover({ slot, active, onHover, onSelect }: { slot: CoverSlot; active: boolean } & Pick<SceneProps, 'onHover' | 'onSelect'>) {
+interface CoverProps extends Pick<SceneProps, 'onHover' | 'onSelect'> {
+  slot: CoverSlot
+  /** Material compartido del mueble con el atlas de su década (null mientras carga). */
+  atlasMaterial: THREE.Material | null
+}
+
+function Cover({ slot, atlasMaterial, onHover, onSelect }: CoverProps) {
   const { album } = slot
-  const [texture, setTexture] = useState<THREE.Texture | null>(null)
   const [hovered, setHovered] = useState(false)
-
-  useEffect(() => {
-    if (!active) return
-    let cancelled = false
-    loadCover(album).then((cover) => {
-      if (!cancelled) setTexture(cover ?? placeholderTexture(album))
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [active, album])
-
-  const color = texture ? '#ffffff' : sleeveFor(album).bg
+  const uv = useMemo(() => atlasUV(album.id), [album.id])
+  const geometry = useMemo(() => (uv ? coverGeometry(COVER_SIZE, uv) : plainCoverGeometry), [uv])
+  useEffect(() => () => {
+    if (geometry !== plainCoverGeometry) geometry.dispose()
+  }, [geometry])
+  // Sin hueco en el atlas (disco sin portada): funda tipográfica propia.
+  const placeholder = useMemo(() => (uv ? null : placeholderTexture(album)), [uv, album])
 
   return (
     <mesh
-      geometry={coverGeometry}
+      geometry={geometry}
+      material={uv && atlasMaterial ? atlasMaterial : undefined}
       position={[slot.x, slot.y + (hovered ? 0.04 : 0), hovered ? 0.2 : 0.12]}
       rotation-x={hovered ? 0 : -0.1}
       scale={hovered ? 1.08 : 1}
@@ -230,8 +224,13 @@ function Cover({ slot, active, onHover, onSelect }: { slot: CoverSlot; active: b
         onSelect(album)
       }}
     >
-      {/* Pasar de «sin textura» a «con textura» cambia el shader: se crea un material nuevo. */}
-      <meshStandardMaterial key={texture?.uuid ?? 'sleeve'} map={texture} color={color} roughness={0.55} />
+      {!(uv && atlasMaterial) &&
+        (placeholder ? (
+          <meshStandardMaterial map={placeholder} roughness={0.55} />
+        ) : (
+          // Mientras llega el atlas: color de funda.
+          <meshStandardMaterial color={sleeveFor(album).bg} roughness={0.55} />
+        ))}
     </mesh>
   )
 }

@@ -35,8 +35,8 @@ export function ShelfDetailPage() {
     <>
       <PageHeader
         eyebrow={
-          <Link to="/" className="transition-colors hover:text-signal">
-            ← Mi tienda
+          <Link to="/estanterias" className="transition-colors hover:text-signal">
+            ← Estanterías
           </Link>
         }
         title={shelf.name}

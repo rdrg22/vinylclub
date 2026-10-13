@@ -24,6 +24,10 @@ const FIRST_UNIT_Z = -(UNIT_WIDTH / 2) - 1.5
 const VIEW_DISTANCE = 3.3
 
 export const START = { position: [0, EYE_HEIGHT, 4.5] as const, yaw: 0 }
+/** Pantalla de inicio: en el umbral de la puerta, mirando al pasillo. */
+export const INTRO = { position: [0, EYE_HEIGHT + 0.05, 5.4] as const, yaw: 0 }
+/** Al pulsar «Entrar», la cámara camina hasta aquí. */
+export const ENTER = { position: [0, EYE_HEIGHT, 1.2] as const, yaw: 0 }
 
 export interface CoverSlot {
   album: Album

@@ -1,10 +1,8 @@
 /**
- * Texturas de la tienda 3D. Las portadas vienen de Cover Art Archive (que permite
- * CORS); todo lo demás —carteles, etiquetas, suelo, fundas sin portada— se dibuja
- * en un <canvas> para no descargar recursos extra.
+ * Texturas de la tienda 3D dibujadas en un <canvas>: carteles, etiquetas, suelo y
+ * fundas de los discos sin portada. Las portadas reales vienen de los atlas (atlas.ts).
  */
 import * as THREE from 'three'
-import { coverUrlFor } from '@/services/coverArt'
 import type { Album } from '@/types/music'
 import { hashString } from '@/utils/hash'
 
@@ -50,38 +48,7 @@ function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number
   return lines
 }
 
-// ---------------------------------------------------------------- portadas
-
-const coverCache = new Map<string, Promise<THREE.Texture | null>>()
-const loader = new THREE.TextureLoader()
-loader.setCrossOrigin('anonymous')
-
-const loadTexture = (url: string) =>
-  new Promise<THREE.Texture>((resolve, reject) => loader.load(url, resolve, undefined, reject))
-
-/**
- * Portada real (250 px), o `null` si no se ha podido cargar.
- * Un fallo aquí no prueba que el disco no tenga portada (puede ser una respuesta
- * en caché sin CORS), así que se reintenta una vez saltando la caché y no se
- * marca como «sin portada» para el resto de la app.
- */
-export function loadCover(album: Album): Promise<THREE.Texture | null> {
-  const url = coverUrlFor(album, 250)
-  if (!url) return Promise.resolve(null)
-  let pending = coverCache.get(album.id)
-  if (!pending) {
-    pending = loadTexture(url)
-      .catch(() => loadTexture(`${url}?cors=1`))
-      .then((texture) => {
-        texture.colorSpace = THREE.SRGBColorSpace
-        texture.anisotropy = 4
-        return texture
-      })
-      .catch(() => null)
-    coverCache.set(album.id, pending)
-  }
-  return pending
-}
+// ---------------------------------------------------------------- fundas sin portada
 
 const placeholderCache = new Map<string, THREE.Texture>()
 

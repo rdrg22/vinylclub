@@ -16,12 +16,15 @@ npm run dev
 
 ## La tienda 3D
 
-La portada es una tienda de discos en 3D (three.js + React Three Fiber, `src/components/store3d/`): un pasillo con un
-mueble por década, carteles pintados y etiquetas de año en las baldas. Se camina con WASD/flechas, se mira arrastrando y
+La portada (`/`) es una tienda de discos en 3D a pantalla completa (three.js + React Three Fiber,
+`src/components/store3d/`), con pantalla de entrada: un pasillo con un mueble por década, carteles pintados y etiquetas
+de año en las baldas. La misma selección en lista está en `/estanterias`. Se camina con WASD/flechas, se mira arrastrando y
 la rueda avanza; en móvil, arrastrar y los botones ▲ ▼. Al pulsar una portada se abre su ficha.
 
 - three.js se descarga aparte (carga diferida) y la escena se pausa fuera de pantalla.
-- Las portadas solo se piden al acercarse a cada mueble.
+- Las portadas de la tienda salen de 8 imágenes (una por década, `public/atlas/`) que se generan con
+  `node scripts/build-cover-atlas.mjs` tras actualizar el catálogo. Son miniaturas de 128 px de Cover Art Archive;
+  la ficha y la vista en lista siguen pidiendo las portadas grandes a Cover Art Archive.
 - Sin WebGL se muestra un aviso, y debajo siempre están las mismas estanterías en lista.
 
 ## Escuchar y comprar
@@ -99,4 +102,4 @@ src/
   utils/        Funciones puras (resumen de filtros, hash, clases)
 ```
 
-Rutas: `/` (Mi tienda), `/buscar?q=&tipo=artistas|ediciones&page=`, `/artista/:mbid`, `/estanteria/:id`, `/estanterias/nueva`, `/coleccion?tab=favoritos|coleccion`.
+Rutas: `/` (tienda 3D), `/estanterias` (lista), `/buscar?q=&tipo=artistas|ediciones&page=`, `/artista/:mbid`, `/estanteria/:id`, `/estanterias/nueva`, `/coleccion?tab=favoritos|coleccion`.

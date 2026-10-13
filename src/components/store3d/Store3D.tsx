@@ -1,4 +1,5 @@
 import { lazy, Suspense, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { DECADE_OPTIONS } from '@/config/shelfFilters'
 import { CHART_ALBUMS, decadeOf, firstChartYear } from '@/data/charts/chartCatalog'
 import type { DecadeInput } from './layout'
@@ -34,7 +35,7 @@ function useDecades(): DecadeInput[] {
 
 function Poster({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid h-[min(78svh,760px)] min-h-[440px] place-items-center bg-[#1b130c] p-6 text-center text-[#f3e4c3]">
+    <div className="grid h-full place-items-center bg-[#1b130c] p-6 text-center text-[#f3e4c3]">
       <div className="max-w-md">{children}</div>
     </div>
   )
@@ -50,7 +51,13 @@ export function Store3D() {
       <Poster>
         <p className="label-mono text-[#e8c98f]">Tienda 3D no disponible</p>
         <p className="mt-3 font-display text-2xl">Tu navegador no permite gráficos 3D (WebGL).</p>
-        <p className="mt-2 text-[#f3e4c3]/75">Puedes recorrer los mismos discos en las estanterías de abajo.</p>
+        <p className="mt-2 text-[#f3e4c3]/75">
+          Puedes recorrer los mismos discos en{' '}
+          <Link to="/estanterias" className="underline underline-offset-2">
+            las estanterías en lista
+          </Link>
+          .
+        </p>
       </Poster>
     )
   }

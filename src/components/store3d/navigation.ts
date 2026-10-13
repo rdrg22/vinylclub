@@ -3,7 +3,7 @@
  * porque se lee y escribe en cada fotograma; la entrada (teclado, ratón, táctil,
  * botones del HUD) lo modifica y el bucle de render lo aplica a la cámara.
  */
-import { EYE_HEIGHT, START } from './layout'
+import { EYE_HEIGHT, INTRO, START } from './layout'
 
 export interface NavState {
   x: number
@@ -17,11 +17,13 @@ export interface NavState {
   walk: number
   /** Destino de un «ir a la década»: la cámara se desliza hasta él. */
   fly: { x: number; y: number; z: number; yaw: number } | null
+  /** Pantalla de inicio: la cámara se mece sola y no responde a la entrada. */
+  intro: boolean
 }
 
-export function createNavState(): NavState {
-  const [x, y, z] = START.position
-  return { x, y, z, yaw: START.yaw, pitch: -0.04, keys: new Set(), walk: 0, fly: null }
+export function createNavState(intro: boolean): NavState {
+  const [x, y, z] = (intro ? INTRO : START).position
+  return { x, y, z, yaw: START.yaw, pitch: intro ? 0.04 : -0.04, keys: new Set(), walk: 0, fly: null, intro }
 }
 
 export const WALK_SPEED = 2.4 // m/s
@@ -45,7 +47,13 @@ export function stepNavigation(
   dt: number,
   bounds: { minX: number; maxX: number; minZ: number; maxZ: number },
   reducedMotion: boolean,
+  time = 0,
 ) {
+  if (nav.intro) {
+    // Vistazo lento a la tienda, como quien se asoma por la puerta.
+    if (!reducedMotion) nav.yaw = Math.sin(time * 0.22) * 0.16
+    return
+  }
   if (nav.fly) {
     const t = reducedMotion ? 1 : Math.min(1, dt * 3.2)
     nav.x += (nav.fly.x - nav.x) * t

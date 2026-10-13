@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { DiscoverySection } from '@/components/discovery/DiscoverySection'
 import { ShelfSection } from '@/components/shelf/ShelfSection'
-import { Store3D } from '@/components/store3d/Store3D'
 import { buttonClass } from '@/components/ui/buttonStyles'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { StateMessage } from '@/components/ui/StateMessage'
@@ -12,7 +11,8 @@ const LIBRARY_LINKS = [
   { to: '/coleccion?tab=coleccion', title: 'Mi colección', text: 'Lo que ya tienes en tus estanterías de casa.' },
 ] as const
 
-export function HomePage() {
+/** Las mismas décadas que la tienda 3D, en lista: más rápido si ya sabes lo que buscas. */
+export function ShelvesPage() {
   const shelves = useShelves()
   const newShelf = (
     <Link to="/estanterias/nueva" className={buttonClass('primary')}>
@@ -24,19 +24,14 @@ export function HomePage() {
     <>
       <PageHeader
         eyebrow={shelves.length === 1 ? '1 estantería' : `${shelves.length} estanterías`}
-        title="Mi tienda"
+        title="Estanterías"
         action={newShelf}
       >
-        Los diez álbumes más vendidos de cada año en EE. UU., década a década, según las listas anuales de Billboard.
-        Entra, recorre los pasillos y saca un disco de la balda para escucharlo.
+        Los diez álbumes más vendidos de cada año en EE. UU., década a década, según las listas anuales de Billboard.{' '}
+        <Link to="/" className="underline decoration-rule underline-offset-2 hover:text-signal">
+          Recórrelos también en la tienda 3D →
+        </Link>
       </PageHeader>
-
-      <section aria-label="Tienda en 3D" className="-mx-4 sm:-mx-8">
-        <Store3D />
-      </section>
-
-      <h2 className="mt-14 font-display text-4xl font-medium tracking-tight italic sm:text-5xl">Las estanterías</h2>
-      <p className="mt-2 text-ink-soft">Los mismos discos, en lista: más rápido si ya sabes lo que buscas.</p>
 
       {shelves.length > 0 ? (
         <div className="divide-y divide-rule">
