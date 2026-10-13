@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Misma versión que en desarrollo (Vite 8 y TypeScript 7 necesitan Node moderno).
+  NODE_VERSION = "24"
+
+# SPA: cualquier ruta (/buscar, /artista/…, /estanteria/…) la resuelve React Router.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
