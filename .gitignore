@@ -8,3 +8,6 @@ dist
 
 # Material de referencia personal (capturas y vídeo)
 inspo/
+
+# Registros de los scripts de datos
+scripts/*.log

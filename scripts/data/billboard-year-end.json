@@ -1,0 +1,3834 @@
+{
+  "source": "Billboard Year-End Top Albums (Billboard 200), vía bestsellingalbums.org",
+  "sourceUrlPattern": "https://bestsellingalbums.org/year-end/Billboard_Top_Albums_{year}",
+  "fetchedAt": "2026-10-13T09:45:17.644Z",
+  "years": {
+    "1956": [
+      {
+        "rank": 1,
+        "artist": "HARRY BELAFONTE",
+        "title": "CALYPSO",
+        "released": "1956"
+      },
+      {
+        "rank": 2,
+        "artist": "SOUNDTRACK",
+        "title": "MY FAIR LADY (ORIGINAL CAST)",
+        "released": "1956"
+      },
+      {
+        "rank": 3,
+        "artist": "SOUNDTRACK",
+        "title": "THE KING AND I",
+        "released": "1956"
+      },
+      {
+        "rank": 4,
+        "artist": "SOUNDTRACK",
+        "title": "EDDY DUCHIN STORY",
+        "released": "1956"
+      },
+      {
+        "rank": 5,
+        "artist": "ELVIS PRESLEY",
+        "title": "ELVIS PRESLEY",
+        "released": "1956"
+      }
+    ],
+    "1957": [
+      {
+        "rank": 1,
+        "artist": "SOUNDTRACK",
+        "title": "MY FAIR LADY (ORIGINAL CAST)",
+        "released": "1956"
+      },
+      {
+        "rank": 2,
+        "artist": "Tennessee Ernie Ford",
+        "title": "HYMNS",
+        "released": "1956"
+      },
+      {
+        "rank": 3,
+        "artist": "SOUNDTRACK",
+        "title": "OKLAHOMA!",
+        "released": "1955"
+      },
+      {
+        "rank": 4,
+        "artist": "SOUNDTRACK",
+        "title": "AROUND THE WORLD IN 80 DAYS",
+        "released": "1957"
+      },
+      {
+        "rank": 5,
+        "artist": "SOUNDTRACK",
+        "title": "THE KING AND I",
+        "released": "1956"
+      }
+    ],
+    "1958": [
+      {
+        "rank": 1,
+        "artist": "SOUNDTRACK",
+        "title": "MY FAIR LADY (ORIGINAL CAST)",
+        "released": "1956"
+      },
+      {
+        "rank": 2,
+        "artist": "SOUNDTRACK",
+        "title": "THE MUSIC MAN (ORIGINAL CAST)",
+        "released": "1957"
+      },
+      {
+        "rank": 3,
+        "artist": "JOHNNY MATHIS",
+        "title": "JOHNNY'S GREATEST HITS",
+        "released": "1958"
+      },
+      {
+        "rank": 4,
+        "artist": "SOUNDTRACK",
+        "title": "SOUTH PACIFIC",
+        "released": "1958"
+      },
+      {
+        "rank": 5,
+        "artist": "FRANK SINATRA",
+        "title": "COME FLY WITH ME",
+        "released": "1958"
+      }
+    ],
+    "1959": [
+      {
+        "rank": 1,
+        "artist": "HENRY MANCINI",
+        "title": "PETER GUN (SOUNDTRACK)",
+        "released": "1959"
+      },
+      {
+        "rank": 2,
+        "artist": "SOUNDTRACK",
+        "title": "GIGI",
+        "released": "1958"
+      },
+      {
+        "rank": 3,
+        "artist": "SOUNDTRACK",
+        "title": "SOUTH PACIFIC",
+        "released": "1958"
+      },
+      {
+        "rank": 4,
+        "artist": "KINGSTON TRIO",
+        "title": "FROM THE HUNGRY I",
+        "released": "1959"
+      },
+      {
+        "rank": 5,
+        "artist": "KINGSTON TRIO",
+        "title": "THE KINGSTON TRIO AT LARGE",
+        "released": "1959"
+      }
+    ],
+    "1960": [
+      {
+        "rank": 1,
+        "artist": "SOUNDTRACK",
+        "title": "THE SOUND OF MUSIC (ORIGINAL CAST)",
+        "released": "1959"
+      },
+      {
+        "rank": 2,
+        "artist": "SHELLEY BERMAN",
+        "title": "INSIDE SHELLEY BERMAN",
+        "released": "1960"
+      },
+      {
+        "rank": 3,
+        "artist": "BOB NEWHART",
+        "title": "THE BUTTON-DOWN MIND OF BOB NEWHART",
+        "released": "1960"
+      },
+      {
+        "rank": 4,
+        "artist": "VARIOUS ARTISTS",
+        "title": "SIXTY YEARS OF MUSIC AMERICA LOVES BEST, VOL. I",
+        "released": "1960"
+      },
+      {
+        "rank": 5,
+        "artist": "KINGSTON TRIO",
+        "title": "HERE WE GO AGAIN",
+        "released": "1959"
+      }
+    ],
+    "1963": [
+      {
+        "rank": 1,
+        "artist": "SOUNDTRACK",
+        "title": "WEST SIDE STORY",
+        "released": "1961"
+      },
+      {
+        "rank": 2,
+        "artist": "PETER, PAUL & MARY",
+        "title": "PETER, PAUL & MARY",
+        "released": "1962"
+      },
+      {
+        "rank": 3,
+        "artist": "PETER, PAUL & MARY",
+        "title": "MOVING",
+        "released": "1963"
+      },
+      {
+        "rank": 4,
+        "artist": "JOAN BAEZ",
+        "title": "JOAN BAEZ IN CONCERT",
+        "released": "1962"
+      },
+      {
+        "rank": 5,
+        "artist": "TONY BENNETT",
+        "title": "I LEFT MY HEART IN SAN FRANCISCO",
+        "released": "1962"
+      },
+      {
+        "rank": 6,
+        "artist": "ANDY WILLIAMS",
+        "title": "MOON RIVER & OTHER GREAT MOVIE THEMES",
+        "released": "1962"
+      },
+      {
+        "rank": 7,
+        "artist": "SOUNDTRACK",
+        "title": "LAWRENCE OF ARABIA",
+        "released": "1963"
+      },
+      {
+        "rank": 8,
+        "artist": "ANDY WILLIAMS",
+        "title": "DAYS OF WINE & ROSES",
+        "released": "1963"
+      },
+      {
+        "rank": 9,
+        "artist": "SOUNDTRACK",
+        "title": "OLIVER (ORIGINAL CAST)",
+        "released": "1960"
+      },
+      {
+        "rank": 10,
+        "artist": "RAY CHARLES",
+        "title": "MODERN SOUNDS IN COUNTRY & WESTERN MUSIC, VOL. 2",
+        "released": "1962"
+      }
+    ],
+    "1964": [
+      {
+        "rank": 1,
+        "artist": "SOUNDTRACK",
+        "title": "HELLO, DOLLY! (ORIGINAL CAST)",
+        "released": "1964"
+      },
+      {
+        "rank": 2,
+        "artist": "PETER, PAUL & MARY",
+        "title": "IN THE WIND",
+        "released": "1963"
+      },
+      {
+        "rank": 3,
+        "artist": "AL HIRT",
+        "title": "HONEY IN THE HORN",
+        "released": "1963"
+      },
+      {
+        "rank": 4,
+        "artist": "BARBRA STREISAND",
+        "title": "THE BARBRA STREISAND ALBUM",
+        "released": "1963"
+      },
+      {
+        "rank": 5,
+        "artist": "SOUNDTRACK",
+        "title": "WEST SIDE STORY",
+        "released": "1961"
+      }
+    ],
+    "1965": [
+      {
+        "rank": 1,
+        "artist": "SOUNDTRACK",
+        "title": "MARY POPPINS",
+        "released": "1964"
+      },
+      {
+        "rank": 2,
+        "artist": "THE BEATLES",
+        "title": "BEATLES '65",
+        "released": "1964"
+      },
+      {
+        "rank": 3,
+        "artist": "SOUNDTRACK",
+        "title": "THE SOUND OF MUSIC",
+        "released": "1965"
+      },
+      {
+        "rank": 4,
+        "artist": "SOUNDTRACK",
+        "title": "MY FAIR LADY",
+        "released": "1964"
+      },
+      {
+        "rank": 5,
+        "artist": "SOUNDTRACK",
+        "title": "FIDDLER ON THE ROOF (ORIGINAL CAST)",
+        "released": "1964"
+      },
+      {
+        "rank": 6,
+        "artist": "JOHN BARRY",
+        "title": "GOLDFINGER (SOUNDTRACK)",
+        "released": "1964"
+      },
+      {
+        "rank": 7,
+        "artist": "SOUNDTRACK",
+        "title": "HELLO, DOLLY! (ORIGINAL CAST)",
+        "released": "1964"
+      },
+      {
+        "rank": 8,
+        "artist": "ANDY WILLIAMS",
+        "title": "DEAR HEART",
+        "released": "1965"
+      },
+      {
+        "rank": 9,
+        "artist": "HERMAN'S HERMITS",
+        "title": "INTRODUCING HERMAN'S HERMITS",
+        "released": "1965"
+      },
+      {
+        "rank": 10,
+        "artist": "THE BEATLES",
+        "title": "BEATLES VI",
+        "released": "1965"
+      }
+    ],
+    "1966": [
+      {
+        "rank": 1,
+        "artist": "HERB ALPERT",
+        "title": "WHIPPED CREAM & OTHER DELIGHTS",
+        "released": "1964"
+      },
+      {
+        "rank": 2,
+        "artist": "SOUNDTRACK",
+        "title": "THE SOUND OF MUSIC",
+        "released": "1965"
+      },
+      {
+        "rank": 3,
+        "artist": "HERB ALPERT",
+        "title": "GOING PLACES",
+        "released": "1965"
+      },
+      {
+        "rank": 4,
+        "artist": "THE BEATLES",
+        "title": "RUBBER SOUL",
+        "released": "1965"
+      },
+      {
+        "rank": 5,
+        "artist": "HERB ALPERT",
+        "title": "WHAT NOW MY LOVE",
+        "released": "1966"
+      },
+      {
+        "rank": 6,
+        "artist": "THE MAMAS & THE PAPAS",
+        "title": "IF YOU CAN BELIEVE YOUR EYES & EARS",
+        "released": "1966"
+      },
+      {
+        "rank": 7,
+        "artist": "SOUNDTRACK",
+        "title": "DR. ZHIVAGO",
+        "released": "1965"
+      },
+      {
+        "rank": 8,
+        "artist": "THE BEATLES",
+        "title": "REVOLVER",
+        "released": "1966"
+      },
+      {
+        "rank": 9,
+        "artist": "BARBRA STREISAND",
+        "title": "COLOR ME BARBRA",
+        "released": "1966"
+      },
+      {
+        "rank": 10,
+        "artist": "SGT. BARRY SADLER",
+        "title": "BALLADS OF THE GREEN BERETS",
+        "released": "1966"
+      }
+    ],
+    "1967": [
+      {
+        "rank": 1,
+        "artist": "THE MONKEES",
+        "title": "MORE OF THE MONKEES",
+        "released": "1967"
+      },
+      {
+        "rank": 2,
+        "artist": "THE MONKEES",
+        "title": "THE MONKEES",
+        "released": "1966"
+      },
+      {
+        "rank": 3,
+        "artist": "SOUNDTRACK",
+        "title": "DR. ZHIVAGO",
+        "released": "1965"
+      },
+      {
+        "rank": 4,
+        "artist": "SOUNDTRACK",
+        "title": "THE SOUND OF MUSIC",
+        "released": "1965"
+      },
+      {
+        "rank": 5,
+        "artist": "THE TEMPTATIONS",
+        "title": "GREATEST HITS",
+        "released": "1966"
+      },
+      {
+        "rank": 6,
+        "artist": "SOUNDTRACK",
+        "title": "A MAN AND A WOMAN",
+        "released": "1966"
+      },
+      {
+        "rank": 7,
+        "artist": "HERB ALPERT",
+        "title": "S.R.O",
+        "released": "1966"
+      },
+      {
+        "rank": 8,
+        "artist": "HERB ALPERT",
+        "title": "WHIPPED CREAM & OTHER DELIGHTS",
+        "released": "1964"
+      },
+      {
+        "rank": 9,
+        "artist": "HERB ALPERT",
+        "title": "GOING PLACES",
+        "released": "1965"
+      },
+      {
+        "rank": 10,
+        "artist": "THE BEATLES",
+        "title": "SGT. PEPPER'S LONELY HEARTS CLUB BAND",
+        "released": "1967"
+      }
+    ],
+    "1968": [
+      {
+        "rank": 1,
+        "artist": "JIMI HENDRIX",
+        "title": "ARE YOU EXPERIENCED",
+        "released": "1967"
+      },
+      {
+        "rank": 2,
+        "artist": "SIMON & GARFUNKEL",
+        "title": "THE GRADUATE (SOUNDTRACK)",
+        "released": "1968"
+      },
+      {
+        "rank": 3,
+        "artist": "CREAM",
+        "title": "DISRAELI GEARS",
+        "released": "1967"
+      },
+      {
+        "rank": 4,
+        "artist": "THE BEATLES",
+        "title": "MAGICAL MYSTERY TOUR",
+        "released": "1967"
+      },
+      {
+        "rank": 5,
+        "artist": "DIANA ROSS & THE SUPREMES",
+        "title": "GREATEST HITS",
+        "released": "1967"
+      }
+    ],
+    "1969": [
+      {
+        "rank": 1,
+        "artist": "IRON BUTTERFLY",
+        "title": "IN-A-GADDA-DA-VIDA",
+        "released": "1968"
+      },
+      {
+        "rank": 2,
+        "artist": "SOUNDTRACK",
+        "title": "HAIR (ORIGINAL CAST)",
+        "released": "1968"
+      },
+      {
+        "rank": 3,
+        "artist": "BLOOD, SWEAT & TEARS",
+        "title": "BLOOD, SWEAT & TEARS",
+        "released": "1969"
+      },
+      {
+        "rank": 4,
+        "artist": "CREEDENCE CLEARWATER REVIVAL",
+        "title": "BAYOU COUNTRY",
+        "released": "1969"
+      },
+      {
+        "rank": 5,
+        "artist": "LED ZEPPELIN",
+        "title": "LED ZEPPELIN I",
+        "released": "1969"
+      },
+      {
+        "rank": 6,
+        "artist": "JOHNNY CASH",
+        "title": "AT FOLSOM PRISON",
+        "released": "1968"
+      },
+      {
+        "rank": 7,
+        "artist": "BARBRA STREISAND",
+        "title": "FUNNY GIRL (SOUNDTRACK)",
+        "released": "1968"
+      },
+      {
+        "rank": 8,
+        "artist": "THE BEATLES",
+        "title": "THE BEATLES (WHITE ALBUM)",
+        "released": "1968"
+      },
+      {
+        "rank": 9,
+        "artist": "DONOVAN",
+        "title": "DONOVAN'S GREATEST HITS",
+        "released": "1969"
+      },
+      {
+        "rank": 10,
+        "artist": "THE ASSOCIATION",
+        "title": "ALONG COMES THE ASSOCIATION",
+        "released": "1966"
+      }
+    ],
+    "1970": [
+      {
+        "rank": 1,
+        "artist": "SIMON & GARFUNKEL",
+        "title": "BRIDGE OVER TROUBLED WATER",
+        "released": "1970"
+      },
+      {
+        "rank": 2,
+        "artist": "LED ZEPPELIN",
+        "title": "LED ZEPPELIN II",
+        "released": "1969"
+      },
+      {
+        "rank": 3,
+        "artist": "CHICAGO",
+        "title": "CHICAGO II",
+        "released": "1970"
+      },
+      {
+        "rank": 4,
+        "artist": "THE BEATLES",
+        "title": "ABBEY ROAD",
+        "released": "1969"
+      },
+      {
+        "rank": 5,
+        "artist": "SANTANA",
+        "title": "SANTANA",
+        "released": "1969"
+      },
+      {
+        "rank": 6,
+        "artist": "RARE EARTH",
+        "title": "GET READY",
+        "released": "1969"
+      },
+      {
+        "rank": 7,
+        "artist": "SOUNDTRACK",
+        "title": "EASY RIDER",
+        "released": "1969"
+      },
+      {
+        "rank": 8,
+        "artist": "BURT BACHARACH",
+        "title": "BUTCH CASSIDY & THE SUNDANCE KID",
+        "released": "1969"
+      },
+      {
+        "rank": 9,
+        "artist": "JOE COCKER",
+        "title": "JOE COCKER!",
+        "released": "1969"
+      },
+      {
+        "rank": 10,
+        "artist": "THREE DOG NIGHT",
+        "title": "CAPTURED LIVE AT THE FORUM",
+        "released": "1969"
+      }
+    ],
+    "1971": [
+      {
+        "rank": 1,
+        "artist": "ANDREW LLOYD WEBBER",
+        "title": "JESUS CHRIST SUPERSTAR (ORIGINAL CAST)",
+        "released": "1970"
+      },
+      {
+        "rank": 2,
+        "artist": "CAROLE KING",
+        "title": "TAPESTRY",
+        "released": "1971"
+      },
+      {
+        "rank": 3,
+        "artist": "CARPENTERS",
+        "title": "CLOSE TO YOU",
+        "released": "1970"
+      },
+      {
+        "rank": 4,
+        "artist": "JANIS JOPLIN",
+        "title": "PEARL",
+        "released": "1971"
+      },
+      {
+        "rank": 5,
+        "artist": "SANTANA",
+        "title": "ABRAXAS",
+        "released": "1970"
+      },
+      {
+        "rank": 6,
+        "artist": "PARTRIDGE FAMILY",
+        "title": "THE PARTRIDGE FAMILY ALBUM",
+        "released": "1970"
+      },
+      {
+        "rank": 7,
+        "artist": "JAMES TAYLOR",
+        "title": "SWEET BABY JAMES",
+        "released": "1970"
+      },
+      {
+        "rank": 8,
+        "artist": "CAT STEVENS (YUSUF ISLAM)",
+        "title": "TEA FOR THE TILLERMAN",
+        "released": "1970"
+      },
+      {
+        "rank": 9,
+        "artist": "SLY & THE FAMILY STONE",
+        "title": "SLY & THE FAMILY STONE'S GREATEST HITS",
+        "released": "1970"
+      },
+      {
+        "rank": 10,
+        "artist": "CHICAGO",
+        "title": "CHICAGO III",
+        "released": "1971"
+      }
+    ],
+    "1972": [
+      {
+        "rank": 1,
+        "artist": "NEIL YOUNG",
+        "title": "HARVEST",
+        "released": "1972"
+      },
+      {
+        "rank": 2,
+        "artist": "CAROLE KING",
+        "title": "TAPESTRY",
+        "released": "1971"
+      },
+      {
+        "rank": 3,
+        "artist": "DON MCLEAN",
+        "title": "AMERICAN PIE",
+        "released": "1971"
+      },
+      {
+        "rank": 4,
+        "artist": "CAT STEVENS (YUSUF ISLAM)",
+        "title": "TEASER & THE FIRECAT",
+        "released": "1971"
+      },
+      {
+        "rank": 5,
+        "artist": "THE ROLLING STONES",
+        "title": "HOT ROCKS 1964-1971",
+        "released": "1971"
+      },
+      {
+        "rank": 6,
+        "artist": "ALICE COOPER",
+        "title": "KILLER",
+        "released": "1971"
+      },
+      {
+        "rank": 7,
+        "artist": "ROBERTA FLACK",
+        "title": "FIRST TAKE",
+        "released": "1969"
+      },
+      {
+        "rank": 8,
+        "artist": "AMERICA",
+        "title": "AMERICA",
+        "released": "1971"
+      },
+      {
+        "rank": 9,
+        "artist": "CAROLE KING",
+        "title": "MUSIC",
+        "released": "1971"
+      },
+      {
+        "rank": 10,
+        "artist": "ELTON JOHN",
+        "title": "MADMAN ACROSS THE WATER",
+        "released": "1971"
+      }
+    ],
+    "1973": [
+      {
+        "rank": 1,
+        "artist": "WAR",
+        "title": "THE WORLD IS A GHETTO",
+        "released": "1972"
+      },
+      {
+        "rank": 2,
+        "artist": "SEALS & CROFTS",
+        "title": "SUMMER BREEZE",
+        "released": "1972"
+      },
+      {
+        "rank": 3,
+        "artist": "STEVIE WONDER",
+        "title": "TALKING BOOK",
+        "released": "1972"
+      },
+      {
+        "rank": 4,
+        "artist": "CARLY SIMON",
+        "title": "NO SECRETS",
+        "released": "1972"
+      },
+      {
+        "rank": 5,
+        "artist": "DIANA ROSS",
+        "title": "LADY SINGS THE BLUES (SOUNDTRACK)",
+        "released": "1972"
+      },
+      {
+        "rank": 6,
+        "artist": "EDGAR WINTER",
+        "title": "THEY ONLY COME OUT AT NIGHT",
+        "released": "1972"
+      },
+      {
+        "rank": 7,
+        "artist": "HELEN REDDY",
+        "title": "I AM WOMAN",
+        "released": "1972"
+      },
+      {
+        "rank": 8,
+        "artist": "ELTON JOHN",
+        "title": "DON'T SHOOT ME I'M ONLY THE PIANO PLAYER",
+        "released": "1973"
+      },
+      {
+        "rank": 9,
+        "artist": "AL GREEN",
+        "title": "I'M STILL IN LOVE WITH YOU",
+        "released": "1972"
+      },
+      {
+        "rank": 10,
+        "artist": "MOODY BLUES",
+        "title": "SEVENTH SOJOURN",
+        "released": "1972"
+      }
+    ],
+    "1974": [
+      {
+        "rank": 1,
+        "artist": "ELTON JOHN",
+        "title": "GOODBYE YELLOW BRICK ROAD",
+        "released": "1973"
+      },
+      {
+        "rank": 2,
+        "artist": "JOHN DENVER",
+        "title": "JOHN DENVER'S GREATEST HITS",
+        "released": "1973"
+      },
+      {
+        "rank": 3,
+        "artist": "PAUL MCCARTNEY & WINGS",
+        "title": "BAND ON THE RUN",
+        "released": "1973"
+      },
+      {
+        "rank": 4,
+        "artist": "STEVIE WONDER",
+        "title": "INNERVISIONS",
+        "released": "1973"
+      },
+      {
+        "rank": 5,
+        "artist": "JIM CROCE",
+        "title": "YOU DON'T MESS AROUND WITH JIM",
+        "released": "1972"
+      },
+      {
+        "rank": 6,
+        "artist": "SOUNDTRACK",
+        "title": "AMERICAN GRAFFITI",
+        "released": "1973"
+      },
+      {
+        "rank": 7,
+        "artist": "GLADYS KNIGHT & THE PIPS",
+        "title": "IMAGINATION",
+        "released": "1973"
+      },
+      {
+        "rank": 8,
+        "artist": "CHARLIE RICH",
+        "title": "BEHIND CLOSED DOORS",
+        "released": "1973"
+      },
+      {
+        "rank": 9,
+        "artist": "MARVIN HAMLISCH",
+        "title": "THE STING (SOUNDTRACK)",
+        "released": "1974"
+      },
+      {
+        "rank": 10,
+        "artist": "ZZ TOP",
+        "title": "TRES HOMBRES",
+        "released": "1973"
+      }
+    ],
+    "1975": [
+      {
+        "rank": 1,
+        "artist": "ELTON JOHN",
+        "title": "GREATEST HITS",
+        "released": "1974"
+      },
+      {
+        "rank": 2,
+        "artist": "EARTH, WIND & FIRE",
+        "title": "THAT'S THE WAY OF THE WORLD",
+        "released": "1975"
+      },
+      {
+        "rank": 3,
+        "artist": "JOHN DENVER",
+        "title": "JOHN DENVER'S GREATEST HITS",
+        "released": "1973"
+      },
+      {
+        "rank": 4,
+        "artist": "JOHN DENVER",
+        "title": "BACK HOME AGAIN",
+        "released": "1974"
+      },
+      {
+        "rank": 5,
+        "artist": "PHOEBE SNOW",
+        "title": "PHOEBE SNOW",
+        "released": "1974"
+      },
+      {
+        "rank": 6,
+        "artist": "ELTON JOHN",
+        "title": "CAPTAIN FANTASTIC & THE BROWN DIRT COWBOY",
+        "released": "1975"
+      },
+      {
+        "rank": 7,
+        "artist": "JOHN DENVER",
+        "title": "AN EVENING WITH JOHN DENVER",
+        "released": "1975"
+      },
+      {
+        "rank": 8,
+        "artist": "AVERAGE WHITE BAND",
+        "title": "AVERAGE WHITE BAND",
+        "released": "1974"
+      },
+      {
+        "rank": 9,
+        "artist": "EAGLES",
+        "title": "ON THE BORDER",
+        "released": "1974"
+      },
+      {
+        "rank": 10,
+        "artist": "LED ZEPPELIN",
+        "title": "PHYSICAL GRAFFITI",
+        "released": "1975"
+      }
+    ],
+    "1976": [
+      {
+        "rank": 1,
+        "artist": "PETER FRAMPTON",
+        "title": "FRAMPTON COMES ALIVE!",
+        "released": "1976"
+      },
+      {
+        "rank": 2,
+        "artist": "FLEETWOOD MAC",
+        "title": "FLEETWOOD MAC",
+        "released": "1975"
+      },
+      {
+        "rank": 3,
+        "artist": "PAUL MCCARTNEY & WINGS",
+        "title": "WINGS AT THE SPEED OF SOUND",
+        "released": "1976"
+      },
+      {
+        "rank": 4,
+        "artist": "EAGLES",
+        "title": "THEIR GREATEST HITS 1971-1975",
+        "released": "1976"
+      },
+      {
+        "rank": 5,
+        "artist": "CHICAGO",
+        "title": "CHICAGO IX - CHICAGO'S GREATEST HITS",
+        "released": "1975"
+      },
+      {
+        "rank": 6,
+        "artist": "GARY WRIGHT",
+        "title": "THE DREAM WEAVER",
+        "released": "1975"
+      },
+      {
+        "rank": 7,
+        "artist": "BOB DYLAN",
+        "title": "DESIRE",
+        "released": "1976"
+      },
+      {
+        "rank": 8,
+        "artist": "QUEEN",
+        "title": "A NIGHT AT THE OPERA",
+        "released": "1975"
+      },
+      {
+        "rank": 9,
+        "artist": "AMERICA",
+        "title": "HISTORY - AMERICA'S GREATEST HITS",
+        "released": "1975"
+      },
+      {
+        "rank": 10,
+        "artist": "EARTH, WIND & FIRE",
+        "title": "GRATITUDE",
+        "released": "1975"
+      }
+    ],
+    "1977": [
+      {
+        "rank": 1,
+        "artist": "FLEETWOOD MAC",
+        "title": "RUMOURS",
+        "released": "1977"
+      },
+      {
+        "rank": 2,
+        "artist": "STEVIE WONDER",
+        "title": "SONGS IN THE KEY OF LIFE",
+        "released": "1976"
+      },
+      {
+        "rank": 3,
+        "artist": "BARBRA STREISAND & KRIS KRISTOFFERSON",
+        "title": "A STAR IS BORN (SOUNDTRACK)",
+        "released": "1976"
+      },
+      {
+        "rank": 4,
+        "artist": "EAGLES",
+        "title": "HOTEL CALIFORNIA",
+        "released": "1976"
+      },
+      {
+        "rank": 5,
+        "artist": "BOSTON",
+        "title": "BOSTON",
+        "released": "1976"
+      },
+      {
+        "rank": 6,
+        "artist": "ELECTRIC LIGHT ORCHESTRA",
+        "title": "A NEW WORLD RECORD",
+        "released": "1976"
+      },
+      {
+        "rank": 7,
+        "artist": "K.C. & THE SUNSHINE BAND",
+        "title": "PART 3",
+        "released": "1976"
+      },
+      {
+        "rank": 8,
+        "artist": "BOZ SCAGGS",
+        "title": "SILK DEGREES",
+        "released": "1976"
+      },
+      {
+        "rank": 9,
+        "artist": "BOB SEGER",
+        "title": "NIGHT MOVES",
+        "released": "1976"
+      },
+      {
+        "rank": 10,
+        "artist": "FLEETWOOD MAC",
+        "title": "FLEETWOOD MAC",
+        "released": "1975"
+      }
+    ],
+    "1978": [
+      {
+        "rank": 1,
+        "artist": "BEE GEES",
+        "title": "SATURDAY NIGHT FEVER (SOUNDTRACK)",
+        "released": "1977"
+      },
+      {
+        "rank": 2,
+        "artist": "SOUNDTRACK",
+        "title": "GREASE",
+        "released": "1978"
+      },
+      {
+        "rank": 3,
+        "artist": "FLEETWOOD MAC",
+        "title": "RUMOURS",
+        "released": "1977"
+      },
+      {
+        "rank": 4,
+        "artist": "BILLY JOEL",
+        "title": "THE STRANGER",
+        "released": "1977"
+      },
+      {
+        "rank": 5,
+        "artist": "STEELY DAN",
+        "title": "AJA",
+        "released": "1977"
+      },
+      {
+        "rank": 6,
+        "artist": "CHUCK MANGIONE",
+        "title": "FEELS SO GOOD",
+        "released": "1977"
+      },
+      {
+        "rank": 7,
+        "artist": "STYX",
+        "title": "THE GRAND ILLUSION",
+        "released": "1977"
+      },
+      {
+        "rank": 8,
+        "artist": "LINDA RONSTADT",
+        "title": "SIMPLE DREAMS",
+        "released": "1977"
+      },
+      {
+        "rank": 9,
+        "artist": "KANSAS",
+        "title": "POINT OF KNOW RETURN",
+        "released": "1977"
+      },
+      {
+        "rank": 10,
+        "artist": "ERIC CLAPTON",
+        "title": "SLOWHAND",
+        "released": "1977"
+      }
+    ],
+    "1979": [
+      {
+        "rank": 1,
+        "artist": "BILLY JOEL",
+        "title": "52ND STREET",
+        "released": "1978"
+      },
+      {
+        "rank": 2,
+        "artist": "BEE GEES",
+        "title": "SPIRITS HAVING FLOWN",
+        "released": "1979"
+      },
+      {
+        "rank": 3,
+        "artist": "THE DOOBIE BROTHERS",
+        "title": "MINUTE BY MINUTE",
+        "released": "1978"
+      },
+      {
+        "rank": 4,
+        "artist": "THE CARS",
+        "title": "THE CARS",
+        "released": "1978"
+      },
+      {
+        "rank": 5,
+        "artist": "SUPERTRAMP",
+        "title": "BREAKFAST IN AMERICA",
+        "released": "1979"
+      },
+      {
+        "rank": 6,
+        "artist": "DONNA SUMMER",
+        "title": "LIVE AND MORE",
+        "released": "1978"
+      },
+      {
+        "rank": 7,
+        "artist": "STYX",
+        "title": "PIECES OF EIGHT",
+        "released": "1978"
+      },
+      {
+        "rank": 8,
+        "artist": "DONNA SUMMER",
+        "title": "BAD GIRLS",
+        "released": "1979"
+      },
+      {
+        "rank": 9,
+        "artist": "BLONDIE",
+        "title": "PARALLEL LINES",
+        "released": "1978"
+      },
+      {
+        "rank": 10,
+        "artist": "ROD STEWART",
+        "title": "BLONDES HAVE MORE FUN",
+        "released": "1978"
+      }
+    ],
+    "1980": [
+      {
+        "rank": 1,
+        "artist": "PINK FLOYD",
+        "title": "THE WALL",
+        "released": "1979"
+      },
+      {
+        "rank": 2,
+        "artist": "EAGLES",
+        "title": "THE LONG RUN",
+        "released": "1979"
+      },
+      {
+        "rank": 3,
+        "artist": "MICHAEL JACKSON",
+        "title": "OFF THE WALL",
+        "released": "1979"
+      },
+      {
+        "rank": 4,
+        "artist": "BILLY JOEL",
+        "title": "GLASS HOUSES",
+        "released": "1980"
+      },
+      {
+        "rank": 5,
+        "artist": "TOM PETTY & THE HEARTBREAKERS",
+        "title": "DAMN THE TORPEDOS",
+        "released": "1979"
+      },
+      {
+        "rank": 6,
+        "artist": "BOB SEGER",
+        "title": "AGAINST THE WIND",
+        "released": "1980"
+      },
+      {
+        "rank": 7,
+        "artist": "PAT BENATAR",
+        "title": "IN THE HEAT OF THE NIGHT",
+        "released": "1979"
+      },
+      {
+        "rank": 8,
+        "artist": "BLONDIE",
+        "title": "EAT TO THE BEAT",
+        "released": "1979"
+      },
+      {
+        "rank": 9,
+        "artist": "LED ZEPPELIN",
+        "title": "IN THROUGH THE OUT DOOR",
+        "released": "1979"
+      },
+      {
+        "rank": 10,
+        "artist": "KENNY ROGERS",
+        "title": "KENNY",
+        "released": "1979"
+      }
+    ],
+    "1981": [
+      {
+        "rank": 1,
+        "artist": "REO SPEEDWAGON",
+        "title": "HI INFIDELITY",
+        "released": "1980"
+      },
+      {
+        "rank": 2,
+        "artist": "JOHN LENNON & YOKO ONO",
+        "title": "DOUBLE FANTASY",
+        "released": "1980"
+      },
+      {
+        "rank": 3,
+        "artist": "KENNY ROGERS",
+        "title": "KENNY ROGERS' GREATEST HITS",
+        "released": "1980"
+      },
+      {
+        "rank": 4,
+        "artist": "CHRISTOPHER CROSS",
+        "title": "CHRISTOPHER CROSS",
+        "released": "1979"
+      },
+      {
+        "rank": 5,
+        "artist": "PAT BENATAR",
+        "title": "CRIMES OF PASSION",
+        "released": "1980"
+      },
+      {
+        "rank": 6,
+        "artist": "STYX",
+        "title": "PARADISE THEATER",
+        "released": "1981"
+      },
+      {
+        "rank": 7,
+        "artist": "AC/DC",
+        "title": "BACK IN BLACK",
+        "released": "1980"
+      },
+      {
+        "rank": 8,
+        "artist": "HALL & OATES",
+        "title": "VOICES",
+        "released": "1980"
+      },
+      {
+        "rank": 9,
+        "artist": "THE POLICE",
+        "title": "ZENYATTA MONDATTA",
+        "released": "1980"
+      },
+      {
+        "rank": 10,
+        "artist": "BRUCE SPRINGSTEEN",
+        "title": "THE RIVER",
+        "released": "1980"
+      }
+    ],
+    "1982": [
+      {
+        "rank": 1,
+        "artist": "ASIA",
+        "title": "ASIA",
+        "released": "1982"
+      },
+      {
+        "rank": 2,
+        "artist": "THE GO-GO’S",
+        "title": "BEAUTY AND THE BEAT",
+        "released": "1981"
+      },
+      {
+        "rank": 3,
+        "artist": "FOREIGNER",
+        "title": "4",
+        "released": "1981"
+      },
+      {
+        "rank": 4,
+        "artist": "JOHN MELLENCAMP",
+        "title": "AMERICAN FOOL",
+        "released": "1982"
+      },
+      {
+        "rank": 5,
+        "artist": "THE J. GEILS BAND",
+        "title": "FREEZE FRAME",
+        "released": "1981"
+      },
+      {
+        "rank": 6,
+        "artist": "JOURNEY",
+        "title": "ESCAPE",
+        "released": "1980"
+      },
+      {
+        "rank": 7,
+        "artist": "LOVERBOY",
+        "title": "GET LUCKY",
+        "released": "1981"
+      },
+      {
+        "rank": 8,
+        "artist": "STEVIE NICKS",
+        "title": "BELLA DONNA",
+        "released": "1981"
+      },
+      {
+        "rank": 9,
+        "artist": "VANGELIS",
+        "title": "CHARIOTS OF FIRE (SOUNDTRACK)",
+        "released": "1981"
+      },
+      {
+        "rank": 10,
+        "artist": "THE POLICE",
+        "title": "GHOST IN THE MACHINE",
+        "released": "1981"
+      }
+    ],
+    "1983": [
+      {
+        "rank": 1,
+        "artist": "MICHAEL JACKSON",
+        "title": "THRILLER",
+        "released": "1982"
+      },
+      {
+        "rank": 2,
+        "artist": "MEN AT WORK",
+        "title": "BUSINESS AS USUAL",
+        "released": "1981"
+      },
+      {
+        "rank": 3,
+        "artist": "THE POLICE",
+        "title": "SYNCHRONICITY",
+        "released": "1983"
+      },
+      {
+        "rank": 4,
+        "artist": "HALL & OATES",
+        "title": "H2O",
+        "released": "1982"
+      },
+      {
+        "rank": 5,
+        "artist": "PRINCE",
+        "title": "1999",
+        "released": "1982"
+      },
+      {
+        "rank": 6,
+        "artist": "LIONEL RICHIE",
+        "title": "LIONEL RICHIE",
+        "released": "1982"
+      },
+      {
+        "rank": 7,
+        "artist": "JANE FONDA",
+        "title": "JANE FONDA'S WORKOUT RECORD",
+        "released": "1981"
+      },
+      {
+        "rank": 8,
+        "artist": "DEF LEPPARD",
+        "title": "PYROMANIA",
+        "released": "1983"
+      },
+      {
+        "rank": 9,
+        "artist": "CULTURE CLUB",
+        "title": "KISSING TO BE CLEVER",
+        "released": "1982"
+      },
+      {
+        "rank": 10,
+        "artist": "OLIVIA NEWTON-JOHN",
+        "title": "GREATEST HITS VOLUME II",
+        "released": "1982"
+      }
+    ],
+    "1984": [
+      {
+        "rank": 1,
+        "artist": "MICHAEL JACKSON",
+        "title": "THRILLER",
+        "released": "1982"
+      },
+      {
+        "rank": 2,
+        "artist": "HUEY LEWIS & THE NEWS",
+        "title": "SPORTS",
+        "released": "1983"
+      },
+      {
+        "rank": 3,
+        "artist": "LIONEL RICHIE",
+        "title": "CAN'T SLOW DOWN",
+        "released": "1983"
+      },
+      {
+        "rank": 4,
+        "artist": "BILLY JOEL",
+        "title": "AN INNOCENT MAN",
+        "released": "1983"
+      },
+      {
+        "rank": 5,
+        "artist": "CULTURE CLUB",
+        "title": "COLOUR BY NUMBERS",
+        "released": "1983"
+      },
+      {
+        "rank": 6,
+        "artist": "VAN HALEN",
+        "title": "1984",
+        "released": "1984"
+      },
+      {
+        "rank": 7,
+        "artist": "ZZ TOP",
+        "title": "ELIMINATOR",
+        "released": "1983"
+      },
+      {
+        "rank": 8,
+        "artist": "THE POLICE",
+        "title": "SYNCHRONICITY",
+        "released": "1983"
+      },
+      {
+        "rank": 9,
+        "artist": "SOUNDTRACK",
+        "title": "FOOTLOOSE",
+        "released": "1984"
+      },
+      {
+        "rank": 10,
+        "artist": "DURAN DURAN",
+        "title": "SEVEN AND THE RAGGED TIGER",
+        "released": "1983"
+      }
+    ],
+    "1985": [
+      {
+        "rank": 1,
+        "artist": "BRUCE SPRINGSTEEN",
+        "title": "BORN IN THE U.S.A.",
+        "released": "1984"
+      },
+      {
+        "rank": 2,
+        "artist": "BRYAN ADAMS",
+        "title": "RECKLESS",
+        "released": "1984"
+      },
+      {
+        "rank": 3,
+        "artist": "MADONNA",
+        "title": "LIKE A VIRGIN",
+        "released": "1984"
+      },
+      {
+        "rank": 4,
+        "artist": "WHAM!",
+        "title": "MAKE IT BIG",
+        "released": "1984"
+      },
+      {
+        "rank": 5,
+        "artist": "TINA TURNER",
+        "title": "PRIVATE DANCER",
+        "released": "1984"
+      },
+      {
+        "rank": 6,
+        "artist": "PHIL COLLINS",
+        "title": "NO JACKET REQUIRED",
+        "released": "1985"
+      },
+      {
+        "rank": 7,
+        "artist": "SOUNDTRACK",
+        "title": "BEVERLY HILLS COP",
+        "released": "1984"
+      },
+      {
+        "rank": 8,
+        "artist": "BILLY OCEAN",
+        "title": "SUDDENLY",
+        "released": "1984"
+      },
+      {
+        "rank": 9,
+        "artist": "PRINCE",
+        "title": "PURPLE RAIN (SOUNDTRACK)",
+        "released": "1984"
+      },
+      {
+        "rank": 10,
+        "artist": "TEARS FOR FEARS",
+        "title": "SONGS FROM THE BIG CHAIR",
+        "released": "1985"
+      }
+    ],
+    "1986": [
+      {
+        "rank": 1,
+        "artist": "WHITNEY HOUSTON",
+        "title": "WHITNEY HOUSTON",
+        "released": "1985"
+      },
+      {
+        "rank": 2,
+        "artist": "HEART",
+        "title": "HEART",
+        "released": "1985"
+      },
+      {
+        "rank": 3,
+        "artist": "JOHN MELLENCAMP",
+        "title": "SCARECROW",
+        "released": "1985"
+      },
+      {
+        "rank": 4,
+        "artist": "ZZ TOP",
+        "title": "AFTERBURNER",
+        "released": "1985"
+      },
+      {
+        "rank": 5,
+        "artist": "DIRE STRAITS",
+        "title": "BROTHERS IN ARMS",
+        "released": "1985"
+      },
+      {
+        "rank": 6,
+        "artist": "JANET JACKSON",
+        "title": "CONTROL",
+        "released": "1986"
+      },
+      {
+        "rank": 7,
+        "artist": "MR. MISTER",
+        "title": "WELCOME TO THE REAL WORLD",
+        "released": "1985"
+      },
+      {
+        "rank": 8,
+        "artist": "SADE",
+        "title": "PROMISE",
+        "released": "1985"
+      },
+      {
+        "rank": 9,
+        "artist": "PHIL COLLINS",
+        "title": "NO JACKET REQUIRED",
+        "released": "1985"
+      },
+      {
+        "rank": 10,
+        "artist": "MIAMI SOUND MACHINE",
+        "title": "PRIMITIVE LOVE",
+        "released": "1985"
+      }
+    ],
+    "1987": [
+      {
+        "rank": 1,
+        "artist": "BON JOVI",
+        "title": "SLIPPERY WHEN WET",
+        "released": "1986"
+      },
+      {
+        "rank": 2,
+        "artist": "PAUL SIMON",
+        "title": "GRACELAND",
+        "released": "1986"
+      },
+      {
+        "rank": 3,
+        "artist": "BEASTIE BOYS",
+        "title": "LICENSED TO ILL",
+        "released": "1986"
+      },
+      {
+        "rank": 4,
+        "artist": "BRUCE HORNSBY",
+        "title": "THE WAY IT IS",
+        "released": "1986"
+      },
+      {
+        "rank": 5,
+        "artist": "JANET JACKSON",
+        "title": "CONTROL",
+        "released": "1986"
+      },
+      {
+        "rank": 6,
+        "artist": "U2",
+        "title": "THE JOSHUA TREE",
+        "released": "1987"
+      },
+      {
+        "rank": 7,
+        "artist": "HUEY LEWIS & THE NEWS",
+        "title": "FORE!",
+        "released": "1986"
+      },
+      {
+        "rank": 8,
+        "artist": "CINDERELLA",
+        "title": "NIGHT SONGS",
+        "released": "1986"
+      },
+      {
+        "rank": 9,
+        "artist": "ANITA BAKER",
+        "title": "RAPTURE",
+        "released": "1986"
+      },
+      {
+        "rank": 10,
+        "artist": "GENESIS",
+        "title": "INVISIBLE TOUCH",
+        "released": "1986"
+      }
+    ],
+    "1988": [
+      {
+        "rank": 1,
+        "artist": "GEORGE MICHAEL",
+        "title": "FAITH",
+        "released": "1987"
+      },
+      {
+        "rank": 2,
+        "artist": "SOUNDTRACK",
+        "title": "DIRTY DANCING",
+        "released": "1987"
+      },
+      {
+        "rank": 3,
+        "artist": "DEF LEPPARD",
+        "title": "HYSTERIA",
+        "released": "1987"
+      },
+      {
+        "rank": 4,
+        "artist": "INXS",
+        "title": "KICK",
+        "released": "1987"
+      },
+      {
+        "rank": 5,
+        "artist": "MICHAEL JACKSON",
+        "title": "BAD",
+        "released": "1987"
+      },
+      {
+        "rank": 6,
+        "artist": "GUNS N' ROSES",
+        "title": "APPETITE FOR DESTRUCTION",
+        "released": "1987"
+      },
+      {
+        "rank": 7,
+        "artist": "DEBBIE GIBSON",
+        "title": "OUT OF THE BLUE",
+        "released": "1987"
+      },
+      {
+        "rank": 8,
+        "artist": "RICHARD MARX",
+        "title": "RICHARD MARX",
+        "released": "1987"
+      },
+      {
+        "rank": 9,
+        "artist": "TIFFANY",
+        "title": "TIFFANY",
+        "released": "1987"
+      },
+      {
+        "rank": 10,
+        "artist": "AEROSMITH",
+        "title": "PERMANENT VACATION",
+        "released": "1987"
+      }
+    ],
+    "1989": [
+      {
+        "rank": 1,
+        "artist": "BOBBY BROWN",
+        "title": "DON'T BE CRUEL",
+        "released": "1988"
+      },
+      {
+        "rank": 2,
+        "artist": "NEW KIDS ON THE BLOCK",
+        "title": "HANGIN' TOUGH",
+        "released": "1988"
+      },
+      {
+        "rank": 3,
+        "artist": "PAULA ABDUL",
+        "title": "FOREVER YOUR GIRL",
+        "released": "1988"
+      },
+      {
+        "rank": 4,
+        "artist": "BON JOVI",
+        "title": "NEW JERSEY",
+        "released": "1988"
+      },
+      {
+        "rank": 5,
+        "artist": "GUNS N' ROSES",
+        "title": "APPETITE FOR DESTRUCTION",
+        "released": "1987"
+      },
+      {
+        "rank": 6,
+        "artist": "FINE YOUNG CANNIBALS",
+        "title": "THE RAW & THE COOKED",
+        "released": "1989"
+      },
+      {
+        "rank": 7,
+        "artist": "GUNS N' ROSES",
+        "title": "G N' R LIES",
+        "released": "1988"
+      },
+      {
+        "rank": 8,
+        "artist": "TRAVELING WILBURYS",
+        "title": "THE TRAVELING WILBURYS VOLUME 1",
+        "released": "1988"
+      },
+      {
+        "rank": 9,
+        "artist": "DEF LEPPARD",
+        "title": "HYSTERIA",
+        "released": "1987"
+      },
+      {
+        "rank": 10,
+        "artist": "MILLI VANILLI",
+        "title": "GIRL YOU KNOW IT'S TRUE",
+        "released": "1989"
+      }
+    ],
+    "1990": [
+      {
+        "rank": 1,
+        "artist": "JANET JACKSON",
+        "title": "RHYTHM NATION 1814",
+        "released": "1989"
+      },
+      {
+        "rank": 2,
+        "artist": "PHIL COLLINS",
+        "title": "BUT SERIOUSLY",
+        "released": "1989"
+      },
+      {
+        "rank": 3,
+        "artist": "MICHAEL BOLTON",
+        "title": "SOUL PROVIDER",
+        "released": "1989"
+      },
+      {
+        "rank": 4,
+        "artist": "AEROSMITH",
+        "title": "PUMP",
+        "released": "1989"
+      },
+      {
+        "rank": 5,
+        "artist": "MC HAMMER",
+        "title": "PLEASE HAMMER DON'T HURT 'EM",
+        "released": "1990"
+      },
+      {
+        "rank": 6,
+        "artist": "PAULA ABDUL",
+        "title": "FOREVER YOUR GIRL",
+        "released": "1988"
+      },
+      {
+        "rank": 7,
+        "artist": "MOTLEY CRUE",
+        "title": "DR. FEELGOOD",
+        "released": "1989"
+      },
+      {
+        "rank": 8,
+        "artist": "DON HENLEY",
+        "title": "THE END OF THE INNOCENCE",
+        "released": "1989"
+      },
+      {
+        "rank": 9,
+        "artist": "THE B-52'S",
+        "title": "COSMIC THING",
+        "released": "1989"
+      },
+      {
+        "rank": 10,
+        "artist": "BILLY JOEL",
+        "title": "STORM FRONT",
+        "released": "1989"
+      }
+    ],
+    "1991": [
+      {
+        "rank": 1,
+        "artist": "MARIAH CAREY",
+        "title": "MARIAH CAREY",
+        "released": "1990"
+      },
+      {
+        "rank": 2,
+        "artist": "GARTH BROOKS",
+        "title": "NO FENCES",
+        "released": "1990"
+      },
+      {
+        "rank": 3,
+        "artist": "THE BLACK CROWES",
+        "title": "SHAKE YOUR MONEY MAKER",
+        "released": "1990"
+      },
+      {
+        "rank": 4,
+        "artist": "C&C MUSIC FACTORY",
+        "title": "GONNA MAKE YOU SWEAT",
+        "released": "1990"
+      },
+      {
+        "rank": 5,
+        "artist": "WILSON PHILLIPS",
+        "title": "WILSON PHILLIPS",
+        "released": "1990"
+      },
+      {
+        "rank": 6,
+        "artist": "VANILLA ICE",
+        "title": "TO THE EXTREME",
+        "released": "1990"
+      },
+      {
+        "rank": 7,
+        "artist": "MC HAMMER",
+        "title": "PLEASE HAMMER DON'T HURT 'EM",
+        "released": "1990"
+      },
+      {
+        "rank": 8,
+        "artist": "MADONNA",
+        "title": "THE IMMACULATE COLLECTION",
+        "released": "1990"
+      },
+      {
+        "rank": 9,
+        "artist": "QUEENSRYCHE",
+        "title": "EMPIRE",
+        "released": "1990"
+      },
+      {
+        "rank": 10,
+        "artist": "WHITNEY HOUSTON",
+        "title": "I'M YOUR BABY TONIGHT",
+        "released": "1990"
+      }
+    ],
+    "1992": [
+      {
+        "rank": 1,
+        "artist": "GARTH BROOKS",
+        "title": "ROPIN' THE WIND",
+        "released": "1991"
+      },
+      {
+        "rank": 2,
+        "artist": "MICHAEL JACKSON",
+        "title": "DANGEROUS",
+        "released": "1991"
+      },
+      {
+        "rank": 3,
+        "artist": "NIRVANA",
+        "title": "NEVERMIND",
+        "released": "1991"
+      },
+      {
+        "rank": 4,
+        "artist": "BILLY RAY CYRUS",
+        "title": "SOME GAVE ALL",
+        "released": "1992"
+      },
+      {
+        "rank": 5,
+        "artist": "U2",
+        "title": "ACHTUNG BABY",
+        "released": "1991"
+      },
+      {
+        "rank": 6,
+        "artist": "GARTH BROOKS",
+        "title": "NO FENCES",
+        "released": "1990"
+      },
+      {
+        "rank": 7,
+        "artist": "METALLICA",
+        "title": "METALLICA",
+        "released": "1991"
+      },
+      {
+        "rank": 8,
+        "artist": "MICHAEL BOLTON",
+        "title": "TIME, LOVE & TENDERNESS",
+        "released": "1991"
+      },
+      {
+        "rank": 9,
+        "artist": "MC HAMMER",
+        "title": "TOO LEGIT TO QUIT",
+        "released": "1991"
+      },
+      {
+        "rank": 10,
+        "artist": "KRIS KROSS",
+        "title": "TOTALLY KROSSED OUT",
+        "released": "1992"
+      }
+    ],
+    "1993": [
+      {
+        "rank": 1,
+        "artist": "WHITNEY HOUSTON",
+        "title": "THE BODYGUARD (SOUNDTRACK)",
+        "released": "1992"
+      },
+      {
+        "rank": 2,
+        "artist": "KENNY G",
+        "title": "BREATHLESS",
+        "released": "1992"
+      },
+      {
+        "rank": 3,
+        "artist": "ERIC CLAPTON",
+        "title": "UNPLUGGED",
+        "released": "1992"
+      },
+      {
+        "rank": 4,
+        "artist": "JANET JACKSON",
+        "title": "JANET.",
+        "released": "1993"
+      },
+      {
+        "rank": 5,
+        "artist": "BILLY RAY CYRUS",
+        "title": "SOME GAVE ALL",
+        "released": "1992"
+      },
+      {
+        "rank": 6,
+        "artist": "DR. DRE",
+        "title": "THE CHRONIC",
+        "released": "1992"
+      },
+      {
+        "rank": 7,
+        "artist": "SPIN DOCTORS",
+        "title": "POCKET FULL OF KRYPTONITE",
+        "released": "1991"
+      },
+      {
+        "rank": 8,
+        "artist": "PEARL JAM",
+        "title": "TEN",
+        "released": "1991"
+      },
+      {
+        "rank": 9,
+        "artist": "GARTH BROOKS",
+        "title": "THE CHASE",
+        "released": "1992"
+      },
+      {
+        "rank": 10,
+        "artist": "STONE TEMPLE PILOTS",
+        "title": "CORE",
+        "released": "1992"
+      }
+    ],
+    "1994": [
+      {
+        "rank": 1,
+        "artist": "ACE OF BASE",
+        "title": "HAPPY NATION/THE SIGN",
+        "released": "1993"
+      },
+      {
+        "rank": 2,
+        "artist": "MARIAH CAREY",
+        "title": "MUSIC BOX",
+        "released": "1993"
+      },
+      {
+        "rank": 3,
+        "artist": "SNOOP DOGG",
+        "title": "DOGGYSTYLE",
+        "released": "1993"
+      },
+      {
+        "rank": 4,
+        "artist": "SOUNDTRACK",
+        "title": "THE LION KING",
+        "released": "1994"
+      },
+      {
+        "rank": 5,
+        "artist": "COUNTING CROWS",
+        "title": "AUGUST & EVERYTHING AFTER",
+        "released": "1993"
+      },
+      {
+        "rank": 6,
+        "artist": "PEARL JAM",
+        "title": "VS.",
+        "released": "1993"
+      },
+      {
+        "rank": 7,
+        "artist": "TONI BRAXTON",
+        "title": "TONI BRAXTON",
+        "released": "1993"
+      },
+      {
+        "rank": 8,
+        "artist": "JANET JACKSON",
+        "title": "JANET.",
+        "released": "1993"
+      },
+      {
+        "rank": 9,
+        "artist": "MEAT LOAF",
+        "title": "BAT OUT OF HELL II: BACK INTO HELL",
+        "released": "1993"
+      },
+      {
+        "rank": 10,
+        "artist": "MICHAEL BOLTON",
+        "title": "THE ONE THING",
+        "released": "1993"
+      }
+    ],
+    "1995": [
+      {
+        "rank": 1,
+        "artist": "HOOTIE & THE BLOWFISH",
+        "title": "CRACKED REAR VIEW",
+        "released": "1994"
+      },
+      {
+        "rank": 2,
+        "artist": "GARTH BROOKS",
+        "title": "THE HITS",
+        "released": "1994"
+      },
+      {
+        "rank": 3,
+        "artist": "BOYZ II MEN",
+        "title": "II",
+        "released": "1994"
+      },
+      {
+        "rank": 4,
+        "artist": "EAGLES",
+        "title": "HELL FREEZES OVER",
+        "released": "1994"
+      },
+      {
+        "rank": 5,
+        "artist": "TLC",
+        "title": "CRAZYSEXYCOOL",
+        "released": "1994"
+      },
+      {
+        "rank": 6,
+        "artist": "PEARL JAM",
+        "title": "VITALOGY",
+        "released": "1994"
+      },
+      {
+        "rank": 7,
+        "artist": "GREEN DAY",
+        "title": "DOOKIE",
+        "released": "1994"
+      },
+      {
+        "rank": 8,
+        "artist": "LIVE",
+        "title": "THROWING COPPER",
+        "released": "1994"
+      },
+      {
+        "rank": 9,
+        "artist": "KENNY G",
+        "title": "MIRACLES: THE HOLIDAY ALBUM",
+        "released": "1994"
+      },
+      {
+        "rank": 10,
+        "artist": "SOUNDTRACK",
+        "title": "THE LION KING",
+        "released": "1994"
+      }
+    ],
+    "1996": [
+      {
+        "rank": 1,
+        "artist": "ALANIS MORISSETTE",
+        "title": "JAGGED LITTLE PILL",
+        "released": "1995"
+      },
+      {
+        "rank": 2,
+        "artist": "MARIAH CAREY",
+        "title": "DAYDREAM",
+        "released": "1995"
+      },
+      {
+        "rank": 3,
+        "artist": "CELINE DION",
+        "title": "FALLING INTO YOU",
+        "released": "1996"
+      },
+      {
+        "rank": 4,
+        "artist": "SOUNDTRACK",
+        "title": "WAITING TO EXHALE",
+        "released": "1995"
+      },
+      {
+        "rank": 5,
+        "artist": "FUGEES",
+        "title": "THE SCORE",
+        "released": "1996"
+      },
+      {
+        "rank": 6,
+        "artist": "SHANIA TWAIN",
+        "title": "THE WOMAN IN ME",
+        "released": "1995"
+      },
+      {
+        "rank": 7,
+        "artist": "GARTH BROOKS",
+        "title": "FRESH HORSES",
+        "released": "1995"
+      },
+      {
+        "rank": 8,
+        "artist": "THE BEATLES",
+        "title": "ANTHOLOGY 1",
+        "released": "1995"
+      },
+      {
+        "rank": 9,
+        "artist": "HOOTIE & THE BLOWFISH",
+        "title": "CRACKED REAR VIEW",
+        "released": "1994"
+      },
+      {
+        "rank": 10,
+        "artist": "THE SMASHING PUMPKINS",
+        "title": "MELLON COLLIE AND THE INFINITE SADNESS",
+        "released": "1995"
+      }
+    ],
+    "1997": [
+      {
+        "rank": 1,
+        "artist": "SPICE GIRLS",
+        "title": "SPICE",
+        "released": "1996"
+      },
+      {
+        "rank": 2,
+        "artist": "NO DOUBT",
+        "title": "TRAGIC KINGDOM",
+        "released": "1995"
+      },
+      {
+        "rank": 3,
+        "artist": "CELINE DION",
+        "title": "FALLING INTO YOU",
+        "released": "1996"
+      },
+      {
+        "rank": 4,
+        "artist": "SOUNDTRACK",
+        "title": "SPACE JAM",
+        "released": "1996"
+      },
+      {
+        "rank": 5,
+        "artist": "JEWEL",
+        "title": "PIECES OF YOU",
+        "released": "1995"
+      },
+      {
+        "rank": 6,
+        "artist": "LEANN RIMES",
+        "title": "BLUE",
+        "released": "1996"
+      },
+      {
+        "rank": 7,
+        "artist": "THE WALLFLOWERS",
+        "title": "BRINGING DOWN THE HORSE",
+        "released": "1996"
+      },
+      {
+        "rank": 8,
+        "artist": "NOTORIOUS B.I.G.",
+        "title": "LIFE AFTER DEATH",
+        "released": "1997"
+      },
+      {
+        "rank": 9,
+        "artist": "TONI BRAXTON",
+        "title": "SECRETS",
+        "released": "1996"
+      },
+      {
+        "rank": 10,
+        "artist": "PUFF DADDY",
+        "title": "NO WAY OUT",
+        "released": "1997"
+      }
+    ],
+    "1998": [
+      {
+        "rank": 1,
+        "artist": "SOUNDTRACK",
+        "title": "TITANIC",
+        "released": "1997"
+      },
+      {
+        "rank": 2,
+        "artist": "CELINE DION",
+        "title": "LET'S TALK ABOUT LOVE",
+        "released": "1997"
+      },
+      {
+        "rank": 3,
+        "artist": "GARTH BROOKS",
+        "title": "SEVENS",
+        "released": "1997"
+      },
+      {
+        "rank": 4,
+        "artist": "BACKSTREET BOYS",
+        "title": "BACKSTREET BOYS",
+        "released": "1996"
+      },
+      {
+        "rank": 5,
+        "artist": "SHANIA TWAIN",
+        "title": "COME ON OVER",
+        "released": "1997"
+      },
+      {
+        "rank": 6,
+        "artist": "MATCHBOX TWENTY",
+        "title": "YOURSELF OR SOMEONE LIKE YOU",
+        "released": "1996"
+      },
+      {
+        "rank": 7,
+        "artist": "SOUNDTRACK",
+        "title": "CITY OF ANGELS",
+        "released": "1998"
+      },
+      {
+        "rank": 8,
+        "artist": "WILL SMITH",
+        "title": "BIG WILLIE STYLE",
+        "released": "1997"
+      },
+      {
+        "rank": 9,
+        "artist": "SAVAGE GARDEN",
+        "title": "SAVAGE GARDEN",
+        "released": "1997"
+      },
+      {
+        "rank": 10,
+        "artist": "SPICE GIRLS",
+        "title": "SPICEWORLD",
+        "released": "1997"
+      }
+    ],
+    "1999": [
+      {
+        "rank": 1,
+        "artist": "BACKSTREET BOYS",
+        "title": "MILLENNIUM",
+        "released": "1999"
+      },
+      {
+        "rank": 2,
+        "artist": "BRITNEY SPEARS",
+        "title": "BABY ONE MORE TIME",
+        "released": "1999"
+      },
+      {
+        "rank": 3,
+        "artist": "SHANIA TWAIN",
+        "title": "COME ON OVER",
+        "released": "1997"
+      },
+      {
+        "rank": 4,
+        "artist": "NSYNC",
+        "title": "NSYNC",
+        "released": "1997"
+      },
+      {
+        "rank": 5,
+        "artist": "RICKY MARTIN",
+        "title": "RICKY MARTIN",
+        "released": "1999"
+      },
+      {
+        "rank": 6,
+        "artist": "GARTH BROOKS",
+        "title": "DOUBLE LIVE",
+        "released": "1998"
+      },
+      {
+        "rank": 7,
+        "artist": "THE OFFSPRING",
+        "title": "AMERICANA",
+        "released": "1998"
+      },
+      {
+        "rank": 8,
+        "artist": "DIXIE CHICKS",
+        "title": "WIDE OPEN SPACES",
+        "released": "1998"
+      },
+      {
+        "rank": 9,
+        "artist": "LIMP BIZKIT",
+        "title": "SIGNIFICANT OTHER",
+        "released": "1999"
+      },
+      {
+        "rank": 10,
+        "artist": "TLC",
+        "title": "FANMAIL",
+        "released": "1999"
+      }
+    ],
+    "2000": [
+      {
+        "rank": 1,
+        "artist": "NSYNC",
+        "title": "NO STRINGS ATTACHED",
+        "released": "2000"
+      },
+      {
+        "rank": 2,
+        "artist": "SANTANA",
+        "title": "SUPERNATURAL",
+        "released": "1999"
+      },
+      {
+        "rank": 3,
+        "artist": "EMINEM",
+        "title": "THE MARSHALL MATHERS LP",
+        "released": "2000"
+      },
+      {
+        "rank": 4,
+        "artist": "BRITNEY SPEARS",
+        "title": "OOPS!...I DID IT AGAIN",
+        "released": "2000"
+      },
+      {
+        "rank": 5,
+        "artist": "DR. DRE",
+        "title": "2001",
+        "released": "1999"
+      },
+      {
+        "rank": 6,
+        "artist": "CREED",
+        "title": "HUMAN CLAY",
+        "released": "1999"
+      },
+      {
+        "rank": 7,
+        "artist": "CELINE DION",
+        "title": "ALL THE WAY...A DECADE OF SONG",
+        "released": "1999"
+      },
+      {
+        "rank": 8,
+        "artist": "CHRISTINA AGUILERA",
+        "title": "CHRISTINA AGUILERA",
+        "released": "1999"
+      },
+      {
+        "rank": 9,
+        "artist": "BACKSTREET BOYS",
+        "title": "MILLENNIUM",
+        "released": "1999"
+      },
+      {
+        "rank": 10,
+        "artist": "DMX",
+        "title": "AND THEN THERE WAS X",
+        "released": "1999"
+      }
+    ],
+    "2001": [
+      {
+        "rank": 1,
+        "artist": "THE BEATLES",
+        "title": "1",
+        "released": "2000"
+      },
+      {
+        "rank": 2,
+        "artist": "SHAGGY",
+        "title": "HOT SHOT",
+        "released": "2000"
+      },
+      {
+        "rank": 3,
+        "artist": "BACKSTREET BOYS",
+        "title": "BLACK & BLUE",
+        "released": "2000"
+      },
+      {
+        "rank": 4,
+        "artist": "NOW SERIES (US)",
+        "title": "NOW THAT'S WHAT I CALL MUSIC! VOL. 5",
+        "released": "2000"
+      },
+      {
+        "rank": 5,
+        "artist": "LIMP BIZKIT",
+        "title": "CHOCOLATE STARFISH AND THE HOT DOG FLAVORED WATER",
+        "released": "2000"
+      },
+      {
+        "rank": 6,
+        "artist": "LINKIN PARK",
+        "title": "HYBRID THEORY",
+        "released": "2000"
+      },
+      {
+        "rank": 7,
+        "artist": "STAIND",
+        "title": "BREAK THE CYCLE",
+        "released": "2001"
+      },
+      {
+        "rank": 8,
+        "artist": "ENYA",
+        "title": "A DAY WITHOUT RAIN",
+        "released": "2000"
+      },
+      {
+        "rank": 9,
+        "artist": "NSYNC",
+        "title": "CELEBRITY",
+        "released": "2001"
+      },
+      {
+        "rank": 10,
+        "artist": "NELLY",
+        "title": "COUNTRY GRAMMAR",
+        "released": "2000"
+      }
+    ],
+    "2002": [
+      {
+        "rank": 1,
+        "artist": "EMINEM",
+        "title": "THE EMINEM SHOW",
+        "released": "2002"
+      },
+      {
+        "rank": 2,
+        "artist": "CREED",
+        "title": "WEATHERED",
+        "released": "2001"
+      },
+      {
+        "rank": 3,
+        "artist": "NELLY",
+        "title": "NELLYVILLE",
+        "released": "2002"
+      },
+      {
+        "rank": 4,
+        "artist": "P!NK",
+        "title": "M!SSUNDAZTOOD",
+        "released": "2001"
+      },
+      {
+        "rank": 5,
+        "artist": "LINKIN PARK",
+        "title": "HYBRID THEORY",
+        "released": "2000"
+      },
+      {
+        "rank": 6,
+        "artist": "SOUNDTRACK",
+        "title": "O BROTHER, WHERE ART THOU?",
+        "released": "2000"
+      },
+      {
+        "rank": 7,
+        "artist": "NICKELBACK",
+        "title": "SILVER SIDE UP",
+        "released": "2001"
+      },
+      {
+        "rank": 8,
+        "artist": "BRITNEY SPEARS",
+        "title": "BRITNEY",
+        "released": "2001"
+      },
+      {
+        "rank": 9,
+        "artist": "NOW SERIES (US)",
+        "title": "NOW THAT'S WHAT I CALL MUSIC! VOL. 8",
+        "released": "2001"
+      },
+      {
+        "rank": 10,
+        "artist": "LUDACRIS",
+        "title": "WORD OF MOUF",
+        "released": "2001"
+      }
+    ],
+    "2003": [
+      {
+        "rank": 1,
+        "artist": "50 CENT",
+        "title": "GET RICH OR DIE TRYIN'",
+        "released": "2003"
+      },
+      {
+        "rank": 2,
+        "artist": "NORAH JONES",
+        "title": "COME AWAY WITH ME",
+        "released": "2002"
+      },
+      {
+        "rank": 3,
+        "artist": "SHANIA TWAIN",
+        "title": "UP!",
+        "released": "2002"
+      },
+      {
+        "rank": 4,
+        "artist": "DIXIE CHICKS",
+        "title": "HOME",
+        "released": "2002"
+      },
+      {
+        "rank": 5,
+        "artist": "AVRIL LAVIGNE",
+        "title": "LET GO",
+        "released": "2002"
+      },
+      {
+        "rank": 6,
+        "artist": "LINKIN PARK",
+        "title": "METEORA",
+        "released": "2003"
+      },
+      {
+        "rank": 7,
+        "artist": "SOUNDTRACK",
+        "title": "8 MILE",
+        "released": "2002"
+      },
+      {
+        "rank": 8,
+        "artist": "EVANESCENCE",
+        "title": "FALLEN",
+        "released": "2003"
+      },
+      {
+        "rank": 9,
+        "artist": "TIM MCGRAW",
+        "title": "TIM MCGRAW & THE DANCEHALL DOCTORS",
+        "released": "2002"
+      },
+      {
+        "rank": 10,
+        "artist": "CHRISTINA AGUILERA",
+        "title": "STRIPPED",
+        "released": "2002"
+      }
+    ],
+    "2004": [
+      {
+        "rank": 1,
+        "artist": "USHER",
+        "title": "CONFESSIONS",
+        "released": "2004"
+      },
+      {
+        "rank": 2,
+        "artist": "OUTKAST",
+        "title": "SPEAKERBOXXX / THE LOVE BELOW",
+        "released": "2003"
+      },
+      {
+        "rank": 3,
+        "artist": "JOSH GROBAN",
+        "title": "CLOSER",
+        "released": "2003"
+      },
+      {
+        "rank": 4,
+        "artist": "ALICIA KEYS",
+        "title": "THE DIARY OF ALICIA KEYS",
+        "released": "2003"
+      },
+      {
+        "rank": 5,
+        "artist": "NORAH JONES",
+        "title": "FEELS LIKE HOME",
+        "released": "2004"
+      },
+      {
+        "rank": 6,
+        "artist": "EVANESCENCE",
+        "title": "FALLEN",
+        "released": "2003"
+      },
+      {
+        "rank": 7,
+        "artist": "TOBY KEITH",
+        "title": "SHOCK 'N Y'ALL",
+        "released": "2003"
+      },
+      {
+        "rank": 8,
+        "artist": "BRITNEY SPEARS",
+        "title": "IN THE ZONE",
+        "released": "2003"
+      },
+      {
+        "rank": 9,
+        "artist": "SHERYL CROW",
+        "title": "THE VERY BEST OF SHERYL CROW",
+        "released": "2003"
+      },
+      {
+        "rank": 10,
+        "artist": "KENNY CHESNEY",
+        "title": "WHEN THE SUN GOES DOWN",
+        "released": "2004"
+      }
+    ],
+    "2005": [
+      {
+        "rank": 1,
+        "artist": "50 CENT",
+        "title": "THE MASSACRE",
+        "released": "2005"
+      },
+      {
+        "rank": 2,
+        "artist": "EMINEM",
+        "title": "ENCORE",
+        "released": "2004"
+      },
+      {
+        "rank": 3,
+        "artist": "GREEN DAY",
+        "title": "AMERICAN IDIOT",
+        "released": "2004"
+      },
+      {
+        "rank": 4,
+        "artist": "MARIAH CAREY",
+        "title": "THE EMANCIPATION OF MIMI",
+        "released": "2005"
+      },
+      {
+        "rank": 5,
+        "artist": "KELLY CLARKSON",
+        "title": "BREAKAWAY",
+        "released": "2004"
+      },
+      {
+        "rank": 6,
+        "artist": "GWEN STEFANI",
+        "title": "LOVE. ANGEL. MUSIC. BABY.",
+        "released": "2004"
+      },
+      {
+        "rank": 7,
+        "artist": "DESTINY'S CHILD",
+        "title": "DESTINY FULFILLED",
+        "released": "2004"
+      },
+      {
+        "rank": 8,
+        "artist": "U2",
+        "title": "HOW TO DISMANTLE AN ATOMIC BOMB",
+        "released": "2004"
+      },
+      {
+        "rank": 9,
+        "artist": "SHANIA TWAIN",
+        "title": "GREATEST HITS",
+        "released": "2004"
+      },
+      {
+        "rank": 10,
+        "artist": "RASCAL FLATTS",
+        "title": "FEELS LIKE TODAY",
+        "released": "2004"
+      }
+    ],
+    "2006": [
+      {
+        "rank": 1,
+        "artist": "CARRIE UNDERWOOD",
+        "title": "SOME HEARTS",
+        "released": "2005"
+      },
+      {
+        "rank": 2,
+        "artist": "HIGH SCHOOL MUSICAL CAST",
+        "title": "HIGH SCHOOL MUSICAL (SOUNDTRACK)",
+        "released": "2006"
+      },
+      {
+        "rank": 3,
+        "artist": "NICKELBACK",
+        "title": "ALL THE RIGHT REASONS",
+        "released": "2005"
+      },
+      {
+        "rank": 4,
+        "artist": "RASCAL FLATTS",
+        "title": "ME AND MY GANG",
+        "released": "2006"
+      },
+      {
+        "rank": 5,
+        "artist": "MARY J. BLIGE",
+        "title": "THE BREAKTHROUGH",
+        "released": "2005"
+      },
+      {
+        "rank": 6,
+        "artist": "EMINEM",
+        "title": "CURTAIN CALL: THE HITS",
+        "released": "2005"
+      },
+      {
+        "rank": 7,
+        "artist": "JAMES BLUNT",
+        "title": "BACK TO BEDLAM",
+        "released": "2004"
+      },
+      {
+        "rank": 8,
+        "artist": "KENNY CHESNEY",
+        "title": "THE ROAD AND THE RADIO",
+        "released": "2005"
+      },
+      {
+        "rank": 9,
+        "artist": "JOHNNY CASH",
+        "title": "THE LEGEND OF JOHNNY CASH",
+        "released": "2005"
+      },
+      {
+        "rank": 10,
+        "artist": "KELLY CLARKSON",
+        "title": "BREAKAWAY",
+        "released": "2004"
+      }
+    ],
+    "2007": [
+      {
+        "rank": 1,
+        "artist": "DAUGHTRY",
+        "title": "DAUGHTRY",
+        "released": "2006"
+      },
+      {
+        "rank": 2,
+        "artist": "AKON",
+        "title": "KONVICTED",
+        "released": "2006"
+      },
+      {
+        "rank": 3,
+        "artist": "FERGIE",
+        "title": "THE DUTCHESS",
+        "released": "2006"
+      },
+      {
+        "rank": 4,
+        "artist": "MILEY CYRUS",
+        "title": "HANNAH MONTANA (SOUNDTRACK)",
+        "released": "2006"
+      },
+      {
+        "rank": 5,
+        "artist": "CARRIE UNDERWOOD",
+        "title": "SOME HEARTS",
+        "released": "2005"
+      },
+      {
+        "rank": 6,
+        "artist": "NICKELBACK",
+        "title": "ALL THE RIGHT REASONS",
+        "released": "2005"
+      },
+      {
+        "rank": 7,
+        "artist": "JUSTIN TIMBERLAKE",
+        "title": "FUTURESEX/LOVESOUNDS",
+        "released": "2006"
+      },
+      {
+        "rank": 8,
+        "artist": "HIGH SCHOOL MUSICAL CAST",
+        "title": "HIGH SCHOOL MUSICAL 2 (SOUNDTRACK)",
+        "released": "2007"
+      },
+      {
+        "rank": 9,
+        "artist": "NOW SERIES (US)",
+        "title": "NOW THAT'S WHAT I CALL MUSIC! VOL. 23",
+        "released": "2006"
+      },
+      {
+        "rank": 10,
+        "artist": "LINKIN PARK",
+        "title": "MINUTES TO MIDNIGHT",
+        "released": "2007"
+      }
+    ],
+    "2008": [
+      {
+        "rank": 1,
+        "artist": "ALICIA KEYS",
+        "title": "AS I AM",
+        "released": "2007"
+      },
+      {
+        "rank": 2,
+        "artist": "JOSH GROBAN",
+        "title": "NOEL",
+        "released": "2007"
+      },
+      {
+        "rank": 3,
+        "artist": "LIL WAYNE",
+        "title": "THA CARTER III",
+        "released": "2008"
+      },
+      {
+        "rank": 4,
+        "artist": "EAGLES",
+        "title": "LONG ROAD OUT OF EDEN",
+        "released": "2007"
+      },
+      {
+        "rank": 5,
+        "artist": "TAYLOR SWIFT",
+        "title": "TAYLOR SWIFT",
+        "released": "2006"
+      },
+      {
+        "rank": 6,
+        "artist": "KID ROCK",
+        "title": "ROCK N ROLL JESUS",
+        "released": "2007"
+      },
+      {
+        "rank": 7,
+        "artist": "COLDPLAY",
+        "title": "VIVA LA VIDA OR DEATH AND ALL HIS FRIENDS",
+        "released": "2008"
+      },
+      {
+        "rank": 8,
+        "artist": "NOW SERIES (US)",
+        "title": "NOW THAT'S WHAT I CALL MUSIC! VOL. 26",
+        "released": "2007"
+      },
+      {
+        "rank": 9,
+        "artist": "CARRIE UNDERWOOD",
+        "title": "CARNIVAL RIDE",
+        "released": "2007"
+      },
+      {
+        "rank": 10,
+        "artist": "GARTH BROOKS",
+        "title": "THE ULTIMATE HITS",
+        "released": "2007"
+      }
+    ],
+    "2009": [
+      {
+        "rank": 1,
+        "artist": "TAYLOR SWIFT",
+        "title": "FEARLESS",
+        "released": "2008"
+      },
+      {
+        "rank": 2,
+        "artist": "BEYONCÉ",
+        "title": "I AM SASHA FIERCE",
+        "released": "2008"
+      },
+      {
+        "rank": 3,
+        "artist": "NICKELBACK",
+        "title": "DARK HORSE",
+        "released": "2008"
+      },
+      {
+        "rank": 4,
+        "artist": "SOUNDTRACK",
+        "title": "TWILIGHT",
+        "released": "2008"
+      },
+      {
+        "rank": 5,
+        "artist": "MILEY CYRUS",
+        "title": "HANNAH MONTANA: THE MOVIE (SOUNDTRACK)",
+        "released": "2009"
+      },
+      {
+        "rank": 6,
+        "artist": "BRITNEY SPEARS",
+        "title": "CIRCUS",
+        "released": "2008"
+      },
+      {
+        "rank": 7,
+        "artist": "KANYE WEST",
+        "title": "808S & HEARTBREAK",
+        "released": "2008"
+      },
+      {
+        "rank": 8,
+        "artist": "LADY GAGA",
+        "title": "THE FAME",
+        "released": "2008"
+      },
+      {
+        "rank": 9,
+        "artist": "EMINEM",
+        "title": "RELAPSE",
+        "released": "2009"
+      },
+      {
+        "rank": 10,
+        "artist": "THE BLACK EYED PEAS",
+        "title": "THE E.N.D.",
+        "released": "2009"
+      }
+    ],
+    "2010": [
+      {
+        "rank": 1,
+        "artist": "SUSAN BOYLE",
+        "title": "I DREAMED A DREAM",
+        "released": "2009"
+      },
+      {
+        "rank": 2,
+        "artist": "EMINEM",
+        "title": "RECOVERY",
+        "released": "2010"
+      },
+      {
+        "rank": 3,
+        "artist": "LADY ANTEBELLUM",
+        "title": "NEED YOU NOW",
+        "released": "2010"
+      },
+      {
+        "rank": 4,
+        "artist": "LADY GAGA",
+        "title": "THE FAME",
+        "released": "2008"
+      },
+      {
+        "rank": 5,
+        "artist": "JUSTIN BIEBER",
+        "title": "MY WORLD 2.0 / MY WORLDS",
+        "released": "2010"
+      },
+      {
+        "rank": 6,
+        "artist": "ANDREA BOCELLI",
+        "title": "MY CHRISTMAS",
+        "released": "2009"
+      },
+      {
+        "rank": 7,
+        "artist": "TAYLOR SWIFT",
+        "title": "FEARLESS",
+        "released": "2008"
+      },
+      {
+        "rank": 8,
+        "artist": "JUSTIN BIEBER",
+        "title": "MY WORLD",
+        "released": "2009"
+      },
+      {
+        "rank": 9,
+        "artist": "TAYLOR SWIFT",
+        "title": "SPEAK NOW",
+        "released": "2010"
+      },
+      {
+        "rank": 10,
+        "artist": "THE BLACK EYED PEAS",
+        "title": "THE E.N.D.",
+        "released": "2009"
+      }
+    ],
+    "2011": [
+      {
+        "rank": 1,
+        "artist": "ADELE",
+        "title": "21",
+        "released": "2011"
+      },
+      {
+        "rank": 2,
+        "artist": "TAYLOR SWIFT",
+        "title": "SPEAK NOW",
+        "released": "2010"
+      },
+      {
+        "rank": 3,
+        "artist": "LADY GAGA",
+        "title": "BORN THIS WAY",
+        "released": "2011"
+      },
+      {
+        "rank": 4,
+        "artist": "JASON ALDEAN",
+        "title": "MY KINDA PARTY",
+        "released": "2010"
+      },
+      {
+        "rank": 5,
+        "artist": "SUSAN BOYLE",
+        "title": "THE GIFT",
+        "released": "2010"
+      },
+      {
+        "rank": 6,
+        "artist": "LIL WAYNE",
+        "title": "THA CARTER IV",
+        "released": "2011"
+      },
+      {
+        "rank": 7,
+        "artist": "NICKI MINAJ",
+        "title": "PINK FRIDAY",
+        "released": "2010"
+      },
+      {
+        "rank": 8,
+        "artist": "MUMFORD & SONS",
+        "title": "SIGH NO MORE",
+        "released": "2009"
+      },
+      {
+        "rank": 9,
+        "artist": "RIHANNA",
+        "title": "LOUD",
+        "released": "2010"
+      },
+      {
+        "rank": 10,
+        "artist": "KATY PERRY",
+        "title": "TEENAGE DREAM",
+        "released": "2010"
+      }
+    ],
+    "2012": [
+      {
+        "rank": 1,
+        "artist": "ADELE",
+        "title": "21",
+        "released": "2011"
+      },
+      {
+        "rank": 2,
+        "artist": "MICHAEL BUBLÉ",
+        "title": "CHRISTMAS",
+        "released": "2011"
+      },
+      {
+        "rank": 3,
+        "artist": "DRAKE",
+        "title": "TAKE CARE",
+        "released": "2011"
+      },
+      {
+        "rank": 4,
+        "artist": "TAYLOR SWIFT",
+        "title": "RED",
+        "released": "2012"
+      },
+      {
+        "rank": 5,
+        "artist": "ONE DIRECTION",
+        "title": "UP ALL NIGHT",
+        "released": "2011"
+      },
+      {
+        "rank": 6,
+        "artist": "LUKE BRYAN",
+        "title": "TAILGATES & TANLINES",
+        "released": "2011"
+      },
+      {
+        "rank": 7,
+        "artist": "MUMFORD & SONS",
+        "title": "BABEL",
+        "released": "2012"
+      },
+      {
+        "rank": 8,
+        "artist": "RIHANNA",
+        "title": "TALK THAT TALK",
+        "released": "2011"
+      },
+      {
+        "rank": 9,
+        "artist": "LIONEL RICHIE",
+        "title": "TUSKEGEE",
+        "released": "2012"
+      },
+      {
+        "rank": 10,
+        "artist": "THE BLACK KEYS",
+        "title": "EL CAMINO",
+        "released": "2011"
+      }
+    ],
+    "2013": [
+      {
+        "rank": 1,
+        "artist": "JUSTIN TIMBERLAKE",
+        "title": "THE 20/20 EXPERIENCE",
+        "released": "2013"
+      },
+      {
+        "rank": 2,
+        "artist": "TAYLOR SWIFT",
+        "title": "RED",
+        "released": "2012"
+      },
+      {
+        "rank": 3,
+        "artist": "ONE DIRECTION",
+        "title": "TAKE ME HOME",
+        "released": "2012"
+      },
+      {
+        "rank": 4,
+        "artist": "BRUNO MARS",
+        "title": "UNORTHODOX JUKEBOX",
+        "released": "2012"
+      },
+      {
+        "rank": 5,
+        "artist": "MUMFORD & SONS",
+        "title": "BABEL",
+        "released": "2012"
+      },
+      {
+        "rank": 6,
+        "artist": "IMAGINE DRAGONS",
+        "title": "NIGHT VISIONS",
+        "released": "2012"
+      },
+      {
+        "rank": 7,
+        "artist": "FLORIDA GEORGIA LINE",
+        "title": "HERE'S TO THE GOOD TIMES",
+        "released": "2012"
+      },
+      {
+        "rank": 8,
+        "artist": "P!NK",
+        "title": "THE TRUTH ABOUT LOVE",
+        "released": "2012"
+      },
+      {
+        "rank": 9,
+        "artist": "LUKE BRYAN",
+        "title": "CRASH MY PARTY",
+        "released": "2013"
+      },
+      {
+        "rank": 10,
+        "artist": "RIHANNA",
+        "title": "UNAPOLOGETIC",
+        "released": "2012"
+      }
+    ],
+    "2014": [
+      {
+        "rank": 1,
+        "artist": "SOUNDTRACK",
+        "title": "FROZEN",
+        "released": "2013"
+      },
+      {
+        "rank": 2,
+        "artist": "BEYONCÉ",
+        "title": "BEYONCÉ",
+        "released": "2013"
+      },
+      {
+        "rank": 3,
+        "artist": "TAYLOR SWIFT",
+        "title": "1989",
+        "released": "2014"
+      },
+      {
+        "rank": 4,
+        "artist": "ONE DIRECTION",
+        "title": "MIDNIGHT MEMORIES",
+        "released": "2013"
+      },
+      {
+        "rank": 5,
+        "artist": "EMINEM",
+        "title": "THE MARSHALL MATHERS LP 2",
+        "released": "2013"
+      },
+      {
+        "rank": 6,
+        "artist": "LORDE",
+        "title": "PURE HEROINE",
+        "released": "2013"
+      },
+      {
+        "rank": 7,
+        "artist": "LUKE BRYAN",
+        "title": "CRASH MY PARTY",
+        "released": "2013"
+      },
+      {
+        "rank": 8,
+        "artist": "KATY PERRY",
+        "title": "PRISM",
+        "released": "2013"
+      },
+      {
+        "rank": 9,
+        "artist": "GARTH BROOKS",
+        "title": "BLAME IT ON MY ROOTS-BOX SET",
+        "released": "2013"
+      },
+      {
+        "rank": 10,
+        "artist": "FLORIDA GEORGIA LINE",
+        "title": "HERE'S TO THE GOOD TIMES",
+        "released": "2012"
+      }
+    ],
+    "2015": [
+      {
+        "rank": 1,
+        "artist": "TAYLOR SWIFT",
+        "title": "1989",
+        "released": "2014"
+      },
+      {
+        "rank": 2,
+        "artist": "ED SHEERAN",
+        "title": "X",
+        "released": "2014"
+      },
+      {
+        "rank": 3,
+        "artist": "SAM SMITH",
+        "title": "IN THE LONELY HOUR",
+        "released": "2014"
+      },
+      {
+        "rank": 4,
+        "artist": "DRAKE",
+        "title": "IF YOU'RE READING THIS ITS TOO LATE",
+        "released": "2015"
+      },
+      {
+        "rank": 5,
+        "artist": "MEGHAN TRAINOR",
+        "title": "TITLE",
+        "released": "2015"
+      },
+      {
+        "rank": 6,
+        "artist": "MAROON 5",
+        "title": "V",
+        "released": "2014"
+      },
+      {
+        "rank": 7,
+        "artist": "NICKI MINAJ",
+        "title": "THE PINKPRINT",
+        "released": "2014"
+      },
+      {
+        "rank": 8,
+        "artist": "J. COLE",
+        "title": "2014 FOREST HILLS DRIVE",
+        "released": "2014"
+      },
+      {
+        "rank": 9,
+        "artist": "SOUNDTRACK",
+        "title": "FIFTY SHADES OF GREY",
+        "released": "2015"
+      },
+      {
+        "rank": 10,
+        "artist": "ONE DIRECTION",
+        "title": "FOUR",
+        "released": "2014"
+      }
+    ],
+    "2016": [
+      {
+        "rank": 1,
+        "artist": "ADELE",
+        "title": "25",
+        "released": "2015"
+      },
+      {
+        "rank": 2,
+        "artist": "DRAKE",
+        "title": "VIEWS",
+        "released": "2016"
+      },
+      {
+        "rank": 3,
+        "artist": "JUSTIN BIEBER",
+        "title": "PURPOSE",
+        "released": "2015"
+      },
+      {
+        "rank": 4,
+        "artist": "BEYONCÉ",
+        "title": "LEMONADE",
+        "released": "2016"
+      },
+      {
+        "rank": 5,
+        "artist": "RIHANNA",
+        "title": "ANTI",
+        "released": "2016"
+      },
+      {
+        "rank": 6,
+        "artist": "TWENTY ONE PILOTS",
+        "title": "BLURRYFACE",
+        "released": "2015"
+      },
+      {
+        "rank": 7,
+        "artist": "CHRIS STAPLETON",
+        "title": "TRAVELLER",
+        "released": "2015"
+      },
+      {
+        "rank": 8,
+        "artist": "ONE DIRECTION",
+        "title": "MADE IN THE A.M.",
+        "released": "2015"
+      },
+      {
+        "rank": 9,
+        "artist": "THE WEEKND",
+        "title": "BEAUTY BEHIND THE MADNESS",
+        "released": "2015"
+      },
+      {
+        "rank": 10,
+        "artist": "SOUNDTRACK",
+        "title": "HAMILTON (ORIGINAL BROADWAY CAST RECORDING)",
+        "released": "2015"
+      }
+    ],
+    "2017": [
+      {
+        "rank": 1,
+        "artist": "KENDRICK LAMAR",
+        "title": "DAMN.",
+        "released": "2017"
+      },
+      {
+        "rank": 2,
+        "artist": "BRUNO MARS",
+        "title": "24K MAGIC",
+        "released": "2016"
+      },
+      {
+        "rank": 3,
+        "artist": "THE WEEKND",
+        "title": "STARBOY",
+        "released": "2016"
+      },
+      {
+        "rank": 4,
+        "artist": "ED SHEERAN",
+        "title": "DIVIDE",
+        "released": "2017"
+      },
+      {
+        "rank": 5,
+        "artist": "DRAKE",
+        "title": "MORE LIFE",
+        "released": "2017"
+      },
+      {
+        "rank": 6,
+        "artist": "SOUNDTRACK",
+        "title": "MOANA",
+        "released": "2016"
+      },
+      {
+        "rank": 7,
+        "artist": "POST MALONE",
+        "title": "STONEY",
+        "released": "2016"
+      },
+      {
+        "rank": 8,
+        "artist": "MIGOS",
+        "title": "CULTURE",
+        "released": "2017"
+      },
+      {
+        "rank": 9,
+        "artist": "SOUNDTRACK",
+        "title": "HAMILTON (ORIGINAL BROADWAY CAST RECORDING)",
+        "released": "2015"
+      },
+      {
+        "rank": 10,
+        "artist": "J. COLE",
+        "title": "4 YOUR EYEZ ONLY",
+        "released": "2016"
+      }
+    ],
+    "2018": [
+      {
+        "rank": 1,
+        "artist": "TAYLOR SWIFT",
+        "title": "REPUTATION",
+        "released": "2017"
+      },
+      {
+        "rank": 2,
+        "artist": "DRAKE",
+        "title": "SCORPION",
+        "released": "2018"
+      },
+      {
+        "rank": 3,
+        "artist": "POST MALONE",
+        "title": "BEERBONGS & BENTLEYS",
+        "released": "2018"
+      },
+      {
+        "rank": 4,
+        "artist": "SOUNDTRACK",
+        "title": "THE GREATEST SHOWMAN",
+        "released": "2017"
+      },
+      {
+        "rank": 5,
+        "artist": "ED SHEERAN",
+        "title": "DIVIDE",
+        "released": "2017"
+      },
+      {
+        "rank": 6,
+        "artist": "CARDI B",
+        "title": "INVASION OF PRIVACY",
+        "released": "2018"
+      },
+      {
+        "rank": 7,
+        "artist": "TRAVIS SCOTT",
+        "title": "ASTROWORLD",
+        "released": "2018"
+      },
+      {
+        "rank": 8,
+        "artist": "POST MALONE",
+        "title": "STONEY",
+        "released": "2016"
+      },
+      {
+        "rank": 9,
+        "artist": "XXXTENTACION",
+        "title": "?",
+        "released": "2018"
+      },
+      {
+        "rank": 10,
+        "artist": "MIGOS",
+        "title": "CULTURE II",
+        "released": "2018"
+      }
+    ],
+    "2019": [
+      {
+        "rank": 1,
+        "artist": "BILLIE EILISH",
+        "title": "WHEN WE ALL FALL ASLEEP, WHERE DO WE GO?",
+        "released": "2019"
+      },
+      {
+        "rank": 2,
+        "artist": "ARIANA GRANDE",
+        "title": "THANK U, NEXT",
+        "released": "2019"
+      },
+      {
+        "rank": 3,
+        "artist": "LADY GAGA & BRADLEY COOPER",
+        "title": "A STAR IS BORN (SOUNDTRACK)",
+        "released": "2018"
+      },
+      {
+        "rank": 4,
+        "artist": "TAYLOR SWIFT",
+        "title": "LOVER",
+        "released": "2019"
+      },
+      {
+        "rank": 5,
+        "artist": "POST MALONE",
+        "title": "BEERBONGS & BENTLEYS",
+        "released": "2018"
+      },
+      {
+        "rank": 6,
+        "artist": "DRAKE",
+        "title": "SCORPION",
+        "released": "2018"
+      },
+      {
+        "rank": 7,
+        "artist": "MEEK MILL",
+        "title": "CHAMPIONSHIPS",
+        "released": "2018"
+      },
+      {
+        "rank": 8,
+        "artist": "TRAVIS SCOTT",
+        "title": "ASTROWORLD",
+        "released": "2018"
+      },
+      {
+        "rank": 9,
+        "artist": "POST MALONE",
+        "title": "HOLLYWOOD'S BLEEDING",
+        "released": "2019"
+      },
+      {
+        "rank": 10,
+        "artist": "A BOOGIE WIT DA HOODIE",
+        "title": "HOODIE SZN",
+        "released": "2018"
+      }
+    ],
+    "2020": [
+      {
+        "rank": 1,
+        "artist": "POST MALONE",
+        "title": "HOLLYWOOD'S BLEEDING",
+        "released": "2019"
+      },
+      {
+        "rank": 2,
+        "artist": "LIL BABY",
+        "title": "MY TURN",
+        "released": "2020"
+      },
+      {
+        "rank": 3,
+        "artist": "RODDY RICCH",
+        "title": "PLEASE EXCUSE ME FOR BEING ANTISOCIAL",
+        "released": "2019"
+      },
+      {
+        "rank": 4,
+        "artist": "HARRY STYLES",
+        "title": "FINE LINE",
+        "released": "2019"
+      },
+      {
+        "rank": 5,
+        "artist": "TAYLOR SWIFT",
+        "title": "FOLKLORE",
+        "released": "2020"
+      },
+      {
+        "rank": 6,
+        "artist": "LIL UZI VERT",
+        "title": "ETERNAL ATAKE",
+        "released": "2020"
+      },
+      {
+        "rank": 7,
+        "artist": "POP SMOKE",
+        "title": "SHOOT FOR THE STARS, AIM FOR THE MOON",
+        "released": "2020"
+      },
+      {
+        "rank": 8,
+        "artist": "THE WEEKND",
+        "title": "AFTER HOURS",
+        "released": "2020"
+      },
+      {
+        "rank": 9,
+        "artist": "JUICE WRLD",
+        "title": "LEGENDS NEVER DIE",
+        "released": "2020"
+      },
+      {
+        "rank": 10,
+        "artist": "LUKE COMBS",
+        "title": "WHAT YOU SEE IS WHAT YOU GET",
+        "released": "2019"
+      }
+    ],
+    "2021": [
+      {
+        "rank": 1,
+        "artist": "MORGAN WALLEN",
+        "title": "DANGEROUS: THE DOUBLE ALBUM",
+        "released": "2021"
+      },
+      {
+        "rank": 2,
+        "artist": "OLIVIA RODRIGO",
+        "title": "SOUR",
+        "released": "2021"
+      },
+      {
+        "rank": 3,
+        "artist": "POP SMOKE",
+        "title": "SHOOT FOR THE STARS, AIM FOR THE MOON",
+        "released": "2020"
+      },
+      {
+        "rank": 4,
+        "artist": "TAYLOR SWIFT",
+        "title": "EVERMORE",
+        "released": "2020"
+      },
+      {
+        "rank": 5,
+        "artist": "DRAKE",
+        "title": "CERTIFIED LOVER BOY",
+        "released": "2021"
+      },
+      {
+        "rank": 6,
+        "artist": "THE KID LAROI",
+        "title": "F*CK LOVE",
+        "released": "2020"
+      },
+      {
+        "rank": 7,
+        "artist": "LUKE COMBS",
+        "title": "WHAT YOU SEE IS WHAT YOU GET",
+        "released": "2019"
+      },
+      {
+        "rank": 8,
+        "artist": "ARIANA GRANDE",
+        "title": "POSITIONS",
+        "released": "2020"
+      },
+      {
+        "rank": 9,
+        "artist": "DUA LIPA",
+        "title": "FUTURE NOSTALGIA",
+        "released": "2020"
+      },
+      {
+        "rank": 10,
+        "artist": "LIL BABY",
+        "title": "MY TURN",
+        "released": "2020"
+      }
+    ],
+    "2022": [
+      {
+        "rank": 1,
+        "artist": "BAD BUNNY",
+        "title": "UN VERANO SIN TI",
+        "released": "2022"
+      },
+      {
+        "rank": 2,
+        "artist": "ADELE",
+        "title": "30",
+        "released": "2021"
+      },
+      {
+        "rank": 3,
+        "artist": "MORGAN WALLEN",
+        "title": "DANGEROUS: THE DOUBLE ALBUM",
+        "released": "2021"
+      },
+      {
+        "rank": 4,
+        "artist": "TAYLOR SWIFT",
+        "title": "MIDNIGHTS",
+        "released": "2022"
+      },
+      {
+        "rank": 5,
+        "artist": "TAYLOR SWIFT",
+        "title": "RED (TAYLOR'S VERSION)",
+        "released": "2021"
+      },
+      {
+        "rank": 6,
+        "artist": "SOUNDTRACK",
+        "title": "ENCANTO",
+        "released": "2021"
+      },
+      {
+        "rank": 7,
+        "artist": "HARRY STYLES",
+        "title": "HARRY'S HOUSE",
+        "released": "2022"
+      },
+      {
+        "rank": 8,
+        "artist": "OLIVIA RODRIGO",
+        "title": "SOUR",
+        "released": "2021"
+      },
+      {
+        "rank": 9,
+        "artist": "DRAKE",
+        "title": "CERTIFIED LOVER BOY",
+        "released": "2021"
+      },
+      {
+        "rank": 10,
+        "artist": "THE WEEKND",
+        "title": "THE HIGHLIGHTS",
+        "released": "2021"
+      }
+    ]
+  },
+  "missing": [
+    1961,
+    1962,
+    2023,
+    2024,
+    2025
+  ]
+}

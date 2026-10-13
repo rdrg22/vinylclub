@@ -5,6 +5,7 @@ import { SourceNote } from '@/components/ui/SourceNote'
 import { AlbumCover } from './AlbumCover'
 import { AlbumDemo } from './AlbumDemo'
 import { AlbumMetadata } from './AlbumMetadata'
+import { ListenLinks } from '@/components/listen/ListenLinks'
 
 interface AlbumDialogProps {
   album: Album | null
@@ -57,6 +58,7 @@ export function AlbumDialog({ album, onClose }: AlbumDialogProps) {
             </div>
 
             <AlbumDemo album={album} />
+            <ListenLinks key={album.id} album={album} />
 
             <AlbumMetadata key={album.id} album={album} />
 

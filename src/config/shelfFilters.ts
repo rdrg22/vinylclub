@@ -30,6 +30,7 @@ export const RELEASE_TYPE_LABEL: Record<ReleaseType | 'other', string> = {
 }
 
 export const DECADE_OPTIONS: FilterOption<Decade>[] = [
+  { value: '1950s', label: 'Años 50' },
   { value: '1960s', label: 'Años 60' },
   { value: '1970s', label: 'Años 70' },
   { value: '1980s', label: 'Años 80' },

@@ -30,13 +30,13 @@ interface ItunesSearchResponse {
 const cache = new Map<string, AlbumPreview | null>()
 const inFlight = new Map<string, Promise<AlbumPreview | null>>()
 
-const sameArtist = (a: string, b: string) => {
+export const sameArtist = (a: string, b: string) => {
   const x = comparable(a)
   const y = comparable(b)
   return x.length > 0 && y.length > 0 && (x === y || x.startsWith(y) || y.startsWith(x))
 }
 
-const sameAlbum = (a: string, b: string) => {
+export const sameAlbum = (a: string, b: string) => {
   const x = comparable(a)
   const y = comparable(b)
   return x.length > 0 && x === y

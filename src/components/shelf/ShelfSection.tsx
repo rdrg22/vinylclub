@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
+import { bestRank, firstChartYear } from '@/data/charts/chartCatalog'
 import { useShelfAlbums } from '@/hooks/useShelves'
 import type { Shelf } from '@/types/shelf'
-import { binLetter, describeFilters } from '@/utils/shelfFilters'
-import { FilterChips } from './FilterChips'
+import { binLetter } from '@/utils/shelfFilters'
 import { ShelfRail } from './ShelfRail'
+
+const PREVIEW = 20
 
 interface ShelfSectionProps {
   shelf: Shelf
@@ -14,7 +16,10 @@ interface ShelfSectionProps {
 export function ShelfSection({ shelf, index }: ShelfSectionProps) {
   const albums = useShelfAlbums(shelf.id)
   const headingId = `shelf-${shelf.id}`
-  const preview = albums.slice(0, 12)
+  // En la balda, primero los nº 1 de cada año, luego los nº 2…; la vista completa va por años.
+  const preview = [...albums].sort((a, b) => bestRank(a) - bestRank(b) || firstChartYear(a) - firstChartYear(b)).slice(0, PREVIEW)
+  const years = albums.map(firstChartYear)
+  const span = years.length ? `${Math.min(...years)}–${Math.max(...years)}` : ''
 
   return (
     <section aria-labelledby={headingId} className="py-8 sm:py-10">
@@ -29,7 +34,7 @@ export function ShelfSection({ shelf, index }: ShelfSectionProps) {
           <h2 id={headingId} className="font-display text-2xl leading-tight font-medium tracking-tight sm:text-3xl">
             {shelf.name}
           </h2>
-          <FilterChips labels={describeFilters(shelf.filters)} className="mt-2" />
+          <p className="label-mono mt-2 text-ink-faint">Top 10 anual de Billboard · {span}</p>
         </div>
         <Link
           to={`/estanteria/${shelf.id}`}
@@ -44,7 +49,7 @@ export function ShelfSection({ shelf, index }: ShelfSectionProps) {
         <ShelfRail albums={preview} label={`Discos de ${shelf.name}`} eager={index < 2} />
       ) : (
         <p className="mt-6 border-y border-dashed border-rule py-10 text-center text-ink-soft">
-          Esta estantería todavía no tiene discos con estos filtros.
+          Esta estantería todavía no tiene discos.
         </p>
       )}
     </section>

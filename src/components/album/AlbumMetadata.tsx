@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { chartSourceUrl } from '@/data/charts/chartCatalog'
 import { useAlbumDetails } from '@/hooks/useAlbums'
 import { describeMusicBrainzError } from '@/services/musicbrainz/client'
 import type { Album } from '@/types/music'
@@ -23,6 +24,24 @@ export function AlbumMetadata({ album }: { album: Album }) {
   return (
     <div className="border-t border-rule pt-5 text-sm">
       <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2.5">
+        {album.charts && album.charts.length > 0 && (
+          <Row label="Billboard">
+            {album.charts.map((chart, i) => (
+              <span key={chart.year}>
+                {i > 0 && ' · '}
+                <a
+                  href={chartSourceUrl(chart.year)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline decoration-rule underline-offset-2 hover:text-signal"
+                >
+                  nº {chart.rank} en {chart.year}
+                </a>
+              </span>
+            ))}
+            <span className="block text-ink-faint">Lista anual de álbumes más vendidos en EE. UU.</span>
+          </Row>
+        )}
         <Row label="Publicación">{date ?? <Missing>Sin fecha en la fuente</Missing>}</Row>
         {types && <Row label="Tipo">{types}</Row>}
         {album.artists && album.artists.length > 0 && (

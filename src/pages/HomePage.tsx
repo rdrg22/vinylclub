@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { DiscoverySection } from '@/components/discovery/DiscoverySection'
 import { ShelfSection } from '@/components/shelf/ShelfSection'
+import { Store3D } from '@/components/store3d/Store3D'
 import { buttonClass } from '@/components/ui/buttonStyles'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { StateMessage } from '@/components/ui/StateMessage'
@@ -26,8 +27,16 @@ export function HomePage() {
         title="Mi tienda"
         action={newShelf}
       >
-        Recorre tus estanterías, saca un disco de la cubeta y descubre qué hay detrás de cada portada.
+        Los diez álbumes más vendidos de cada año en EE. UU., década a década, según las listas anuales de Billboard.
+        Entra, recorre los pasillos y saca un disco de la balda para escucharlo.
       </PageHeader>
+
+      <section aria-label="Tienda en 3D" className="-mx-4 sm:-mx-8">
+        <Store3D />
+      </section>
+
+      <h2 className="mt-14 font-display text-4xl font-medium tracking-tight italic sm:text-5xl">Las estanterías</h2>
+      <p className="mt-2 text-ink-soft">Los mismos discos, en lista: más rápido si ya sabes lo que buscas.</p>
 
       {shelves.length > 0 ? (
         <div className="divide-y divide-rule">

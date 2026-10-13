@@ -1,19 +1,31 @@
-import { isDemoMode } from '@/config/env'
-import { DEMO_DISCOVERY } from '@/data/demo/demoCatalog'
+import { CHART_ALBUMS } from '@/data/charts/chartCatalog'
 import { AlbumCover } from '@/components/album/AlbumCover'
 import { AlbumTile } from '@/components/album/AlbumTile'
 import { useAlbumDetail } from '@/components/album/albumDetailContext'
 import { PlayButton } from '@/components/player/PlayButton'
 import { StateMessage } from '@/components/ui/StateMessage'
 import type { Album } from '@/types/music'
+import { hashString } from '@/utils/hash'
+
+const PICKS = 4
 
 /**
- * Sección de descubrimiento. Fase 1: selección fija del modo demostración.
- * Se alimentará de MusicBrainz cuando exista la capa de servicios (fase 2).
+ * Selección del día: 4 discos al azar del catálogo (solo los localizados en
+ * MusicBrainz, que tienen portada y ficha). Cambia cada día y es igual para todos;
+ * no es una recomendación personalizada.
  */
+function dailyPicks(day: string): Album[] {
+  const pool = CHART_ALBUMS.filter((album) => album.source === 'musicbrainz')
+  const picks: Album[] = []
+  for (let i = 0; picks.length < Math.min(PICKS, pool.length); i++) {
+    const candidate = pool[hashString(`${day}#${i}`) % pool.length]
+    if (candidate && !picks.includes(candidate)) picks.push(candidate)
+  }
+  return picks
+}
+
 export function DiscoverySection() {
-  const picks = isDemoMode ? DEMO_DISCOVERY : []
-  const [featured, ...rest] = picks
+  const [featured, ...rest] = dailyPicks(new Date().toISOString().slice(0, 10))
 
   return (
     <section id="descubrir" aria-labelledby="discovery-title" className="mt-10 border-t-2 border-ink pt-8">
@@ -21,7 +33,7 @@ export function DiscoverySection() {
         <h2 id="discovery-title" className="font-display text-4xl font-medium tracking-tight italic sm:text-5xl">
           Descubrir
         </h2>
-        <p className="label-mono text-ink-faint">{isDemoMode ? 'Selección de ejemplo' : 'Recomendaciones'}</p>
+        <p className="label-mono text-ink-faint">Selección del día · al azar entre los Top 10 de Billboard</p>
       </div>
 
       {featured ? (
@@ -34,8 +46,8 @@ export function DiscoverySection() {
           </ol>
         </div>
       ) : (
-        <StateMessage tone="pending" eyebrow="En preparación" title="Aquí aparecerán discos por descubrir" className="mt-8">
-          La selección se construirá con datos reales de MusicBrainz a partir de tus estanterías.
+        <StateMessage tone="pending" eyebrow="Sin catálogo" title="Aquí aparecerán discos por descubrir" className="mt-8">
+          El catálogo de la tienda todavía no se ha generado.
         </StateMessage>
       )}
     </section>

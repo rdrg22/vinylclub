@@ -1,0 +1,12 @@
+{
+  "note": "Años que bestsellingalbums.org no publica (404). Solo se conoce el nº 1 del año, tomado de Wikipedia.",
+  "source": "Wikipedia: List of Billboard Year-End number-one singles and albums",
+  "sourceUrl": "https://en.wikipedia.org/wiki/List_of_Billboard_Year-End_number-one_singles_and_albums",
+  "years": {
+    "1961": [{ "rank": 1, "artist": "ORIGINAL CAST", "title": "CAMELOT", "released": null }],
+    "1962": [{ "rank": 1, "artist": "SOUNDTRACK", "title": "WEST SIDE STORY", "released": null }],
+    "2023": [{ "rank": 1, "artist": "MORGAN WALLEN", "title": "ONE THING AT A TIME", "released": null }],
+    "2024": [{ "rank": 1, "artist": "TAYLOR SWIFT", "title": "THE TORTURED POETS DEPARTMENT", "released": null }],
+    "2025": [{ "rank": 1, "artist": "TAYLOR SWIFT", "title": "THE LIFE OF A SHOWGIRL", "released": null }]
+  }
+}

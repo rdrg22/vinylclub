@@ -1,0 +1,20 @@
+{
+  "note": "Correcciones manuales revisadas: clave «año-puesto» → MBID del release group (o null para dejarlo sin coincidencia). Los MBID salen de búsquedas en MusicBrainz, no se escriben de memoria.",
+  "overrides": {
+    "1963-4": { "mbid": "85cd9dcd-b0eb-3fc4-bfce-5aa7fd99cdbc", "why": "«Joan Baez in Concert» de la lista es la Part 1 (1962); la Part 2 salió en nov. 1963" },
+    "1963-3": { "mbid": "521a35ec-a487-3aba-839c-4c677a8fbeaa", "why": "MusicBrainz lo titula «(Moving)» y acredita a «Peter, Paul and Mary»" },
+    "1969-7": { "mbid": "2adc6aeb-a25d-3925-8db1-f16808cb21c6", "why": "Banda sonora de la película (1968), acreditada al compositor Jule Styne" },
+    "1974-6": { "mbid": "fb6ad135-7ee5-31d1-9885-bad0ce1025ce", "why": "El disco de la lista es «41 Original Hits From the Sound Track of American Graffiti»" },
+    "1975-8": { "mbid": "21619f35-2f3c-3740-8d6c-c2418913ca69", "why": "El álbum homónimo de Average White Band se conoce como «AWB»" },
+    "1980-5": { "mbid": "871631b9-651c-3c2e-88ae-3a2491d9eb6b", "why": "Errata en la fuente: «Torpedos» por «Torpedoes»" },
+    "1981-6": { "mbid": "7f7bae53-22ac-30af-bdcc-2ad7b1c6dabd", "why": "La lista escribe «Theater»; el disco es «Paradise Theatre»" },
+    "1981-8": { "mbid": "7e83f916-6e93-3ed0-8ef2-53860688e27b", "why": "MusicBrainz acredita a «Daryl Hall & John Oates»" },
+    "1998-1": { "mbid": "cfc7581a-385e-3933-93b7-432f16873cf3", "why": "Banda sonora de la película (James Horner), no el musical de Broadway" },
+    "2007-4": { "mbid": "a0825764-af80-4589-81dd-00557acb4d63", "why": "Primera banda sonora de la serie, acreditada al personaje «Hannah Montana»" },
+    "2015-2": { "mbid": "c24e5416-cd2e-4cff-851b-5faa78db98a2", "why": "El título real es el símbolo «×»" },
+    "2017-4": { "mbid": "e05f9927-e24b-41c5-928d-d0e008a12444", "why": "El título real es el símbolo «÷»" },
+    "2018-5": { "mbid": "e05f9927-e24b-41c5-928d-d0e008a12444", "why": "El título real es el símbolo «÷»" },
+    "2017-6": { "mbid": "8a7f0b86-317c-412d-89bc-a3f5fd68e92e", "why": "Versión original en inglés, no la doblada al español" },
+    "2018-9": { "mbid": "311ae629-ee9e-443e-9c38-d7a5c97679d5", "why": "El título real es «?»" }
+  }
+}

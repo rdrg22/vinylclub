@@ -14,11 +14,52 @@ npm run dev
 - `npm run typecheck` — solo TypeScript.
 - `npm test` — pruebas (Vitest). No llaman a ninguna API real.
 
-## Modo demostración
+## La tienda 3D
 
-Si `VITE_SUPABASE_URL` o `VITE_SUPABASE_ANON_KEY` están vacías, la app usa un catálogo de ejemplo escrito a mano
-(`src/data/demo/demoCatalog.ts`). Esos discos no proceden de MusicBrainz, no tienen MBID ni portada, y la interfaz
-los marca siempre como datos de ejemplo.
+La portada es una tienda de discos en 3D (three.js + React Three Fiber, `src/components/store3d/`): un pasillo con un
+mueble por década, carteles pintados y etiquetas de año en las baldas. Se camina con WASD/flechas, se mira arrastrando y
+la rueda avanza; en móvil, arrastrar y los botones ▲ ▼. Al pulsar una portada se abre su ficha.
+
+- three.js se descarga aparte (carga diferida) y la escena se pausa fuera de pantalla.
+- Las portadas solo se piden al acercarse a cada mueble.
+- Sin WebGL se muestra un aviso, y debajo siempre están las mismas estanterías en lista.
+
+## Escuchar y comprar
+
+Cada ficha enlaza a Apple Music, Spotify, Tidal, SoundCloud y Amazon (`src/services/listen/listenLinks.ts`):
+
+- **Apple Music**: enlace directo al álbum, verificado con la iTunes Search API (mismo criterio artista + título).
+- **Spotify, Tidal, SoundCloud y Amazon.com**: búsqueda del disco en cada servicio (marcada con ⌕). Para enlaces directos
+  haría falta una API con clave (p. ej. Odesli/song.link, que ya no funciona sin ella) o un backend propio.
+- Logos: [Simple Icons](https://simpleicons.org) (CC0). Amazon no está disponible allí: se usa un carrito genérico.
+
+## Catálogo de la tienda: Top 10 anual de Billboard
+
+La tienda muestra, en una estantería por década, los 10 álbumes más vendidos de cada año en EE. UU. según las listas
+anuales de Billboard (desde 1956, el primer año con lista de álbumes). El catálogo se genera con dos scripts y se
+guarda en el repositorio, así que la web no hace ninguna petición para montarlo (solo para las portadas):
+
+```bash
+node scripts/fetch-billboard-charts.mjs              # listas → scripts/data/billboard-year-end.json (1 página cada 10 s)
+node scripts/resolve-chart-albums.mjs                # MusicBrainz → src/data/charts/billboardTop10.json (1 petición/s)
+node scripts/resolve-chart-albums.mjs --retry-unmatched   # reintenta los discos sin coincidencia
+```
+
+- `scripts/data/billboard-supplement.json`: años que la fuente no publica (1961, 1962, 2023–2025); solo el nº 1, de Wikipedia.
+- `scripts/data/mb-overrides.json`: correcciones revisadas a mano (erratas de la fuente, títulos que son símbolos como «÷»,
+  bandas sonoras confundidas con la partitura…), cada una con su motivo.
+
+- Fuente de las listas: [bestsellingalbums.org](https://bestsellingalbums.org), que recopila los *Year-End* de Billboard
+  (billboard.com no permite el acceso automatizado). Antes de 1992 Billboard elaboraba la lista con encuestas a tiendas,
+  no con ventas contabilizadas, y algunos años antiguos solo publicaron 5 discos.
+- Cada disco solo se asocia a un MBID si coinciden título y artista. Los que no tienen coincidencia segura se muestran
+  igualmente, con su título y artista de la lista, placeholder y la nota «No localizado en MusicBrainz».
+- Ambos scripts guardan su progreso: si se interrumpen, al relanzarlos continúan.
+
+## Sin Supabase
+
+Si `VITE_SUPABASE_URL` o `VITE_SUPABASE_ANON_KEY` están vacías, la tienda funciona igual pero sin cuentas: favoritos y
+colección quedan pendientes y un aviso lo indica.
 
 ## MusicBrainz y Cover Art Archive
 

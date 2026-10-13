@@ -1,28 +1,54 @@
-import { useMemo } from 'react'
-import { isDemoMode } from '@/config/env'
-import { DEMO_SHELF_ALBUMS, DEMO_SHELVES } from '@/data/demo/demoCatalog'
+import { DECADE_OPTIONS } from '@/config/shelfFilters'
+import { CHART_ALBUMS, decadeOf, firstChartYear } from '@/data/charts/chartCatalog'
 import type { Album } from '@/types/music'
-import type { Shelf } from '@/types/shelf'
+import type { Decade, Shelf } from '@/types/shelf'
 
 /*
- * Fase 1: la única fuente es el catálogo de demostración.
- * Con Supabase configurado aún no hay persistencia, así que la tienda aparece vacía.
- * En las fases 3 y 4 estos hooks pasarán a leer del repositorio de estanterías
- * y los discos se resolverán contra MusicBrainz a partir de los filtros.
+ * Estanterías de la tienda: una por década, con los Top 10 anuales de Billboard.
+ * Son fijas y se calculan una vez al cargar el módulo (no hacen peticiones).
+ * Las estanterías personalizadas del usuario se sumarán aquí en las fases 3 y 4.
  */
 
+const EMPTY_FILTERS: Shelf['filters'] = {
+  releaseTypes: [],
+  decades: [],
+  artists: [],
+  genres: [],
+  styles: [],
+  collections: [],
+  discovery: null,
+}
+
+const byYearThenRank = (a: Album, b: Album) =>
+  firstChartYear(a) - firstChartYear(b) || (a.charts?.[0]?.rank ?? 0) - (b.charts?.[0]?.rank ?? 0)
+
+const ALBUMS_BY_DECADE = new Map<Decade, Album[]>()
+for (const album of [...CHART_ALBUMS].sort(byYearThenRank)) {
+  const decade = decadeOf(firstChartYear(album))
+  ALBUMS_BY_DECADE.set(decade, [...(ALBUMS_BY_DECADE.get(decade) ?? []), album])
+}
+
+const DECADE_SHELVES: Shelf[] = DECADE_OPTIONS.filter((option) => ALBUMS_BY_DECADE.has(option.value)).map(
+  (option, position) => ({
+    id: `decada-${option.value}`,
+    name: option.label,
+    position,
+    createdAt: '2026-10-13T00:00:00.000Z',
+    filters: { ...EMPTY_FILTERS, decades: [option.value] },
+  }),
+)
+
 export function useShelves(): Shelf[] {
-  return useMemo(
-    () => (isDemoMode ? [...DEMO_SHELVES].sort((a, b) => a.position - b.position) : []),
-    [],
-  )
+  return DECADE_SHELVES
 }
 
 export function useShelf(id: string | undefined): Shelf | undefined {
-  const shelves = useShelves()
-  return shelves.find((shelf) => shelf.id === id)
+  return DECADE_SHELVES.find((shelf) => shelf.id === id)
 }
 
+/** Discos de una estantería, por año de entrada en la lista y puesto. */
 export function useShelfAlbums(shelfId: string | undefined): Album[] {
-  return (isDemoMode && shelfId && DEMO_SHELF_ALBUMS[shelfId]) || []
+  const shelf = DECADE_SHELVES.find((s) => s.id === shelfId)
+  const decade = shelf?.filters.decades[0]
+  return (decade && ALBUMS_BY_DECADE.get(decade)) || []
 }

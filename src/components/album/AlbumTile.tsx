@@ -5,6 +5,23 @@ import { cn } from '@/utils/cn'
 import { AlbumCover } from './AlbumCover'
 import { useAlbumDetail } from './albumDetailContext'
 
+/** Puesto en Billboard si el disco viene de la lista; si no, el año de publicación. */
+function TileFootnote({ album }: { album: Album }) {
+  const chart = album.charts?.[0]
+  if (chart) {
+    return (
+      <span className="label-mono mt-1 flex items-center gap-1.5 text-ink-faint">
+        <span className={cn('px-1 py-px', chart.rank === 1 ? 'bg-signal text-paper' : 'bg-paper-deep text-ink-soft')}>
+          nº {chart.rank}
+        </span>
+        {chart.year}
+        {album.charts && album.charts.length > 1 && <span title="Estuvo en la lista varios años">+{album.charts.length - 1}</span>}
+      </span>
+    )
+  }
+  return album.year ? <span className="label-mono mt-1 block text-ink-faint">{album.year}</span> : null
+}
+
 interface AlbumTileProps {
   album: Album
   className?: string
@@ -55,7 +72,7 @@ export function AlbumTile({ album, className, eager }: AlbumTileProps) {
             {album.title}
           </span>
           <span className="line-clamp-1 text-sm text-ink-soft">{album.artist}</span>
-          {album.year && <span className="label-mono mt-1 block text-ink-faint">{album.year}</span>}
+          <TileFootnote album={album} />
         </span>
       </button>
 

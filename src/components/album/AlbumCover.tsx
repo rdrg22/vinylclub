@@ -12,7 +12,8 @@ interface AlbumCoverProps {
   size?: CoverSize
 }
 
-type LoadState = 'loading' | 'loaded' | 'failed'
+/** `retry`: falló en modo CORS y se reintenta como imagen normal antes de darla por perdida. */
+type LoadState = 'loading' | 'retry' | 'loaded' | 'failed'
 
 /**
  * Portada cuadrada. El placeholder está siempre debajo: la imagen real aparece
@@ -35,8 +36,12 @@ export function AlbumCover({ album, className, eager = false, size = 250 }: Albu
           alt={`Portada de ${album.title}, de ${album.artist}`}
           loading={eager ? 'eager' : 'lazy'}
           decoding="async"
+          // En modo CORS, igual que la tienda 3D: si no, la caché del navegador guarda
+          // la imagen sin cabecera CORS y la tienda 3D no puede usarla como textura.
+          crossOrigin={load === 'retry' ? undefined : 'anonymous'}
           onLoad={() => setState({ src, load: 'loaded' })}
           onError={() => {
+            if (load !== 'retry') return setState({ src, load: 'retry' })
             markCoverMissing(album.id)
             setState({ src, load: 'failed' })
           }}

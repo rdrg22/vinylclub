@@ -7,10 +7,18 @@
 export type ReleaseType = 'album' | 'single' | 'ep' | 'compilation' | 'soundtrack'
 
 /**
- * Origen de un disco. `demo` identifica datos de ejemplo escritos a mano:
- * nunca deben presentarse como resultados de MusicBrainz.
+ * Origen de un disco.
+ * - `musicbrainz`: identificado en MusicBrainz (tiene MBID, portada posible, ficha completa).
+ * - `chart`: aparece en una lista de ventas pero no se ha localizado en MusicBrainz con
+ *   seguridad; solo se conocen el título y el artista tal como los publica la lista.
  */
-export type DataSource = 'musicbrainz' | 'demo'
+export type DataSource = 'musicbrainz' | 'chart'
+
+/** Posición de un disco en la lista anual de álbumes de Billboard. */
+export interface ChartPosition {
+  year: number
+  rank: number
+}
 
 export interface ArtistRef {
   /** MBID del artista. */
@@ -20,7 +28,7 @@ export interface ArtistRef {
 
 /** Un disco = un «release group» de MusicBrainz (la obra, no una edición concreta). */
 export interface Album {
-  /** MBID del release group en MusicBrainz, o `demo-*` para datos de ejemplo. */
+  /** MBID del release group en MusicBrainz, o `chart-<año>-<puesto>` si no se ha localizado. */
   id: string
   source: DataSource
   title: string
@@ -39,6 +47,8 @@ export interface Album {
   releaseCount?: number
   /** Etiquetas de la comunidad de MusicBrainz, ordenadas por votos. No son géneros verificados. */
   tags?: string[]
+  /** Puestos en las listas anuales de Billboard, por año. */
+  charts?: ChartPosition[]
 }
 
 /** Una edición concreta de un disco (país, fecha, formato, sello). */
