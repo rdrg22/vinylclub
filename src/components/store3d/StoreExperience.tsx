@@ -3,7 +3,7 @@
  * entrada (como un juego): la tienda se ve detrás, se reponen las baldas (atlas de
  * portadas) y al pulsar «Entrar» la cámara cruza la puerta.
  */
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useThree } from '@react-three/fiber'
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { Link } from 'react-router-dom'
 import * as THREE from 'three'
@@ -39,6 +39,23 @@ import { StoreScene } from './StoreScene'
 import { fontsReady, type BackData } from './textures'
 
 const FOV = 62
+/**
+ * Campo de visión vertical según la forma de la pantalla: en vertical (móvil) se abre
+ * más para que quepa más tienda a lo ancho; en apaisado, el de siempre.
+ */
+const fovFor = (aspect: number) => (aspect < 0.7 ? 80 : aspect < 1 ? 70 : FOV)
+
+/** Ajusta el campo de visión de la cámara cuando cambia el tamaño de la ventana. */
+function ResponsiveFov() {
+  const camera = useThree((state) => state.camera)
+  const size = useThree((state) => state.size)
+  useEffect(() => {
+    if (!(camera instanceof THREE.PerspectiveCamera)) return
+    camera.fov = fovFor(size.width / Math.max(1, size.height))
+    camera.updateProjectionMatrix()
+  }, [camera, size])
+  return null
+}
 /** Sitio «virtual» tras entrar: unos pasos dentro, sin marca propia. */
 const ARRIVAL = 'llegada'
 /** No más lejos que el borde de los muebles de enfrente. */
@@ -391,7 +408,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   const viewX = useCallback((unit: UnitLayout) => {
     const el = wrapperRef.current
     const aspect = el ? el.clientWidth / Math.max(1, el.clientHeight) : 16 / 9
-    const halfHFov = Math.atan(Math.tan((FOV * Math.PI) / 360) * aspect)
+    const halfHFov = Math.atan(Math.tan((fovFor(aspect) * Math.PI) / 360) * aspect)
     const distance = Math.min(MAX_VIEW_DISTANCE, Math.max(2.6, (UNIT_WIDTH / 2 + 0.4) / Math.tan(halfHFov)))
     return unit.center[0] + (unit.side === 'left' ? distance : -distance)
   }, [])
@@ -443,6 +460,8 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
 
   const chip = 'label-mono rounded px-3 py-2 whitespace-nowrap backdrop-blur-sm transition-colors'
   const chipIdle = 'bg-[#1b130c]/75 text-[#f3e4c3] hover:bg-[#3e2716]'
+  // Botones del menú de arriba: en el móvil, cuadrados de 40 px (cómodos para el dedo).
+  const menuChip = 'flex min-h-10 min-w-10 items-center justify-center gap-1 max-sm:px-2.5'
   const total = decadeUnits.length
 
   return (
@@ -515,6 +534,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
           )}
           <CameraEffects quality={quality} />
           <AdaptivePerformance />
+          <ResponsiveFov />
           {debug && <StatsProbe onStats={setStats} />}
           </Suspense>
         </Canvas>
@@ -631,42 +651,50 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
         <Link
           to="/"
           onClick={() => goTo(null)}
-          className="pointer-events-auto flex items-center gap-2 rounded bg-[#1b130c]/70 px-3 py-2 text-[#f3e4c3] backdrop-blur-sm"
+          className="pointer-events-auto flex shrink-0 items-center gap-2 rounded bg-[#1b130c]/70 px-2.5 py-2 text-[#f3e4c3] backdrop-blur-sm sm:px-3"
         >
           <span aria-hidden className="vinyl block size-5" />
-          <span className="font-display text-lg leading-none font-semibold">
+          <span className="font-display text-base leading-none font-semibold whitespace-nowrap sm:text-lg">
             Vinyl <em className="font-normal">Club</em>
           </span>
         </Link>
-        <nav aria-label="Tienda" className="pointer-events-auto flex gap-1.5">
-          <button type="button" onClick={() => setOpenWindow('search')} disabled={!!held} className={cn(chip, chipIdle)}>
-            <span aria-hidden>⌕</span> Buscar
+        {/* En el móvil solo iconos (con su nombre para lectores de pantalla); «Entrar» mantiene el texto. */}
+        <nav aria-label="Tienda" className="pointer-events-auto flex min-w-0 gap-1.5">
+          <button type="button" onClick={() => setOpenWindow('search')} disabled={!!held} aria-label="Buscar" className={cn(chip, chipIdle, menuChip)}>
+            <span aria-hidden className="text-base leading-none sm:text-sm">⌕</span>
+            <span className="hidden sm:inline"> Buscar</span>
           </button>
-          <button type="button" onClick={() => setOpenWindow('favorites')} disabled={!!held} className={cn(chip, chipIdle)}>
-            <span aria-hidden className="text-[#f2b01e]">★</span> Favoritos
+          <button type="button" onClick={() => setOpenWindow('favorites')} disabled={!!held} aria-label="Favoritos" className={cn(chip, chipIdle, menuChip)}>
+            <span aria-hidden className="text-[#f2b01e]">★</span>
+            <span className="hidden sm:inline"> Favoritos</span>
             {favorites.length > 0 && <span className="ml-1 rounded-full bg-signal px-1.5 text-paper">{favorites.length}</span>}
           </button>
           <button
             type="button"
             onClick={() => setOpenWindow('account')}
             disabled={!!held}
-            className={cn(chip, auth.state.status === 'signed-out' ? 'bg-signal text-paper hover:bg-signal-deep' : chipIdle)}
+            aria-label={auth.state.status === 'signed-out' ? 'Entrar' : 'Tu perfil'}
+            className={cn(chip, menuChip, auth.state.status === 'signed-out' ? 'bg-signal text-paper hover:bg-signal-deep' : chipIdle)}
           >
             {auth.state.status === 'signed-in' ? (
               <span className="flex items-center gap-2">
                 <span className="block size-5 shrink-0 overflow-hidden rounded-full bg-signal text-[0.65rem] text-paper">
                   <ProfileAvatar user={auth.state.user} />
                 </span>
-                <span className="max-w-32 truncate normal-case">{displayName(auth.state.user)}</span>
+                <span className="hidden max-w-32 truncate normal-case sm:inline">{displayName(auth.state.user)}</span>
               </span>
             ) : auth.state.status === 'signed-out' ? (
               'Entrar'
             ) : (
-              'Tu perfil'
+              <>
+                <span aria-hidden className="sm:hidden">♪</span>
+                <span className="hidden sm:inline">Tu perfil</span>
+              </>
             )}
           </button>
-          <button type="button" onClick={() => setOpenWindow('settings')} disabled={!!held} className={cn(chip, chipIdle)}>
-            <span aria-hidden>⚙</span> Ajustes
+          <button type="button" onClick={() => setOpenWindow('settings')} disabled={!!held} aria-label="Ajustes" className={cn(chip, chipIdle, menuChip)}>
+            <span aria-hidden className="text-base leading-none sm:text-sm">⚙</span>
+            <span className="hidden sm:inline"> Ajustes</span>
           </button>
         </nav>
       </div>
