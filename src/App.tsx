@@ -1,7 +1,9 @@
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
 import { RootLayout } from '@/components/layout/RootLayout'
 import { ArtistPage } from '@/pages/ArtistPage'
+import { CollectionPage } from '@/pages/CollectionPage'
+import { LoginPage } from '@/pages/LoginPage'
 import { ShelvesPage } from '@/pages/ShelvesPage'
 import { StorePage } from '@/pages/StorePage'
 import { FavoritesPage } from '@/pages/FavoritesPage'
@@ -23,8 +25,8 @@ const router = createBrowserRouter([
           { path: 'artista/:artistId', element: <ArtistPage /> },
           { path: 'estanteria/:shelfId', element: <ShelfDetailPage /> },
           { path: 'favoritos', element: <FavoritesPage /> },
-          // La antigua «Colección» se convirtió en «Favoritos».
-          { path: 'coleccion', element: <Navigate to="/favoritos" replace /> },
+          { path: 'entrar', element: <LoginPage /> },
+          { path: 'coleccion', element: <CollectionPage /> },
           { path: '*', element: <NotFoundPage /> },
         ],
       },

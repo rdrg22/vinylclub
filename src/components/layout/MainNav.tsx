@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '@/components/auth/authContext'
 import { useFavorites } from '@/components/favorites/favoritesContext'
 import { cn } from '@/utils/cn'
 
@@ -8,17 +9,21 @@ const ITEMS = [
   { to: '/estanterias', label: 'Estanterías', end: false, desktopOnly: false },
   { to: '/buscar', label: 'Buscar', end: false, desktopOnly: true },
   { to: '/favoritos', label: 'Favoritos', end: false, desktopOnly: false },
+  { to: '/coleccion', label: 'Mi colección', end: false, desktopOnly: false },
 ] as const
 
 export function MainNav({ className }: { className?: string }) {
   const { albums: favorites } = useFavorites()
+  const { state } = useAuth()
+  // Sin sesión, «Mi colección» lleva a entrar.
+  const signedOut = state.status === 'signed-out'
   return (
     <nav aria-label="Principal" className={className}>
       <ul className="flex items-center gap-5 sm:gap-7">
         {ITEMS.map((item) => (
           <li key={item.to} className={item.desktopOnly ? 'hidden md:block' : undefined}>
             <NavLink
-              to={item.to}
+              to={item.to === '/coleccion' && signedOut ? '/entrar' : item.to}
               end={item.end}
               className={({ isActive }) =>
                 cn(
@@ -28,7 +33,7 @@ export function MainNav({ className }: { className?: string }) {
                 )
               }
             >
-              {item.label}
+              {item.to === '/coleccion' && signedOut ? 'Entrar' : item.label}
               {item.to === '/favoritos' && favorites.length > 0 && (
                 <span className="ml-1.5 rounded-full bg-signal px-1.5 py-px text-[0.6rem] text-paper">{favorites.length}</span>
               )}

@@ -42,8 +42,15 @@ export interface YearTag {
   y: number
 }
 
+/** Clave del mueble con la colección del visitante (no es una década). */
+export const COLLECTION_KEY = 'coleccion'
+/** Huecos del mueble de colección: cinco baldas de 20 discos. */
+export const COLLECTION_CAPACITY = ROW_Y.length * PER_HALF * 2
+/** Orden de llenado de las baldas: ojos, debajo, arriba y las de abajo. */
+const COLLECTION_ROW_ORDER = [1, 2, 0, 3, 4] as const
+
 export interface UnitLayout {
-  decade: Decade
+  decade: Decade | typeof COLLECTION_KEY
   label: string
   side: 'left' | 'right'
   /** Centro del mueble en el mundo (a ras de suelo). */
@@ -63,13 +70,27 @@ export interface DecadeInput {
   albums: Array<{ album: Album; year: number; rank: number }>
 }
 
+/** Sitio del mueble número `index`: alternando paredes y avanzando por el pasillo. */
+function placement(index: number) {
+  const side: UnitLayout['side'] = index % 2 === 0 ? 'left' : 'right'
+  const z = FIRST_UNIT_Z - Math.floor(index / 2) * UNIT_PITCH_Z
+  const x = side === 'left' ? -WALL_X : WALL_X
+  // Izquierda: mira a +X (giro +90°). Derecha: mira a −X (giro −90°).
+  const rotationY = side === 'left' ? Math.PI / 2 : -Math.PI / 2
+  return {
+    side,
+    center: [x, 0, z] as [number, number, number],
+    rotationY,
+    viewpoint: {
+      position: [x + (side === 'left' ? VIEW_DISTANCE : -VIEW_DISTANCE), EYE_HEIGHT - 0.1, z] as [number, number, number],
+      // Con la cámara mirando a −Z en yaw 0, mirar a −X es +90°: coincide con el giro del mueble.
+      yaw: rotationY,
+    },
+  }
+}
+
 export function buildStoreLayout(decades: DecadeInput[]): UnitLayout[] {
   return decades.map((input, index) => {
-    const side = index % 2 === 0 ? 'left' : 'right'
-    const z = FIRST_UNIT_Z - Math.floor(index / 2) * UNIT_PITCH_Z
-    const x = side === 'left' ? -WALL_X : WALL_X
-    // Izquierda: mira a +X (giro +90°). Derecha: mira a −X (giro −90°).
-    const rotationY = side === 'left' ? Math.PI / 2 : -Math.PI / 2
 
     const years = [...new Set(input.albums.map((a) => a.year))].sort((a, b) => a - b).slice(0, ROW_Y.length * 2)
     const rows = Math.ceil(years.length / 2)
@@ -89,21 +110,26 @@ export function buildStoreLayout(decades: DecadeInput[]): UnitLayout[] {
         .forEach(({ album }, k) => slots.push({ album, x: left + k * COVER_PITCH + COVER_PITCH / 2, y }))
     })
 
-    return {
-      decade: input.decade,
-      label: input.label,
-      side,
-      center: [x, 0, z],
-      rotationY,
-      slots,
-      yearTags,
-      viewpoint: {
-        position: [x + (side === 'left' ? VIEW_DISTANCE : -VIEW_DISTANCE), EYE_HEIGHT - 0.1, z],
-        // Con la cámara mirando a −Z en yaw 0, mirar a −X es +90°: coincide con el giro del mueble.
-        yaw: rotationY,
-      },
-    }
+    return { decade: input.decade, label: input.label, ...placement(index), slots, yearTags }
   })
+}
+
+/**
+ * Mueble «Colección» con los discos del visitante, a continuación de las décadas
+ * (al fondo, junto al DJ). Siempre existe, aunque esté vacío, para que la tienda no
+ * cambie de forma al entrar o salir de la cuenta. Se llena empezando por la balda a la
+ * altura de los ojos, con los discos centrados, 20 por balda.
+ */
+export function buildCollectionUnit(index: number, albums: Album[]): UnitLayout {
+  const perRow = PER_HALF * 2
+  const list = albums.slice(0, COLLECTION_CAPACITY)
+  const slots = list.map((album, i) => {
+    const row = Math.floor(i / perRow)
+    const k = i % perRow
+    const inRow = Math.min(perRow, list.length - row * perRow)
+    return { album, x: (k - (inRow - 1) / 2) * COVER_PITCH, y: ROW_Y[COLLECTION_ROW_ORDER[row]!]! }
+  })
+  return { decade: COLLECTION_KEY, label: 'Colección', ...placement(index), slots, yearTags: [] }
 }
 
 /** Límites del pasillo por los que se puede caminar. */

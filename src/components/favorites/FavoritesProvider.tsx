@@ -5,7 +5,7 @@ import { FavoritesContext } from './favoritesContext'
 /**
  * Favoritos temporales: viven en memoria mientras la página está abierta (sobreviven
  * a la navegación entre secciones, no a una recarga). Cuando haya cuentas de usuario
- * se guardarán en Supabase.
+ * se guardarán en Firebase.
  */
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [albums, setAlbums] = useState<Album[]>([])

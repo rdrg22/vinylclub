@@ -39,7 +39,45 @@ colores, casete con lápiz, consola portátil y cascos.
 ## Favoritos
 
 La estrella de cada disco lo guarda en `/favoritos`. De momento son temporales: viven en memoria y se borran al recargar
-la página (`src/components/favorites/`). Con cuentas de usuario (Supabase) pasarán a guardarse.
+la página (`src/components/favorites/`).
+
+## Cuentas y «Mi colección»
+
+Con una cuenta (Firebase Auth, email y contraseña) cada visitante registra los discos que tiene en casa en
+`/coleccion`:
+
+- **Por código de barras**: se escribe el número de la funda (se aceptan espacios y guiones; UPC-A de 12 cifras y
+  EAN-13 se prueban como equivalentes) o se **escanea con la cámara** donde el navegador tiene `BarcodeDetector`
+  (Chrome en Android, sobre todo). La cámara solo funciona en https o en `localhost`.
+- **Por título o artista**: «Pink Floyd The Wall».
+
+En ambos casos se busca en MusicBrainz y el usuario elige su **edición exacta** (los vinilos salen primero). Cada disco
+guardado es un documento `users/{uid}/collection/{MBID de la edición}` en Firestore. Las reglas
+(`firestore.rules`) solo dejan a cada usuario leer, añadir y quitar lo suyo, validan los campos y no permiten la misma
+edición dos veces.
+
+En la tienda 3D, al fondo junto al DJ, aparece el mueble **«Colección»** con tus discos (portadas reales de Cover Art
+Archive): se cogen, se les da la vuelta y suena su demo como en el resto de la tienda.
+
+### Configurar Firebase
+
+1. En la [consola de Firebase](https://console.firebase.google.com) crea un proyecto y, en *Configuración del
+   proyecto → Tus apps*, añade una **app web** (`</>`). Copia los valores de `firebaseConfig`.
+2. **Authentication → Comenzar → Método de acceso → Correo electrónico/contraseña → Habilitar.**
+   `localhost` ya está en *Settings → Dominios autorizados*; si publicas la web, añade su dominio ahí.
+3. **Firestore Database → Crear base de datos** (modo producción, ubicación `eur3` u otra cercana).
+   En la pestaña **Reglas**, pega el contenido de `firestore.rules` y pulsa **Publicar**.
+4. Crea `.env.local` en la raíz (no se sube a git) con los valores del paso 1:
+
+   ```
+   VITE_FIREBASE_API_KEY=...
+   VITE_FIREBASE_AUTH_DOMAIN=tu-proyecto.firebaseapp.com
+   VITE_FIREBASE_PROJECT_ID=tu-proyecto
+   VITE_FIREBASE_APP_ID=1:...:web:...
+   ```
+
+   Son identificadores públicos de la app web, no secretos: lo que protege los datos son las reglas de Firestore.
+5. Reinicia `npm run dev`.
 
 - three.js se descarga aparte (carga diferida) y la escena se pausa fuera de pantalla.
 - Las portadas de la tienda salen de 8 imágenes (una por década, `public/atlas/`) que se generan con
@@ -88,10 +126,10 @@ node scripts/resolve-chart-albums.mjs --retry-unmatched   # reintenta los discos
   igualmente, con su título y artista de la lista, placeholder y la nota «No localizado en MusicBrainz».
 - Ambos scripts guardan su progreso: si se interrumpen, al relanzarlos continúan.
 
-## Sin Supabase
+## Sin Firebase (modo demostración)
 
-Si `VITE_SUPABASE_URL` o `VITE_SUPABASE_ANON_KEY` están vacías, la tienda funciona igual pero sin cuentas: favoritos y
-colección quedan pendientes y un aviso lo indica.
+Si falta alguna variable `VITE_FIREBASE_*`, la tienda funciona igual pero sin cuentas: un aviso lo indica, los favoritos
+se borran al recargar y «Mi colección» se guarda solo en este navegador (`localStorage`).
 
 ## MusicBrainz y Cover Art Archive
 

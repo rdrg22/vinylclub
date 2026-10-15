@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import type { Album } from '@/types/music'
 import {
   backWallZ,
+  COLLECTION_KEY,
   COVER_SIZE,
   ROW_Y,
   UNIT_WIDTH,
@@ -21,7 +22,8 @@ import type { ScreenState } from './jukeboxScreen'
 import { InteriorEnvironment } from './Lighting'
 import type { Quality } from './quality'
 import { SurfacesProvider, useSurface } from './surfaces'
-import { placeholderTexture, signTexture, sleeveFor, storeSignTexture, yearTagTexture } from './textures'
+import { coverUrlFor } from '@/services/coverArt'
+import { labelCardTexture, loadRemoteTexture, placeholderTexture, signTexture, sleeveFor, storeSignTexture, yearTagTexture } from './textures'
 
 const CEILING = 3.3
 
@@ -61,7 +63,7 @@ export function StoreScene(props: SceneProps) {
       <hemisphereLight args={['#ffe2b8', '#2a1a0e', 0.35]} />
       <ambientLight intensity={0.08} color="#ffd9a8" />
       <CameraRig nav={nav} bounds={bounds} reducedMotion={reducedMotion} />
-      <StaticShadows version={`${Object.keys(atlases).length}|${takenIds.join(',')}`} />
+      <StaticShadows version={`${Object.keys(atlases).length}|${takenIds.join(',')}|${units.at(-1)?.slots.length ?? 0}`} />
       <Room units={units} quality={props.quality} />
       {units.map((unit) => (
         <ShelfUnit key={unit.decade} unit={unit} atlas={atlases[unit.decade] ?? null} takenIds={takenIds} onHover={onHover} onSelect={onSelect} />
@@ -287,6 +289,7 @@ function Room({ units, quality }: { units: UnitLayout[]; quality: Quality }) {
 
 function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect }: { unit: UnitLayout; atlas: THREE.Texture | null } & Pick<SceneProps, 'onHover' | 'onSelect' | 'takenIds'>) {
   const surface = useSurface()
+  const isCollection = unit.decade === COLLECTION_KEY
   // Con atlas: todas las portadas en una sola instancia. Sueltas solo las que no tienen recorte
   // (o todas, con su color de funda, mientras el atlas carga).
   const looseSlots = useMemo(() => (atlas ? unit.slots.filter((s) => !atlasUV(s.album.id)) : unit.slots), [atlas, unit.slots])
@@ -296,10 +299,18 @@ function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect }: { unit: UnitLay
   const ledge = surface('dark_wood', { repeat: [UNIT_WIDTH / 1.4, 0.25] })
 
   const sign = useMemo(() => {
+    if (isCollection) {
+      const n = unit.slots.length
+      return signTexture(unit.label, n === 0 ? 'Tus discos, aquí' : n === 1 ? '1 disco · Tu colección' : `${n} discos · Tu colección`)
+    }
     const years = unit.yearTags.map((t) => t.year)
     const span = years.length ? `${Math.min(...years)}–${Math.max(...years)} · Top 10 Billboard` : ''
     return signTexture(unit.label, span)
-  }, [unit])
+  }, [unit, isCollection])
+  const emptyCard = useMemo(
+    () => (isCollection && unit.slots.length === 0 ? labelCardTexture('Tu colección está vacía', 'Registra tus vinilos en «Mi colección»') : null),
+    [isCollection, unit.slots.length],
+  )
 
   return (
     <group position={unit.center} rotation-y={unit.rotationY}>
@@ -342,8 +353,14 @@ function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect }: { unit: UnitLay
       ))}
       {atlas && <CoverInstances slots={unit.slots} atlas={atlas} takenIds={takenIds} onHover={onHover} onSelect={onSelect} />}
       {looseSlots.map((slot) => (
-        <Cover key={slot.album.id} slot={slot} hidden={takenIds.includes(slot.album.id)} onHover={onHover} onSelect={onSelect} />
+        <Cover key={slot.album.id} slot={slot} remote={isCollection} hidden={takenIds.includes(slot.album.id)} onHover={onHover} onSelect={onSelect} />
       ))}
+      {emptyCard && (
+        <mesh position={[0, ROW_Y[2], 0.1]} rotation-x={-0.1}>
+          <planeGeometry args={[0.9, 0.28]} />
+          <meshStandardMaterial map={emptyCard} roughness={0.9} />
+        </mesh>
+      )}
     </group>
   )
 }
@@ -363,13 +380,38 @@ const plainCoverGeometry = new THREE.PlaneGeometry(COVER_SIZE, COVER_SIZE)
 interface CoverProps extends Pick<SceneProps, 'onHover' | 'onSelect'> {
   slot: CoverSlot
   hidden: boolean
+  /** Sin hueco en los atlas (discos de la colección): portada descargada del Cover Art Archive. */
+  remote?: boolean
+}
+
+/** Portada pequeña del Cover Art Archive como textura; null mientras carga o si no hay. */
+function useRemoteCover(album: Album, enabled: boolean) {
+  const [texture, setTexture] = useState<THREE.Texture | null>(null)
+  useEffect(() => {
+    const url = enabled ? coverUrlFor(album, 250) : undefined
+    if (!url) return
+    let alive = true
+    let loaded: THREE.Texture | null = null
+    loadRemoteTexture(url).then((t) => {
+      loaded = t
+      if (alive) setTexture(t)
+      else t?.dispose()
+    })
+    return () => {
+      alive = false
+      loaded?.dispose()
+      setTexture(null)
+    }
+  }, [album, enabled])
+  return texture
 }
 
 /** Funda suelta: discos sin portada (tipográfica) o, mientras carga el atlas, color de funda. */
-function Cover({ slot, hidden, onHover, onSelect }: CoverProps) {
+function Cover({ slot, hidden, remote = false, onHover, onSelect }: CoverProps) {
   const { album } = slot
   const [hovered, setHovered] = useState(false)
   const hasCover = useMemo(() => atlasUV(album.id) !== null, [album.id])
+  const photo = useRemoteCover(album, remote && !hasCover)
   const placeholder = useMemo(() => (hasCover ? null : placeholderTexture(album)), [hasCover, album])
 
   return (
@@ -401,8 +443,10 @@ function Cover({ slot, hidden, onHover, onSelect }: CoverProps) {
         onSelect(album, e.object)
       }}
     >
-      {placeholder ? (
-        <meshStandardMaterial map={placeholder} roughness={0.42} />
+      {photo ? (
+        <meshStandardMaterial key="photo" map={photo} roughness={0.38} envMapIntensity={0.8} />
+      ) : placeholder ? (
+        <meshStandardMaterial key="placeholder" map={placeholder} roughness={0.42} />
       ) : (
         // Mientras llega el atlas: color de funda.
         <meshStandardMaterial color={sleeveFor(album).bg} roughness={0.55} />

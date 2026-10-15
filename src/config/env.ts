@@ -1,10 +1,15 @@
 const clean = (value: string | undefined) => value?.trim() || undefined
 
 export const env = {
-  supabaseUrl: clean(import.meta.env.VITE_SUPABASE_URL),
-  supabaseAnonKey: clean(import.meta.env.VITE_SUPABASE_ANON_KEY),
+  /** Configuración web de Firebase. Son identificadores públicos: la seguridad la ponen las reglas de Firestore. */
+  firebase: {
+    apiKey: clean(import.meta.env.VITE_FIREBASE_API_KEY),
+    authDomain: clean(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN),
+    projectId: clean(import.meta.env.VITE_FIREBASE_PROJECT_ID),
+    appId: clean(import.meta.env.VITE_FIREBASE_APP_ID),
+  },
   musicBrainzContact: clean(import.meta.env.VITE_MUSICBRAINZ_CONTACT),
 } as const
 
-/** Sin credenciales de Supabase la app funciona con datos de ejemplo locales. */
-export const isDemoMode = !(env.supabaseUrl && env.supabaseAnonKey)
+/** Sin la configuración de Firebase la app funciona sin cuentas (modo demostración). */
+export const isDemoMode = !(env.firebase.apiKey && env.firebase.authDomain && env.firebase.projectId && env.firebase.appId)

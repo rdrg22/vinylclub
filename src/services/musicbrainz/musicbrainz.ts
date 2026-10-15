@@ -108,3 +108,29 @@ export async function searchShelfAlbums(filters: ShelfFilters, page = 1, signal?
   const res = await mbGet<MbSearchResponse>('release-group', { query: query.query, ...params }, signal)
   return { page: toPage(uniqueById((res['release-groups'] ?? []).map((g) => toAlbum(g))), res, params.limit), query }
 }
+
+// ---------------------------------------------------------------- colección
+
+/** Los vinilos primero; dentro de cada grupo se respeta el orden de relevancia de MusicBrainz. */
+const vinylFirst = (releases: Release[]) =>
+  releases
+    .map((release, i) => ({ release, i, vinyl: release.formats.some((f) => /vinyl/i.test(f)) }))
+    .sort((a, b) => Number(b.vinyl) - Number(a.vinyl) || a.i - b.i)
+    .map((x) => x.release)
+
+/**
+ * Ediciones con ese código de barras. Recibe las variantes ya normalizadas (solo cifras),
+ * así que no hay texto del usuario en la consulta Lucene.
+ */
+export async function searchReleasesByBarcode(variants: string[], signal?: AbortSignal): Promise<Release[]> {
+  const digits = variants.filter((v) => /^\d+$/.test(v))
+  if (digits.length === 0) return []
+  const res = await mbGet<MbSearchResponse>('release', { query: `barcode:(${digits.join(' OR ')})`, limit: 25 }, signal)
+  return vinylFirst(uniqueById((res.releases ?? []).map(toRelease)))
+}
+
+/** Ediciones por título y/o artista («pink floyd the wall»), con los vinilos primero. */
+export async function searchReleasesForCollection(text: string, signal?: AbortSignal): Promise<Release[]> {
+  const res = await mbGet<MbSearchResponse>('release', { query: text, dismax: 'true', limit: 40 }, signal)
+  return vinylFirst(uniqueById((res.releases ?? []).map(toRelease)))
+}

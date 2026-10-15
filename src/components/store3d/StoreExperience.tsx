@@ -8,6 +8,9 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type Point
 import { Link } from 'react-router-dom'
 import * as THREE from 'three'
 import { useAlbumDetail } from '@/components/album/albumDetailContext'
+import { useAuth } from '@/components/auth/authContext'
+import { useCollection } from '@/components/collection/collectionContext'
+import { albumOf } from '@/services/collection/collection'
 import { useFavorites } from '@/components/favorites/favoritesContext'
 import { usePreviewPlayer } from '@/components/player/previewPlayerContext'
 import { useAsyncResource } from '@/hooks/useAsyncResource'
@@ -16,7 +19,7 @@ import type { Album } from '@/types/music'
 import { cn } from '@/utils/cn'
 import { loadAtlas } from './atlas'
 import { buildDecorLayout } from './decorLayout'
-import { buildStoreLayout, ENTER, START, UNIT_WIDTH, WALL_X, type DecadeInput, type UnitLayout } from './layout'
+import { buildCollectionUnit, buildStoreLayout, ENTER, START, UNIT_WIDTH, WALL_X, type DecadeInput, type UnitLayout } from './layout'
 import { createNavState, LOOK_SENSITIVITY, MAX_PITCH, NAV_KEYS } from './navigation'
 import { HeldPanel } from './HeldPanel'
 import { HeldRecord, type HeldState, type HoldControl } from './HeldRecord'
@@ -79,17 +82,29 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   const { openAlbum } = useAlbumDetail()
   const { state: player, toggle: togglePreview, audio } = usePreviewPlayer()
   const { albums: favorites } = useFavorites()
+  const auth = useAuth()
+  const { items: owned } = useCollection()
   const wrapperRef = useRef<HTMLDivElement>(null)
   const [entered, setEntered] = useState(readEntered)
   const nav = useRef(createNavState(!entered)).current
-  const units = useMemo(() => buildStoreLayout(decades), [decades])
+  const decadeUnits = useMemo(() => buildStoreLayout(decades), [decades])
+  // Tus discos (una vez cada uno aunque tengas varias ediciones), en el mueble del fondo.
+  const ownedAlbums = useMemo(() => {
+    const seen = new Set<string>()
+    return owned.map(albumOf).filter((a) => !seen.has(a.id) && seen.add(a.id))
+  }, [owned])
+  const units = useMemo(
+    () => [...decadeUnits, buildCollectionUnit(decadeUnits.length, ownedAlbums)],
+    [decadeUnits, ownedAlbums],
+  )
   const decor = useMemo(
     () => buildDecorLayout(units, Object.fromEntries(decades.map((d) => [d.decade, d.albums.map((a) => a.album)]))),
     [units, decades],
   )
   const numberOnes = useMemo(() => decor.crates.flatMap((c) => c.albums), [decor])
   const [hint, setHint] = useState<string | null>(null)
-  const { atlases, loaded } = useAtlases(units)
+  // Los atlas son por década: no se recargan al cambiar la colección.
+  const { atlases, loaded } = useAtlases(decadeUnits)
   const [hovered, setHovered] = useState<Album | null>(null)
   const [quality, setQuality] = useState<Quality>(detectQuality)
   const [debug] = useState(debugEnabled)
@@ -400,7 +415,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
 
   const chip = 'label-mono rounded px-3 py-2 whitespace-nowrap backdrop-blur-sm transition-colors'
   const chipIdle = 'bg-[#1b130c]/75 text-[#f3e4c3] hover:bg-[#3e2716]'
-  const total = units.length
+  const total = decadeUnits.length
 
   return (
     <div
@@ -563,6 +578,10 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
           </Link>
           <Link to="/estanterias" className={cn(chip, chipIdle)}>
             Lista
+          </Link>
+          <Link to={auth.state.status === 'signed-out' ? '/entrar' : '/coleccion'} className={cn(chip, chipIdle)}>
+            {auth.state.status === 'signed-out' ? 'Entrar' : 'Mi colección'}
+            {owned.length > 0 && <span className="ml-1 rounded-full bg-[#f3e4c3] px-1.5 text-[#1b130c]">{owned.length}</span>}
           </Link>
           <Link to="/favoritos" className={cn(chip, chipIdle)}>
             <span aria-hidden className="text-[#f2b01e]">★</span> Favoritos
