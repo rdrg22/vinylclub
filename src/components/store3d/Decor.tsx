@@ -8,6 +8,7 @@ import * as THREE from 'three'
 import type { Album } from '@/types/music'
 import { atlasUV, coverGeometry } from './atlas'
 import { CounterToys } from './CounterToys'
+import { DjAvatar } from './DjAvatar'
 import { useSurface } from './surfaces'
 import { COUNTER, PLATTER_Y, type CrateSpot, type DecorLayout, type PosterSpot } from './decorLayout'
 import { createScreenTexture, drawScreen, marqueeSignTexture, type ScreenState } from './jukeboxScreen'
@@ -101,6 +102,15 @@ export function CounterArea({ layout, record, playing, holding, reducedMotion, o
         onClick={onTurntable}
         onHint={onHint}
         hint={holding ? 'Pon el disco en el tocadiscos' : record ? `Tocadiscos: «${record.title}»` : 'Tocadiscos: coge un disco y ponlo aquí'}
+      />
+
+      {/* El DJ, detrás del plato */}
+      <DjAvatar
+        position={[turntable.x - 0.2, 0, counter.z - 0.55]}
+        platter={[turntable.x, PLATTER_Y, turntable.z]}
+        playing={playing}
+        reducedMotion={reducedMotion}
+        onHint={onHint}
       />
 
       <CounterToys x={counter.x} z={counter.z} playing={playing} reducedMotion={reducedMotion} onHint={onHint} />
@@ -473,7 +483,6 @@ export function NeonSign({ z }: { z: number }) {
         <planeGeometry args={[1.8, 0.45]} />
         <meshBasicMaterial map={texture} transparent depthWrite={false} toneMapped={false} />
       </mesh>
-      <pointLight position={[0, 0, 0.4]} color="#ff3f6c" intensity={1.4} distance={3} decay={1.8} />
     </group>
   )
 }

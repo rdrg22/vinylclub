@@ -31,7 +31,7 @@ export function InteriorEnvironment({ intensity = 0.45 }: { intensity?: number }
 export function CameraEffects({ quality }: { quality: Quality }) {
   if (quality !== 'high') return null
   return (
-    <EffectComposer multisampling={4}>
+    <EffectComposer multisampling={2}>
       <N8AO aoRadius={0.55} distanceFalloff={0.8} intensity={2.4} color="#1a0f08" halfRes quality="medium" />
       <Bloom mipmapBlur luminanceThreshold={0.95} luminanceSmoothing={0.2} intensity={0.75} />
       <Vignette offset={0.32} darkness={0.55} />

@@ -28,6 +28,15 @@ export function detectQuality(): Quality {
   return touchSmall || lowMemory || fewCores || saveData ? 'low' : 'high'
 }
 
+/** El visitante eligió la calidad a mano (entonces no se cambia sola). */
+export function hasSavedQuality() {
+  try {
+    return localStorage.getItem(KEY) !== null
+  } catch {
+    return false
+  }
+}
+
 export function saveQuality(quality: Quality) {
   try {
     localStorage.setItem(KEY, quality)

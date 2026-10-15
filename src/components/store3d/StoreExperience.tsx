@@ -20,8 +20,10 @@ import { buildStoreLayout, ENTER, START, UNIT_WIDTH, WALL_X, type DecadeInput, t
 import { createNavState, LOOK_SENSITIVITY, MAX_PITCH, NAV_KEYS } from './navigation'
 import { HeldPanel } from './HeldPanel'
 import { HeldRecord, type HeldState, type HoldControl } from './HeldRecord'
+import { AdaptivePerformance } from './AdaptivePerformance'
+import { debugEnabled, StatsProbe, type FrameStats } from './DebugStats'
 import { CameraEffects } from './Lighting'
-import { detectQuality, saveQuality, type Quality } from './quality'
+import { detectQuality, hasSavedQuality, saveQuality, type Quality } from './quality'
 import { StoreScene } from './StoreScene'
 import { fontsReady, type BackData } from './textures'
 
@@ -90,9 +92,14 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   const { atlases, loaded } = useAtlases(units)
   const [hovered, setHovered] = useState<Album | null>(null)
   const [quality, setQuality] = useState<Quality>(detectQuality)
+  const [debug] = useState(debugEnabled)
+  const [stats, setStats] = useState<FrameStats | null>(null)
+  // Calidad elegida a mano: se respeta. Detectada sola: puede bajar si el equipo no llega.
+  const [autoQuality, setAutoQuality] = useState(() => !hasSavedQuality())
   const switchQuality = () => {
     const next = quality === 'high' ? 'low' : 'high'
     saveQuality(next)
+    setAutoQuality(false)
     setQuality(next)
   }
   const [fonts, setFonts] = useState(false)
@@ -413,7 +420,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
           // Cambiar de calidad reconstruye el lienzo (sombras y posprocesado se fijan al crearlo).
           key={quality}
           shadows={quality === 'high' ? 'soft' : false}
-          dpr={quality === 'high' ? [1, 1.75] : [1, 1.25]}
+          dpr={quality === 'high' ? [1, 1.5] : [1, 1.25]}
           camera={{ fov: FOV, near: 0.05, far: 60, position: [nav.x, nav.y, nav.z] }}
           gl={{ antialias: quality !== 'high', powerPreference: 'high-performance' }}
           onPointerMissed={() => setHovered(null)}
@@ -456,8 +463,16 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             />
           )}
           <CameraEffects quality={quality} />
+          <AdaptivePerformance onTooSlow={autoQuality && quality === 'high' ? () => setQuality('low') : undefined} />
+          {debug && <StatsProbe onStats={setStats} />}
           </Suspense>
         </Canvas>
+      )}
+
+      {debug && stats && (
+        <pre className="pointer-events-none absolute top-16 left-3 z-40 rounded bg-black/75 p-2 font-mono text-[11px] leading-tight text-lime-300">
+          {`${stats.fps} fps · peor ${stats.frameMs} ms\n${stats.calls} dibujos · ${(stats.triangles / 1000).toFixed(0)}k triáng.\n${stats.lights} luces · ${stats.programs} shaders · ${stats.textures} texturas\ncalidad ${quality}`}
+        </pre>
       )}
 
       {/* ---------- Pantalla de entrada ---------- */}

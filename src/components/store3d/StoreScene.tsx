@@ -1,4 +1,4 @@
-import { useFrame, type ThreeEvent } from '@react-three/fiber'
+import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
 import { useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import type { Album } from '@/types/music'
@@ -13,7 +13,8 @@ import {
   type UnitLayout,
 } from './layout'
 import { stepNavigation, type NavState } from './navigation'
-import { atlasUV, coverGeometry } from './atlas'
+import { atlasUV } from './atlas'
+import { CoverInstances } from './CoverInstances'
 import { CounterArea, Crate, Jukebox, NeonSign, Poster, VinylRug, WallRecords } from './Decor'
 import type { DecorLayout } from './decorLayout'
 import type { ScreenState } from './jukeboxScreen'
@@ -60,6 +61,7 @@ export function StoreScene(props: SceneProps) {
       <hemisphereLight args={['#ffe2b8', '#2a1a0e', 0.35]} />
       <ambientLight intensity={0.08} color="#ffd9a8" />
       <CameraRig nav={nav} bounds={bounds} reducedMotion={reducedMotion} />
+      <StaticShadows version={`${Object.keys(atlases).length}|${takenIds.join(',')}`} />
       <Room units={units} quality={props.quality} />
       {units.map((unit) => (
         <ShelfUnit key={unit.decade} unit={unit} atlas={atlases[unit.decade] ?? null} takenIds={takenIds} onHover={onHover} onSelect={onSelect} />
@@ -93,6 +95,20 @@ export function StoreScene(props: SceneProps) {
       <WallRecords z={backWallZ(units)} />
     </SurfacesProvider>
   )
+}
+
+/**
+ * Las sombras de muebles y discos no cambian de un fotograma a otro: se calculan una vez
+ * y solo se rehacen cuando cambia la escena (llegan portadas, se coge o devuelve un disco).
+ * Ahorra varias pasadas completas de la escena por fotograma.
+ */
+function StaticShadows({ version }: { version: string }) {
+  const gl = useThree((state) => state.gl)
+  useEffect(() => {
+    gl.shadowMap.autoUpdate = false
+    gl.shadowMap.needsUpdate = true
+  }, [gl, version])
+  return null
 }
 
 function CameraRig({ nav, bounds, reducedMotion }: { nav: NavState; bounds: ReturnType<typeof walkBounds>; reducedMotion: boolean }) {
@@ -139,7 +155,6 @@ function PendantLamp({ z, shadows }: { z: number; shadows: boolean }) {
         shadow-bias={-0.0004}
         shadow-normalBias={0.02}
       />
-      <pointLight position={[0, -0.25, 0]} color="#ffcf94" intensity={2.5} distance={6} decay={1.8} />
     </group>
   )
 }
@@ -272,13 +287,9 @@ function Room({ units, quality }: { units: UnitLayout[]; quality: Quality }) {
 
 function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect }: { unit: UnitLayout; atlas: THREE.Texture | null } & Pick<SceneProps, 'onHover' | 'onSelect' | 'takenIds'>) {
   const surface = useSurface()
-  // Un único material para todas las portadas del mueble: una textura, un shader.
-  // Algo satinado: las fundas reflejan las lámparas como el cartón plastificado.
-  const atlasMaterial = useMemo(
-    () => (atlas ? new THREE.MeshStandardMaterial({ map: atlas, roughness: 0.38, envMapIntensity: 0.8 }) : null),
-    [atlas],
-  )
-  useEffect(() => () => atlasMaterial?.dispose(), [atlasMaterial])
+  // Con atlas: todas las portadas en una sola instancia. Sueltas solo las que no tienen recorte
+  // (o todas, con su color de funda, mientras el atlas carga).
+  const looseSlots = useMemo(() => (atlas ? unit.slots.filter((s) => !atlasUV(s.album.id)) : unit.slots), [atlas, unit.slots])
 
   const back = surface('dark_wood', { repeat: [UNIT_WIDTH / 1.6, 2.6 / 1.6], tint: '#8a6a52' })
   const wood = surface('dark_wood', { repeat: [0.4, 2.2] })
@@ -329,8 +340,9 @@ function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect }: { unit: UnitLay
       {unit.yearTags.map((tag) => (
         <YearTag key={tag.year} year={tag.year} x={tag.x} y={tag.y - COVER_SIZE / 2 - 0.035} />
       ))}
-      {unit.slots.map((slot) => (
-        <Cover key={slot.album.id} slot={slot} atlasMaterial={atlasMaterial} hidden={takenIds.includes(slot.album.id)} onHover={onHover} onSelect={onSelect} />
+      {atlas && <CoverInstances slots={unit.slots} atlas={atlas} takenIds={takenIds} onHover={onHover} onSelect={onSelect} />}
+      {looseSlots.map((slot) => (
+        <Cover key={slot.album.id} slot={slot} hidden={takenIds.includes(slot.album.id)} onHover={onHover} onSelect={onSelect} />
       ))}
     </group>
   )
@@ -350,28 +362,21 @@ const plainCoverGeometry = new THREE.PlaneGeometry(COVER_SIZE, COVER_SIZE)
 
 interface CoverProps extends Pick<SceneProps, 'onHover' | 'onSelect'> {
   slot: CoverSlot
-  /** Material compartido del mueble con el atlas de su década (null mientras carga). */
-  atlasMaterial: THREE.Material | null
   hidden: boolean
 }
 
-function Cover({ slot, atlasMaterial, hidden, onHover, onSelect }: CoverProps) {
+/** Funda suelta: discos sin portada (tipográfica) o, mientras carga el atlas, color de funda. */
+function Cover({ slot, hidden, onHover, onSelect }: CoverProps) {
   const { album } = slot
   const [hovered, setHovered] = useState(false)
-  const uv = useMemo(() => atlasUV(album.id), [album.id])
-  const geometry = useMemo(() => (uv ? coverGeometry(COVER_SIZE, uv) : plainCoverGeometry), [uv])
-  useEffect(() => () => {
-    if (geometry !== plainCoverGeometry) geometry.dispose()
-  }, [geometry])
-  // Sin hueco en el atlas (disco sin portada): funda tipográfica propia.
-  const placeholder = useMemo(() => (uv ? null : placeholderTexture(album)), [uv, album])
+  const hasCover = useMemo(() => atlasUV(album.id) !== null, [album.id])
+  const placeholder = useMemo(() => (hasCover ? null : placeholderTexture(album)), [hasCover, album])
 
   return (
     <mesh
       visible={!hidden}
       castShadow
-      geometry={geometry}
-      material={uv && atlasMaterial ? atlasMaterial : undefined}
+      geometry={plainCoverGeometry}
       position={[slot.x, slot.y + (hovered ? 0.04 : 0), hovered ? 0.2 : 0.12]}
       rotation-x={hovered ? 0 : -0.1}
       scale={hovered ? 1.08 : 1}
@@ -396,13 +401,12 @@ function Cover({ slot, atlasMaterial, hidden, onHover, onSelect }: CoverProps) {
         onSelect(album, e.object)
       }}
     >
-      {!(uv && atlasMaterial) &&
-        (placeholder ? (
-          <meshStandardMaterial map={placeholder} roughness={0.42} />
-        ) : (
-          // Mientras llega el atlas: color de funda.
-          <meshStandardMaterial color={sleeveFor(album).bg} roughness={0.55} />
-        ))}
+      {placeholder ? (
+        <meshStandardMaterial map={placeholder} roughness={0.42} />
+      ) : (
+        // Mientras llega el atlas: color de funda.
+        <meshStandardMaterial color={sleeveFor(album).bg} roughness={0.55} />
+      )}
     </mesh>
   )
 }
