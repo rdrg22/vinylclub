@@ -434,6 +434,41 @@ export function floorArrowTexture() {
   })
 }
 
+/** Colores flúor de las pegatinas de precio, como en las tiendas de segunda mano. */
+const STICKER_COLORS = ['#ffd23f', '#ff8a3d', '#ff5d8f', '#b6f05a', '#ffe9a8']
+const stickerCache = new Map<string, THREE.Texture>()
+
+/** Pegatina de precio escrita a rotulador («24 €», «12,50 €»), con el color según el disco. */
+export function priceStickerTexture(text: string, seed: string) {
+  const color = STICKER_COLORS[hashString(seed) % STICKER_COLORS.length]!
+  const key = `${text}|${color}`
+  const cached = stickerCache.get(key)
+  if (cached) return cached
+  const texture = canvasTexture(256, 160, (ctx) => {
+    ctx.beginPath()
+    ctx.roundRect(8, 8, 240, 144, 26)
+    ctx.fillStyle = color
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.35)'
+    ctx.shadowBlur = 6
+    ctx.fill()
+    ctx.shadowBlur = 0
+    ctx.lineWidth = 3
+    ctx.strokeStyle = 'rgba(42, 26, 14, 0.35)'
+    ctx.stroke()
+    ctx.fillStyle = '#2a1a0e'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    let size = 78
+    do {
+      ctx.font = `italic 700 ${size}px Fraunces, Georgia, serif`
+      size -= 4
+    } while (ctx.measureText(text).width > 212 && size > 30)
+    ctx.fillText(text, 128, 84)
+  })
+  stickerCache.set(key, texture)
+  return texture
+}
+
 /** Hueco vacío de la colección: funda punteada con un «+». */
 export function addSlotTexture() {
   return canvasTexture(256, 256, (ctx) => {

@@ -74,6 +74,26 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
           return message(error)
         }
       },
+      async update(id, notes) {
+        if (!store) return 'Entra en tu cuenta.'
+        try {
+          await store.update(id, notes)
+          setItems((prev) =>
+            prev.map((i) =>
+              i.id !== id
+                ? i
+                : {
+                    ...i,
+                    ...(notes.price !== undefined && { price: notes.price ?? undefined }),
+                    ...(notes.note !== undefined && { note: notes.note || undefined }),
+                  },
+            ),
+          )
+          return null
+        } catch (error) {
+          return message(error)
+        }
+      },
       reload: () => setAttempt((n) => n + 1),
     }),
     [status, state.status, items, has, store],

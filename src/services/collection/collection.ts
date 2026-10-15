@@ -5,7 +5,7 @@
  * - Firestore, con cuenta: en la nube, protegido por las reglas (cada uno solo ve lo suyo).
  * - Local, en modo demostración (sin Firebase configurado): solo en este navegador.
  */
-import { collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, type Firestore } from 'firebase/firestore'
+import { collection, deleteDoc, deleteField, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, type Firestore } from 'firebase/firestore'
 import type { Album, Release } from '@/types/music'
 import { yearOf } from '@/services/musicbrainz/normalize'
 
@@ -25,12 +25,38 @@ export interface CollectionItem {
   labels: string[]
   barcode?: string
   addedAt: string
+  /** Lo que le costó al usuario, en euros (opcional, lo escribe él). */
+  price?: number
+  /** Nota libre del usuario (estado, dónde lo compró…). */
+  note?: string
 }
+
+/** Lo que el usuario puede cambiar de un disco de su colección. `null` lo borra. */
+export interface ItemNotes {
+  price?: number | null
+  note?: string | null
+}
+
+export const MAX_PRICE = 100000
+export const MAX_NOTE = 500
+
+/** Precio escrito por el usuario («24,99», «24.99 €», «24») → euros con 2 decimales; null si no vale. */
+export function parsePrice(input: string): number | null {
+  const clean = input.replace(/[€\s]/g, '').replace(',', '.')
+  if (!/^\d+(\.\d{1,2})?$/.test(clean)) return null
+  const value = Math.round(Number(clean) * 100) / 100
+  return value <= MAX_PRICE ? value : null
+}
+
+const euros = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' })
+export const formatPrice = (value: number) => euros.format(value)
 
 export interface CollectionStore {
   list(): Promise<CollectionItem[]>
   add(release: Release): Promise<CollectionItem>
   remove(id: string): Promise<void>
+  /** Cambiar el precio y la nota del usuario. */
+  update(id: string, notes: ItemNotes): Promise<void>
 }
 
 export class CollectionError extends Error {
@@ -88,6 +114,8 @@ export interface CollectionDoc {
   barcode?: string
   /** Timestamp de Firestore (null un instante, mientras el servidor lo pone). */
   addedAt: { toDate(): Date } | null
+  price?: number
+  note?: string
 }
 
 export function fromDoc(id: string, data: CollectionDoc): CollectionItem {
@@ -103,6 +131,8 @@ export function fromDoc(id: string, data: CollectionDoc): CollectionItem {
     labels: data.labels ?? [],
     barcode: data.barcode,
     addedAt: (data.addedAt?.toDate() ?? new Date()).toISOString(),
+    price: typeof data.price === 'number' ? data.price : undefined,
+    note: data.note || undefined,
   }
 }
 
@@ -152,6 +182,16 @@ export function firestoreCollection(db: Firestore, uid: string): CollectionStore
         throw new CollectionError('No se pudo quitar el disco.')
       }
     },
+    async update(id, notes) {
+      const changes: Record<string, unknown> = {}
+      if (notes.price !== undefined) changes.price = notes.price === null ? deleteField() : notes.price
+      if (notes.note !== undefined) changes.note = notes.note ? notes.note.slice(0, MAX_NOTE) : deleteField()
+      try {
+        await updateDoc(doc(items, id), changes)
+      } catch {
+        throw new CollectionError('No se pudo guardar. Inténtalo de nuevo.')
+      }
+    },
   }
 }
 
@@ -191,6 +231,17 @@ export function localCollection(storage: Storage = window.localStorage): Collect
     },
     async remove(id) {
       write(readLocal(storage).filter((i) => i.id !== id))
+    },
+    async update(id, notes) {
+      write(
+        readLocal(storage).map((i) => {
+          if (i.id !== id) return i
+          const next = { ...i }
+          if (notes.price !== undefined) next.price = notes.price ?? undefined
+          if (notes.note !== undefined) next.note = notes.note?.slice(0, MAX_NOTE) || undefined
+          return next
+        }),
+      )
     },
   }
 }

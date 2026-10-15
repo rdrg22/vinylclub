@@ -8,6 +8,7 @@ import { AuthForm } from '@/components/auth/AuthForm'
 import { useCollection } from '@/components/collection/collectionContext'
 import { useFavorites } from '@/components/favorites/favoritesContext'
 import { CHART_ALBUMS } from '@/data/charts/chartCatalog'
+import { formatPrice } from '@/services/collection/collection'
 import { computeCollectionStats, type CollectionStats } from '@/services/collection/stats'
 import { formatPartialDate } from '@/utils/format'
 import { StoreWindow, storeButton, storeButtonPrimary } from './StoreWindow'
@@ -178,7 +179,18 @@ function StatsPanel({ stats }: { stats: CollectionStats }) {
   return (
     <section className="mt-5 border-t border-rule pt-4">
       <h3 className="label-mono text-ink-faint">Tu colección</h3>
-      <dl className="mt-3 flex flex-wrap gap-x-8 gap-y-3">
+      {stats.priced > 0 && (
+        <p className="mt-3 flex flex-wrap items-baseline gap-x-3">
+          <span className="rounded-sm bg-[#ffd23f] px-3 py-1.5 font-display text-2xl leading-none font-semibold text-[#2a1a0e] italic shadow -rotate-1">
+            {formatPrice(stats.spent)}
+          </span>
+          <span className="label-mono text-ink-faint">
+            te ha costado tu colección
+            {stats.priced < stats.total && ` · ${stats.priced} de ${stats.total} discos con precio`}
+          </span>
+        </p>
+      )}
+      <dl className="mt-4 flex flex-wrap gap-x-8 gap-y-3">
         {figures.map((f) => (
           <div key={f.label}>
             <dd className="font-display text-3xl leading-none font-semibold">{f.value}</dd>

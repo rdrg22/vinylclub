@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useCollection } from '@/components/collection/collectionContext'
 import { FavoriteButton } from '@/components/favorites/FavoriteButton'
+import { OwnedNotes } from './OwnedNotes'
 import { useWishlist } from '@/components/favorites/favoritesContext'
 import { ListenLinks } from '@/components/listen/ListenLinks'
 import { PlayButton } from '@/components/player/PlayButton'
@@ -92,6 +93,8 @@ export function HeldPanel({ album, flipped, backNote, onFlip, onReturn, onTurnta
         </div>
         <ListenLinks album={album} tone="dark" className="max-w-full" />
       </div>
+
+      {owned.length > 0 && <OwnedNotes items={owned} />}
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[#e8c98f]/25 pt-3">
         <div className="flex flex-wrap gap-2">

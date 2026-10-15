@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { CollectionItem } from '@/services/collection/collection'
+import type { CollectionItem, ItemNotes } from '@/services/collection/collection'
 import type { Release } from '@/types/music'
 
 export interface CollectionApi {
@@ -12,6 +12,8 @@ export interface CollectionApi {
   /** Devuelve un mensaje de error, o null si se ha añadido. */
   add: (release: Release) => Promise<string | null>
   remove: (id: string) => Promise<string | null>
+  /** Guardar precio y nota de un disco; devuelve un mensaje de error o null. */
+  update: (id: string, notes: ItemNotes) => Promise<string | null>
   reload: () => void
 }
 

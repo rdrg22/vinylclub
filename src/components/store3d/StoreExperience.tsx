@@ -104,6 +104,12 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
     const seen = new Set<string>()
     return owned.map(albumOf).filter((a) => !seen.has(a.id) && seen.add(a.id))
   }, [owned])
+  // Lo que te costó cada disco (la primera edición con precio): pegatina en la estantería.
+  const ownedPrices = useMemo(() => {
+    const prices: Record<string, number> = {}
+    for (const item of owned) if (item.price !== undefined && !(item.albumId in prices)) prices[item.albumId] = item.price
+    return prices
+  }, [owned])
   const units = useMemo(
     () => [
       ...decadeUnits,
@@ -476,6 +482,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             onJukebox={entered && !held ? onJukebox : () => undefined}
             onHint={entered ? setHint : () => undefined}
             onAddRecord={entered && !held ? () => setOpenWindow('add') : () => undefined}
+            prices={ownedPrices}
             spots={spots}
             currentSpot={current ?? ENTRANCE_SPOT}
             spotsDisabled={!entered || !!held || openWindow !== null}

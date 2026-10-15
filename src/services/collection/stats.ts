@@ -20,6 +20,9 @@ export interface CollectionStats {
   /** Discos (no ediciones) que fueron nº 1 / estuvieron en el Top 10 anual de Billboard. */
   numberOnes: number
   inCharts: number
+  /** Suma de lo que el usuario dice que le costaron (euros) y cuántos discos tienen precio. */
+  spent: number
+  priced: number
 }
 
 const isCd = (formats: string[]) => formats.some((f) => /\bcd\b/i.test(f))
@@ -29,6 +32,8 @@ export function computeCollectionStats(items: CollectionItem[], catalog: Readonl
   const decades = new Map<number, number>()
   const artists = new Map<string, { artist: string; count: number }>()
   let undated = 0
+  let spent = 0
+  let priced = 0
   const dated: CollectionItem[] = []
 
   for (const item of items) {
@@ -43,6 +48,11 @@ export function computeCollectionStats(items: CollectionItem[], catalog: Readonl
       dated.push(item)
     } else {
       undated++
+    }
+
+    if (item.price !== undefined) {
+      spent += item.price
+      priced++
     }
 
     const key = item.artist.trim().toLowerCase()
@@ -76,5 +86,8 @@ export function computeCollectionStats(items: CollectionItem[], catalog: Readonl
     newest: dated.at(-1),
     numberOnes,
     inCharts,
+    // Céntimos exactos aunque se sumen decimales.
+    spent: Math.round(spent * 100) / 100,
+    priced,
   }
 }

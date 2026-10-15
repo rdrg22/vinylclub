@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Release } from '@/types/music'
-import { albumOf, fromDoc, isVinyl, itemFromRelease, localCollection, toDocData } from './collection'
+import { albumOf, formatPrice, fromDoc, isVinyl, itemFromRelease, localCollection, parsePrice, toDocData } from './collection'
 
 const release: Release = {
   id: '11111111-1111-1111-1111-111111111111',
@@ -62,5 +62,28 @@ describe('colección', () => {
     await expect(store.add(release)).rejects.toMatchObject({ code: 'duplicate' })
     await store.remove(added.id)
     expect(await store.list()).toEqual([])
+  })
+
+  it('entiende los precios como los escribe la gente', () => {
+    expect(parsePrice('24,99')).toBe(24.99)
+    expect(parsePrice('24.99 €')).toBe(24.99)
+    expect(parsePrice(' 30 ')).toBe(30)
+    expect(parsePrice('12,5')).toBe(12.5)
+    expect(parsePrice('')).toBeNull()
+    expect(parsePrice('-3')).toBeNull()
+    expect(parsePrice('12,999')).toBeNull()
+    expect(parsePrice('mucho')).toBeNull()
+    expect(formatPrice(24.99).replace(/\s/g, ' ')).toBe('24,99 €')
+  })
+
+  it('almacén local: guarda y borra precio y nota', async () => {
+    const store = localCollection(memoryStorage())
+    const added = await store.add(release)
+    await store.update(added.id, { price: 19.5, note: 'Primera edición' })
+    expect(await store.list()).toMatchObject([{ price: 19.5, note: 'Primera edición' }])
+    await store.update(added.id, { price: null, note: '' })
+    const [item] = await store.list()
+    expect(item?.price).toBeUndefined()
+    expect(item?.note).toBeUndefined()
   })
 })

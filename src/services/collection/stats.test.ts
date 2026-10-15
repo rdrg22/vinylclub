@@ -18,8 +18,8 @@ const item = (over: Partial<CollectionItem>): CollectionItem => ({
 
 describe('estadísticas de la colección', () => {
   const items = [
-    item({ artist: 'Fleetwood Mac', albumId: 'rumours', date: '1977-02-04' }),
-    item({ artist: 'fleetwood mac ', albumId: 'rumours', date: '2004', formats: ['CD'] }),
+    item({ artist: 'Fleetwood Mac', albumId: 'rumours', date: '1977-02-04', price: 24.99 }),
+    item({ artist: 'fleetwood mac ', albumId: 'rumours', date: '2004', formats: ['CD'], price: 0.1 }),
     item({ artist: 'Daft Punk', date: '2013-05-17' }),
     item({ artist: 'Pink Floyd', date: '1979-11-30', formats: ['Cassette'] }),
     item({ artist: 'Desconocido', date: undefined }),
@@ -55,6 +55,11 @@ describe('estadísticas de la colección', () => {
   it('cada disco cuenta una vez en las listas aunque tengas dos ediciones', () => {
     expect(stats.numberOnes).toBe(1)
     expect(stats.inCharts).toBe(1)
+  })
+
+  it('suma lo que te han costado, solo de los que tienen precio', () => {
+    expect(stats.spent).toBe(25.09)
+    expect(stats.priced).toBe(2)
   })
 
   it('colección vacía', () => {

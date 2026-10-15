@@ -26,7 +26,9 @@ import { InteriorEnvironment } from './Lighting'
 import { QUALITY, type Quality } from './quality'
 import { SurfacesProvider, useSurface } from './surfaces'
 import { coverUrlFor } from '@/services/coverArt'
-import { addSlotTexture, labelCardTexture, loadRemoteTexture, placeholderTexture, signTexture, sleeveFor, storeSignTexture, yearTagTexture } from './textures'
+import { formatPrice } from '@/services/collection/collection'
+import { hashString } from '@/utils/hash'
+import { addSlotTexture, priceStickerTexture, labelCardTexture, loadRemoteTexture, placeholderTexture, signTexture, sleeveFor, storeSignTexture, yearTagTexture } from './textures'
 
 const CEILING = 3.3
 
@@ -54,6 +56,8 @@ interface SceneProps {
   onHint: (hint: string | null) => void
   /** Pulsar el hueco «+» de la colección. */
   onAddRecord: () => void
+  /** Lo que te costó cada disco de tu colección (por id del disco): pegatina en la funda. */
+  prices: Record<string, number>
   /** Marcas del suelo (los sitios a los que se puede ir) y en cuál se está. */
   spots: FloorSpot[]
   currentSpot: string | null
@@ -85,6 +89,7 @@ export function StoreScene(props: SceneProps) {
           onSelect={onSelect}
           onHint={onHint}
           onAddRecord={props.onAddRecord}
+          prices={unit.decade === COLLECTION_KEY ? props.prices : undefined}
         />
       ))}
       <FloorSpots
@@ -314,9 +319,12 @@ function Room({ units, quality }: { units: UnitLayout[]; quality: Quality }) {
 
 // ---------------------------------------------------------------- muebles
 
-type ShelfUnitProps = { unit: UnitLayout; atlas: THREE.Texture | null } & Pick<SceneProps, 'onHover' | 'onSelect' | 'takenIds' | 'onHint' | 'onAddRecord'>
+type ShelfUnitProps = { unit: UnitLayout; atlas: THREE.Texture | null; prices?: Record<string, number> } & Pick<
+  SceneProps,
+  'onHover' | 'onSelect' | 'takenIds' | 'onHint' | 'onAddRecord'
+>
 
-function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect, onHint, onAddRecord }: ShelfUnitProps) {
+function ShelfUnit({ unit, atlas, prices, takenIds, onHover, onSelect, onHint, onAddRecord }: ShelfUnitProps) {
   const surface = useSurface()
   const isCollection = unit.decade === COLLECTION_KEY
   const isWishlist = unit.decade === WISHLIST_KEY
@@ -388,7 +396,7 @@ function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect, onHint, onAddReco
       ))}
       {atlas && !isPersonal && <CoverInstances slots={unit.slots} atlas={atlas} takenIds={takenIds} onHover={onHover} onSelect={onSelect} />}
       {looseSlots.map((slot) => (
-        <Cover key={slot.album.id} slot={slot} remote={isPersonal} hidden={takenIds.includes(slot.album.id)} onHover={onHover} onSelect={onSelect} />
+        <Cover key={slot.album.id} slot={slot} remote={isPersonal} price={prices?.[slot.album.id]} hidden={takenIds.includes(slot.album.id)} onHover={onHover} onSelect={onSelect} />
       ))}
       {unit.addSlot && <AddSlot x={unit.addSlot.x} y={unit.addSlot.y} onHint={onHint} onClick={onAddRecord} />}
       {emptyCard && (
@@ -456,6 +464,23 @@ interface CoverProps extends Pick<SceneProps, 'onHover' | 'onSelect'> {
   hidden: boolean
   /** Sin hueco en los atlas (discos de la colección): portada descargada del Cover Art Archive. */
   remote?: boolean
+  /** Lo que te costó (euros): pegatina de precio en la esquina de la funda. */
+  price?: number
+}
+
+/** «24 €» si es redondo, «12,50 €» si tiene céntimos. */
+const stickerText = (price: number) => (Number.isInteger(price) ? `${price} €` : formatPrice(price))
+
+/** Pegatina de precio en la esquina superior derecha de la funda, algo torcida. */
+function PriceSticker({ price, seed }: { price: number; seed: string }) {
+  const map = useMemo(() => priceStickerTexture(stickerText(price), seed), [price, seed])
+  const tilt = ((hashString(seed) % 21) - 10) / 70
+  return (
+    <mesh position={[COVER_SIZE / 2 - 0.08, COVER_SIZE / 2 - 0.058, 0.002]} rotation-z={tilt}>
+      <planeGeometry args={[0.15, 0.094]} />
+      <meshStandardMaterial map={map} transparent roughness={0.55} />
+    </mesh>
+  )
 }
 
 /** Portada pequeña del Cover Art Archive como textura; null mientras carga o si no hay. */
@@ -481,7 +506,7 @@ function useRemoteCover(album: Album, enabled: boolean) {
 }
 
 /** Funda suelta: discos sin portada (tipográfica) o, mientras carga el atlas, color de funda. */
-function Cover({ slot, hidden, remote = false, onHover, onSelect }: CoverProps) {
+function Cover({ slot, hidden, remote = false, price, onHover, onSelect }: CoverProps) {
   const { album } = slot
   const [hovered, setHovered] = useState(false)
   const hasCover = useMemo(() => atlasUV(album.id) !== null, [album.id])
@@ -526,6 +551,7 @@ function Cover({ slot, hidden, remote = false, onHover, onSelect }: CoverProps) 
         // Mientras llega el atlas: color de funda.
         <meshStandardMaterial color={sleeveFor(album).bg} roughness={0.55} />
       )}
+      {price !== undefined && <PriceSticker price={price} seed={album.id} />}
     </mesh>
   )
 }

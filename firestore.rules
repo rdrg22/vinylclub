@@ -13,7 +13,8 @@ service cloud.firestore {
       allow read, delete: if request.auth != null && request.auth.uid == userId;
       // Solo crear (la misma edición no se puede añadir dos veces) y con datos válidos.
       allow create: if request.auth != null && request.auth.uid == userId && validItem(releaseId);
-      allow update: if false;
+      // Después solo se pueden cambiar el precio y la nota del usuario.
+      allow update: if request.auth != null && request.auth.uid == userId && validNotes();
     }
 
     // Favoritos de cada usuario: users/{uid}/favorites/{id del disco}.
@@ -48,6 +49,13 @@ service cloud.firestore {
         && d.formats is list && d.formats.size() <= 20
         && d.labels is list && d.labels.size() <= 20
         && d.addedAt == request.time;
+    }
+
+    function validNotes() {
+      let d = request.resource.data;
+      return d.diff(resource.data).affectedKeys().hasOnly(['price', 'note'])
+        && (!('price' in d) || (d.price is number && d.price >= 0 && d.price <= 100000))
+        && (!('note' in d) || (d.note is string && d.note.size() <= 500));
     }
 
     function validFavorite(albumId) {
