@@ -47,6 +47,15 @@ la página (`src/components/favorites/`). Con cuentas de usuario (Supabase) pasa
   la ficha y la vista en lista siguen pidiendo las portadas grandes a Cover Art Archive.
 - Sin WebGL se muestra un aviso, y debajo siempre están las mismas estanterías en lista.
 
+### Aspecto realista
+
+- Texturas fotográficas PBR (color, relieve y rugosidad) e iluminación HDRI de [Poly Haven](https://polyhaven.com)
+  (CC0), en `public/textures` y `public/hdri`. Se descargan con `node scripts/fetch-polyhaven-assets.mjs`; los créditos
+  están en `public/textures/CREDITS.md`.
+- Calidad automática (`src/components/store3d/quality.ts`): en «alta», sombras suaves, oclusión ambiental, brillo de
+  bombillas y neones, viñeta y grano (`Lighting.tsx`); en «ligera» (móviles y equipos modestos), solo color y luz
+  básica. Se puede cambiar con el botón «Calidad» de la tienda y se recuerda en el navegador.
+
 ## Escuchar y comprar
 
 Cada ficha enlaza a Apple Music, Spotify, Tidal, SoundCloud y Amazon (`src/services/listen/listenLinks.ts`):

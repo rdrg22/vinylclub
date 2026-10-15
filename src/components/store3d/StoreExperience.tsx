@@ -4,7 +4,7 @@
  * portadas) y al pulsar «Entrar» la cámara cruza la puerta.
  */
 import { Canvas } from '@react-three/fiber'
-import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { Link } from 'react-router-dom'
 import * as THREE from 'three'
 import { useAlbumDetail } from '@/components/album/albumDetailContext'
@@ -20,6 +20,8 @@ import { buildStoreLayout, ENTER, START, UNIT_WIDTH, WALL_X, type DecadeInput, t
 import { createNavState, LOOK_SENSITIVITY, MAX_PITCH, NAV_KEYS } from './navigation'
 import { HeldPanel } from './HeldPanel'
 import { HeldRecord, type HeldState, type HoldControl } from './HeldRecord'
+import { CameraEffects } from './Lighting'
+import { detectQuality, saveQuality, type Quality } from './quality'
 import { StoreScene } from './StoreScene'
 import { fontsReady, type BackData } from './textures'
 
@@ -87,6 +89,12 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   const [hint, setHint] = useState<string | null>(null)
   const { atlases, loaded } = useAtlases(units)
   const [hovered, setHovered] = useState<Album | null>(null)
+  const [quality, setQuality] = useState<Quality>(detectQuality)
+  const switchQuality = () => {
+    const next = quality === 'high' ? 'low' : 'high'
+    saveQuality(next)
+    setQuality(next)
+  }
   const [fonts, setFonts] = useState(false)
   const [current, setCurrent] = useState<string | null>(null)
   const reducedMotion = useMemo(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches, [])
@@ -402,12 +410,17 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
     >
       {fonts && (
         <Canvas
-          dpr={[1, 1.75]}
+          // Cambiar de calidad reconstruye el lienzo (sombras y posprocesado se fijan al crearlo).
+          key={quality}
+          shadows={quality === 'high' ? 'soft' : false}
+          dpr={quality === 'high' ? [1, 1.75] : [1, 1.25]}
           camera={{ fov: FOV, near: 0.05, far: 60, position: [nav.x, nav.y, nav.z] }}
-          gl={{ antialias: true, powerPreference: 'high-performance' }}
+          gl={{ antialias: quality !== 'high', powerPreference: 'high-performance' }}
           onPointerMissed={() => setHovered(null)}
         >
+          <Suspense fallback={null}>
           <StoreScene
+            quality={quality}
             units={units}
             atlases={atlases}
             nav={nav}
@@ -442,6 +455,8 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
               onLeft={onLeft}
             />
           )}
+          <CameraEffects quality={quality} />
+          </Suspense>
         </Canvas>
       )}
 
@@ -538,6 +553,14 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             <span aria-hidden className="text-[#f2b01e]">★</span> Favoritos
             {favorites.length > 0 && <span className="ml-1 rounded-full bg-signal px-1.5 text-paper">{favorites.length}</span>}
           </Link>
+          <button
+            type="button"
+            onClick={switchQuality}
+            className={cn(chip, chipIdle, 'hidden sm:block')}
+            title="Alta: texturas con relieve, sombras y luces que brillan. Ligera: más fluida en equipos modestos."
+          >
+            Calidad: {quality === 'high' ? 'alta' : 'ligera'}
+          </button>
           <button type="button" onClick={toggleFullscreen} className={cn(chip, chipIdle, 'hidden sm:block')}>
             Pantalla completa
           </button>

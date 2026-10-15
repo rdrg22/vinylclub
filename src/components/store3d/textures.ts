@@ -143,22 +143,6 @@ export function storeSignTexture() {
   })
 }
 
-/** Tarima de madera: tablas con tonos ligeramente distintos. */
-export function floorTexture() {
-  const texture = canvasTexture(512, 512, (ctx) => {
-    const tones = ['#8a5a34', '#7e5230', '#93623a', '#845632', '#7a4f2d']
-    for (let i = 0; i < 8; i++) {
-      ctx.fillStyle = tones[i % tones.length]!
-      ctx.fillRect(i * 64, 0, 64, 512)
-      ctx.fillStyle = 'rgba(0,0,0,0.25)'
-      ctx.fillRect(i * 64, 0, 2, 512)
-      ctx.fillRect(i * 64, ((i * 157) % 512) | 0, 64, 2)
-    }
-  })
-  texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-  return texture
-}
-
 /** Las texturas de canvas usan las fuentes de la web: esperamos a que estén cargadas. */
 export async function fontsReady() {
   try {

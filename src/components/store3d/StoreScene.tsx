@@ -17,7 +17,10 @@ import { atlasUV, coverGeometry } from './atlas'
 import { CounterArea, Crate, Jukebox, NeonSign, Poster, VinylRug, WallRecords } from './Decor'
 import type { DecorLayout } from './decorLayout'
 import type { ScreenState } from './jukeboxScreen'
-import { floorTexture, placeholderTexture, signTexture, sleeveFor, storeSignTexture, yearTagTexture } from './textures'
+import { InteriorEnvironment } from './Lighting'
+import type { Quality } from './quality'
+import { SurfacesProvider, useSurface } from './surfaces'
+import { placeholderTexture, signTexture, sleeveFor, storeSignTexture, yearTagTexture } from './textures'
 
 const CEILING = 3.3
 
@@ -43,19 +46,21 @@ interface SceneProps {
   onTurntable: () => void
   onJukebox: () => void
   onHint: (hint: string | null) => void
+  quality: Quality
 }
 
 export function StoreScene(props: SceneProps) {
   const { units, atlases, nav, reducedMotion, onHover, onSelect, takenIds, decor, onHint } = props
   const bounds = useMemo(() => ({ ...walkBounds(units), obstacles: decor.obstacles }), [units, decor])
   return (
-    <>
-      <color attach="background" args={['#1b130c']} />
-      <fog attach="fog" args={['#1b130c', 9, 30]} />
-      <hemisphereLight args={['#ffe2b8', '#3a2414', 0.9]} />
-      <ambientLight intensity={0.25} color="#ffd9a8" />
+    <SurfacesProvider quality={props.quality}>
+      <color attach="background" args={['#120c07']} />
+      <fog attach="fog" args={['#120c07', 14, 40]} />
+      <InteriorEnvironment intensity={props.quality === 'high' ? 0.45 : 0.6} />
+      <hemisphereLight args={['#ffe2b8', '#2a1a0e', 0.35]} />
+      <ambientLight intensity={0.08} color="#ffd9a8" />
       <CameraRig nav={nav} bounds={bounds} reducedMotion={reducedMotion} />
-      <Room units={units} />
+      <Room units={units} quality={props.quality} />
       {units.map((unit) => (
         <ShelfUnit key={unit.decade} unit={unit} atlas={atlases[unit.decade] ?? null} takenIds={takenIds} onHover={onHover} onSelect={onSelect} />
       ))}
@@ -86,7 +91,7 @@ export function StoreScene(props: SceneProps) {
       <NeonSign z={decor.crates[0]?.z ?? 2} />
       <VinylRug x={decor.rug.x} z={decor.rug.z} />
       <WallRecords z={backWallZ(units)} />
-    </>
+    </SurfacesProvider>
   )
 }
 
@@ -101,7 +106,95 @@ function CameraRig({ nav, bounds, reducedMotion }: { nav: NavState; bounds: Retu
 
 // ---------------------------------------------------------------- sala
 
-function Room({ units }: { units: UnitLayout[] }) {
+/** Lámpara colgante industrial: cable, pantalla metálica, bombilla que brilla y foco hacia abajo. */
+function PendantLamp({ z, shadows }: { z: number; shadows: boolean }) {
+  const target = useMemo(() => new THREE.Object3D(), [])
+  return (
+    <group position={[0, CEILING - 0.55, z]}>
+      <mesh position={[0, 0.3, 0]}>
+        <cylinderGeometry args={[0.006, 0.006, 0.55, 6]} />
+        <meshStandardMaterial color="#111" roughness={0.6} />
+      </mesh>
+      <mesh>
+        <coneGeometry args={[0.26, 0.22, 32, 1, true]} />
+        <meshStandardMaterial color="#20201c" metalness={0.85} roughness={0.32} side={THREE.DoubleSide} />
+      </mesh>
+      {/* Bombilla: más clara que el blanco para que el posprocesado la haga brillar. */}
+      <mesh position={[0, -0.07, 0]}>
+        <sphereGeometry args={[0.06, 20, 14]} />
+        <meshBasicMaterial color={[5, 3.6, 2.2]} toneMapped={false} />
+      </mesh>
+      <primitive object={target} position={[0, -3, 0]} />
+      <spotLight
+        target={target}
+        position={[0, -0.1, 0]}
+        color="#ffcf94"
+        intensity={28}
+        angle={1.0}
+        penumbra={0.75}
+        distance={11}
+        decay={1.6}
+        castShadow={shadows}
+        shadow-mapSize={[1024, 1024]}
+        shadow-bias={-0.0004}
+        shadow-normalBias={0.02}
+      />
+      <pointLight position={[0, -0.25, 0]} color="#ffcf94" intensity={2.5} distance={6} decay={1.8} />
+    </group>
+  )
+}
+
+/** Escaparate de la entrada: luz de día entrando por los cristales (al darse la vuelta). */
+function Storefront({ z, wood }: { z: number; wood: THREE.Material }) {
+  const panes = [-1.85, 1.85]
+  return (
+    <group position={[0, 0, z - 0.02]} rotation-y={Math.PI}>
+      {panes.map((x) => (
+        <group key={x} position={[x, 1.55, 0]}>
+          <mesh>
+            <planeGeometry args={[2.3, 1.9]} />
+            <meshBasicMaterial color={[2.1, 2.05, 1.95]} toneMapped={false} />
+          </mesh>
+          {/* Marco y parteluces */}
+          {[-1.17, 1.17].map((fx) => (
+            <mesh key={fx} position={[fx, 0, 0.03]} material={wood}>
+              <boxGeometry args={[0.08, 2.0, 0.08]} />
+            </mesh>
+          ))}
+          {[-0.97, 0.97, 0].map((fy) => (
+            <mesh key={fy} position={[0, fy, 0.03]} material={wood}>
+              <boxGeometry args={[2.4, fy === 0 ? 0.04 : 0.08, 0.08]} />
+            </mesh>
+          ))}
+        </group>
+      ))}
+      {/* Puerta acristalada */}
+      <group position={[0, 1.15, 0]}>
+        <mesh position={[0, 0.35, 0]}>
+          <planeGeometry args={[0.95, 1.2]} />
+          <meshBasicMaterial color={[1.9, 1.85, 1.75]} toneMapped={false} />
+        </mesh>
+        <mesh position={[0, -0.55, 0.01]} material={wood}>
+          <boxGeometry args={[1.05, 0.65, 0.05]} />
+        </mesh>
+        <mesh position={[0.38, -0.1, 0.06]}>
+          <boxGeometry args={[0.03, 0.22, 0.03]} />
+          <meshStandardMaterial color="#c9a45c" metalness={0.9} roughness={0.3} />
+        </mesh>
+        {[-0.52, 0.52].map((fx) => (
+          <mesh key={fx} position={[fx, 0, 0.03]} material={wood}>
+            <boxGeometry args={[0.08, 2.35, 0.08]} />
+          </mesh>
+        ))}
+      </group>
+      {/* Luz fría de la calle entrando por el escaparate. */}
+      <pointLight position={[0, 1.6, 0.8]} color="#dfe8ff" intensity={6} distance={7} decay={1.6} />
+    </group>
+  )
+}
+
+function Room({ units, quality }: { units: UnitLayout[]; quality: Quality }) {
+  const surface = useSurface()
   const bounds = walkBounds(units)
   const backZ = backWallZ(units)
   const frontZ = bounds.maxZ + 0.6
@@ -109,60 +202,67 @@ function Room({ units }: { units: UnitLayout[] }) {
   const midZ = (frontZ + backZ) / 2
   const width = WALL_X * 2 + 0.4
 
-  const floor = useMemo(() => {
-    const t = floorTexture()
-    t.repeat.set(width / 1.6, length / 1.6)
-    return t
-  }, [width, length])
+  const floor = surface('wood_floor_worn', { repeat: [width / 1.8, length / 1.8], roughness: 1 })
+  const sideWall = surface('beige_wall_001', { repeat: [length / 2.5, CEILING / 2.5], tint: '#c7a47c', normalScale: 0.6 })
+  const endWall = surface('beige_wall_001', { repeat: [width / 2.5, CEILING / 2.5], tint: '#b8946d', normalScale: 0.6 })
+  const ceiling = surface('plastered_wall', { repeat: [width / 3, length / 3], tint: '#6e5a48' })
+  const beam = surface('dark_wood', { repeat: [3, 0.3], tint: '#7a5a40' })
+  const trim = surface('dark_wood', { repeat: [length / 2, 0.1], tint: '#6a4a32' })
+
   const storeSign = useMemo(storeSignTexture, [])
   const lampZs = useMemo(() => {
     const zs: number[] = []
     for (let z = frontZ - 2; z > backZ + 1; z -= 4.2) zs.push(z)
     return zs
   }, [frontZ, backZ])
+  const beamZs = useMemo(() => {
+    const zs: number[] = []
+    for (let z = frontZ - 1; z > backZ; z -= 2.1) zs.push(z)
+    return zs
+  }, [frontZ, backZ])
 
   return (
     <group>
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0, midZ]}>
+      <mesh rotation-x={-Math.PI / 2} position={[0, 0, midZ]} material={floor} receiveShadow>
         <planeGeometry args={[width, length]} />
-        <meshStandardMaterial map={floor} roughness={0.75} />
       </mesh>
-      <mesh rotation-x={Math.PI / 2} position={[0, CEILING, midZ]}>
+      <mesh rotation-x={Math.PI / 2} position={[0, CEILING, midZ]} material={ceiling}>
         <planeGeometry args={[width, length]} />
-        <meshStandardMaterial color="#2a1d13" roughness={1} />
       </mesh>
-      {/* Paredes laterales, fondo y entrada. */}
-      {[-1, 1].map((side) => (
-        <mesh key={side} position={[side * (WALL_X + 0.2), CEILING / 2, midZ]} rotation-y={(-side * Math.PI) / 2}>
-          <planeGeometry args={[length, CEILING]} />
-          <meshStandardMaterial color="#6b4a30" roughness={0.9} />
+      {/* Vigas de madera en el techo */}
+      {beamZs.map((z) => (
+        <mesh key={z} position={[0, CEILING - 0.09, z]} material={beam} castShadow={false}>
+          <boxGeometry args={[width, 0.18, 0.16]} />
         </mesh>
       ))}
-      <mesh position={[0, CEILING / 2, backZ]}>
+      {/* Paredes laterales con zócalo y moldura */}
+      {[-1, 1].map((side) => (
+        <group key={side}>
+          <mesh position={[side * (WALL_X + 0.2), CEILING / 2, midZ]} rotation-y={(-side * Math.PI) / 2} material={sideWall} receiveShadow>
+            <planeGeometry args={[length, CEILING]} />
+          </mesh>
+          <mesh position={[side * (WALL_X + 0.17), 0.07, midZ]} material={trim}>
+            <boxGeometry args={[0.06, 0.14, length]} />
+          </mesh>
+          <mesh position={[side * (WALL_X + 0.16), CEILING - 0.05, midZ]} material={trim}>
+            <boxGeometry args={[0.08, 0.1, length]} />
+          </mesh>
+        </group>
+      ))}
+      <mesh position={[0, CEILING / 2, backZ]} material={endWall} receiveShadow>
         <planeGeometry args={[width, CEILING]} />
-        <meshStandardMaterial color="#5a3d26" roughness={0.9} />
       </mesh>
-      <mesh position={[0, CEILING / 2, frontZ]} rotation-y={Math.PI}>
+      <mesh position={[0, CEILING / 2, frontZ]} rotation-y={Math.PI} material={endWall}>
         <planeGeometry args={[width, CEILING]} />
-        <meshStandardMaterial color="#5a3d26" roughness={0.9} />
       </mesh>
+      <Storefront z={frontZ} wood={trim} />
       <mesh position={[0, 1.9, backZ + 0.02]}>
         <planeGeometry args={[3.6, 1.35]} />
-        <meshStandardMaterial map={storeSign} emissive="#ffffff" emissiveMap={storeSign} emissiveIntensity={0.35} />
+        <meshStandardMaterial map={storeSign} roughness={0.7} />
       </mesh>
-      {/* Lámparas colgantes de luz cálida. */}
-      {lampZs.map((z) => (
-        <group key={z} position={[0, CEILING - 0.5, z]}>
-          <mesh>
-            <coneGeometry args={[0.28, 0.24, 24, 1, true]} />
-            <meshStandardMaterial color="#2b2118" side={THREE.DoubleSide} />
-          </mesh>
-          <mesh position={[0, -0.08, 0]}>
-            <sphereGeometry args={[0.08, 16, 12]} />
-            <meshBasicMaterial color="#ffe1a8" />
-          </mesh>
-          <pointLight position={[0, -0.2, 0]} color="#ffcf8f" intensity={9} distance={10} decay={1.6} />
-        </group>
+      {lampZs.map((z, i) => (
+        // Sombras solo en una de cada tres lámparas: suficiente para el efecto, sin hundir el rendimiento.
+        <PendantLamp key={z} z={z} shadows={quality === 'high' && i % 3 === 1} />
       ))}
     </group>
   )
@@ -171,39 +271,60 @@ function Room({ units }: { units: UnitLayout[] }) {
 // ---------------------------------------------------------------- muebles
 
 function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect }: { unit: UnitLayout; atlas: THREE.Texture | null } & Pick<SceneProps, 'onHover' | 'onSelect' | 'takenIds'>) {
+  const surface = useSurface()
   // Un único material para todas las portadas del mueble: una textura, un shader.
-  const atlasMaterial = useMemo(() => (atlas ? new THREE.MeshStandardMaterial({ map: atlas, roughness: 0.55 }) : null), [atlas])
+  // Algo satinado: las fundas reflejan las lámparas como el cartón plastificado.
+  const atlasMaterial = useMemo(
+    () => (atlas ? new THREE.MeshStandardMaterial({ map: atlas, roughness: 0.38, envMapIntensity: 0.8 }) : null),
+    [atlas],
+  )
   useEffect(() => () => atlasMaterial?.dispose(), [atlasMaterial])
+
+  const back = surface('dark_wood', { repeat: [UNIT_WIDTH / 1.6, 2.6 / 1.6], tint: '#8a6a52' })
+  const wood = surface('dark_wood', { repeat: [0.4, 2.2] })
+  const ledge = surface('dark_wood', { repeat: [UNIT_WIDTH / 1.4, 0.25] })
 
   const sign = useMemo(() => {
     const years = unit.yearTags.map((t) => t.year)
     const span = years.length ? `${Math.min(...years)}–${Math.max(...years)} · Top 10 Billboard` : ''
     return signTexture(unit.label, span)
   }, [unit])
-  const rows = useMemo(() => [...new Set(unit.slots.map((s) => s.y))], [unit.slots])
 
   return (
     <group position={unit.center} rotation-y={unit.rotationY}>
-      {/* Trasera y laterales de madera. */}
-      <mesh position={[0, 1.3, -0.03]}>
+      {/* Trasera, laterales, zócalo y cornisa de madera maciza. */}
+      <mesh position={[0, 1.3, -0.03]} material={back} receiveShadow>
         <boxGeometry args={[UNIT_WIDTH + 0.3, 2.6, 0.06]} />
-        <meshStandardMaterial color="#4a301c" roughness={0.85} />
       </mesh>
       {[-1, 1].map((s) => (
-        <mesh key={s} position={[s * (UNIT_WIDTH / 2 + 0.15), 1.3, 0.1]}>
-          <boxGeometry args={[0.06, 2.6, 0.32]} />
-          <meshStandardMaterial color="#5c3b22" roughness={0.8} />
+        <mesh key={s} position={[s * (UNIT_WIDTH / 2 + 0.15), 1.32, 0.12]} material={wood} castShadow receiveShadow>
+          <boxGeometry args={[0.07, 2.64, 0.36]} />
         </mesh>
       ))}
+      <mesh position={[0, 0.07, 0.14]} material={ledge} castShadow receiveShadow>
+        <boxGeometry args={[UNIT_WIDTH + 0.24, 0.14, 0.32]} />
+      </mesh>
+      <mesh position={[0, 2.64, 0.13]} material={ledge} castShadow>
+        <boxGeometry args={[UNIT_WIDTH + 0.44, 0.08, 0.4]} />
+      </mesh>
       {ROW_Y.map((y) => (
-        <mesh key={y} position={[0, y - COVER_SIZE / 2 - 0.02, 0.1]}>
-          <boxGeometry args={[UNIT_WIDTH + 0.24, 0.03, 0.3]} />
-          <meshStandardMaterial color={rows.includes(y) ? '#7a5232' : '#5c3b22'} roughness={0.7} />
-        </mesh>
+        <group key={y} position={[0, y - COVER_SIZE / 2 - 0.02, 0.1]}>
+          <mesh material={ledge} castShadow receiveShadow>
+            <boxGeometry args={[UNIT_WIDTH + 0.24, 0.03, 0.3]} />
+          </mesh>
+          {/* Listón delantero que sujeta los discos */}
+          <mesh position={[0, 0.025, 0.14]} material={ledge} castShadow>
+            <boxGeometry args={[UNIT_WIDTH + 0.24, 0.035, 0.02]} />
+          </mesh>
+        </group>
       ))}
-      <mesh position={[0, 2.85, 0.02]}>
+      <mesh position={[0, 2.95, 0.04]} castShadow>
+        <boxGeometry args={[2.66, 0.71, 0.04]} />
+        <meshStandardMaterial color="#2e1d10" roughness={0.6} />
+      </mesh>
+      <mesh position={[0, 2.95, 0.061]}>
         <planeGeometry args={[2.6, 0.65]} />
-        <meshStandardMaterial map={sign} roughness={0.8} />
+        <meshStandardMaterial map={sign} roughness={0.75} />
       </mesh>
       {unit.yearTags.map((tag) => (
         <YearTag key={tag.year} year={tag.year} x={tag.x} y={tag.y - COVER_SIZE / 2 - 0.035} />
@@ -248,6 +369,7 @@ function Cover({ slot, atlasMaterial, hidden, onHover, onSelect }: CoverProps) {
   return (
     <mesh
       visible={!hidden}
+      castShadow
       geometry={geometry}
       material={uv && atlasMaterial ? atlasMaterial : undefined}
       position={[slot.x, slot.y + (hovered ? 0.04 : 0), hovered ? 0.2 : 0.12]}
@@ -276,7 +398,7 @@ function Cover({ slot, atlasMaterial, hidden, onHover, onSelect }: CoverProps) {
     >
       {!(uv && atlasMaterial) &&
         (placeholder ? (
-          <meshStandardMaterial map={placeholder} roughness={0.55} />
+          <meshStandardMaterial map={placeholder} roughness={0.42} />
         ) : (
           // Mientras llega el atlas: color de funda.
           <meshStandardMaterial color={sleeveFor(album).bg} roughness={0.55} />

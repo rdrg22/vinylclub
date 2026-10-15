@@ -8,6 +8,7 @@ import * as THREE from 'three'
 import type { Album } from '@/types/music'
 import { atlasUV, coverGeometry } from './atlas'
 import { CounterToys } from './CounterToys'
+import { useSurface } from './surfaces'
 import { COUNTER, PLATTER_Y, type CrateSpot, type DecorLayout, type PosterSpot } from './decorLayout'
 import { createScreenTexture, drawScreen, marqueeSignTexture, type ScreenState } from './jukeboxScreen'
 import { COVER_SIZE, WALL_X } from './layout'
@@ -58,6 +59,10 @@ interface CounterProps extends HintHandlers {
 
 export function CounterArea({ layout, record, playing, holding, reducedMotion, onTurntable, onHint }: CounterProps) {
   const { counter, turntable } = layout
+  const surface = useSurface()
+  const counterWood = surface('dark_wood', { repeat: [3, 1] })
+  const counterTop = surface('dark_wood', { repeat: [3, 0.6], tint: '#c79066', roughness: 0.5 })
+  const speakerWood = surface('dark_wood', { repeat: [0.6, 1.4], tint: '#5a3e2c' })
   const sign = useMemo(() => labelCardTexture('Escucha aquí', 'Pon un disco en el plato'), [])
   const grille = useMemo(() => grilleTexture(), [])
   return (
@@ -65,11 +70,11 @@ export function CounterArea({ layout, record, playing, holding, reducedMotion, o
       {/* Mostrador */}
       <mesh position={[counter.x, COUNTER.height / 2, counter.z]}>
         <boxGeometry args={[COUNTER.width, COUNTER.height, COUNTER.depth]} />
-        <meshStandardMaterial color="#4a2e1a" roughness={0.8} />
+        <primitive object={counterWood} attach="material" />
       </mesh>
       <mesh position={[counter.x, COUNTER.height + 0.015, counter.z]}>
         <boxGeometry args={[COUNTER.width + 0.1, 0.03, COUNTER.depth + 0.08]} />
-        <meshStandardMaterial color="#8a5a34" roughness={0.5} />
+        <primitive object={counterTop} attach="material" />
       </mesh>
       <mesh position={[counter.x - 0.55, 0.62, counter.z + COUNTER.depth / 2 + 0.005]}>
         <planeGeometry args={[0.9, 0.28]} />
@@ -105,7 +110,7 @@ export function CounterArea({ layout, record, playing, holding, reducedMotion, o
         <group key={side} position={[counter.x + side * (COUNTER.width / 2 + 0.55), 0, counter.z]}>
           <mesh position={[0, 0.65, 0]}>
             <boxGeometry args={[0.55, 1.3, 0.45]} />
-            <meshStandardMaterial color="#2a1d13" roughness={0.7} />
+            <primitive object={speakerWood} attach="material" />
           </mesh>
           <mesh position={[0, 0.65, 0.226]}>
             <planeGeometry args={[0.47, 1.2]} />
@@ -212,6 +217,14 @@ const SCREEN_FRAME = 1 / 15
 export function Jukebox({ layout, screen, audio, glowing, reducedMotion, onPlay, onHint }: JukeboxProps) {
   const grille = useMemo(() => grilleTexture(), [])
   const sign = useMemo(() => marqueeSignTexture(), [])
+  const surface = useSurface()
+  const lacquer = surface('dark_wood', { repeat: [1, 1.2], tint: '#b5523a', roughness: 0.32 })
+  // El remate es medio cilindro abierto: necesita verse por las dos caras.
+  const lacquerTwoSided = useMemo(() => {
+    const material = lacquer.clone()
+    material.side = THREE.DoubleSide
+    return material
+  }, [lacquer])
   const display = useMemo(() => createScreenTexture(), [])
   useEffect(() => () => display.texture.dispose(), [display])
   const lastDraw = useRef(-1)
@@ -252,12 +265,12 @@ export function Jukebox({ layout, screen, audio, glowing, reducedMotion, onPlay,
     >
       <mesh position={[0, 0.55, 0]}>
         <boxGeometry args={[0.92, 1.1, 0.6]} />
-        <meshStandardMaterial color="#5a2a17" roughness={0.45} metalness={0.2} />
+        <primitive object={lacquer} attach="material" />
       </mesh>
       {/* Remate redondo */}
       <mesh position={[0, 1.1, 0]} rotation-x={Math.PI / 2}>
         <cylinderGeometry args={[0.46, 0.46, 0.6, 40, 1, false, Math.PI / 2, Math.PI]} />
-        <meshStandardMaterial color="#5a2a17" roughness={0.45} metalness={0.2} side={THREE.DoubleSide} />
+        <primitive object={lacquerTwoSided} attach="material" />
       </mesh>
       {/* Arcos de luz */}
       {colors.map((color, i) => (
@@ -311,6 +324,9 @@ interface CrateProps extends HintHandlers {
 
 export function Crate({ crate, atlases, takenIds, onSelect, onHover }: CrateProps) {
   const label = useMemo(() => labelCardTexture(crate.label), [crate.label])
+  const surface = useSurface()
+  const crateWood = surface('wood_table_worn', { repeat: [1, 0.35] })
+  const legWood = surface('dark_wood', { repeat: [0.2, 1], tint: '#6a4a32' })
   const materials = useMemo(() => {
     const map = new Map<string, THREE.MeshStandardMaterial>()
     for (const album of crate.albums) {
@@ -329,25 +345,25 @@ export function Crate({ crate, atlases, takenIds, onSelect, onHover }: CrateProp
       {/* Caja de madera con patas */}
       <mesh position={[0, 0.55, 0]}>
         <boxGeometry args={[depth, 0.02, width]} />
-        <meshStandardMaterial color="#6e4528" roughness={0.8} />
+        <primitive object={crateWood} attach="material" />
       </mesh>
       {[-1, 1].map((s) => (
         <mesh key={`side${s}`} position={[0, 0.66, s * (width / 2)]}>
           <boxGeometry args={[depth, 0.22, 0.02]} />
-          <meshStandardMaterial color="#7a4d2c" roughness={0.8} />
+          <primitive object={crateWood} attach="material" />
         </mesh>
       ))}
       {[-1, 1].map((s) => (
         <mesh key={`end${s}`} position={[s * (depth / 2), 0.66, 0]}>
           <boxGeometry args={[0.02, 0.22, width]} />
-          <meshStandardMaterial color="#7a4d2c" roughness={0.8} />
+          <primitive object={crateWood} attach="material" />
         </mesh>
       ))}
       {[-1, 1].flatMap((sx) =>
         [-1, 1].map((sz) => (
           <mesh key={`${sx}${sz}`} position={[sx * (depth / 2 - 0.03), 0.27, sz * (width / 2 - 0.03)]}>
             <boxGeometry args={[0.04, 0.54, 0.04]} />
-            <meshStandardMaterial color="#4a2e1a" />
+            <primitive object={legWood} attach="material" />
           </mesh>
         )),
       )}
@@ -429,6 +445,7 @@ function CrateRecord({
 // ---------------------------------------------------------------- pósters, neón, alfombra, discos de pared
 
 export function Poster({ poster, atlases }: { poster: PosterSpot; atlases: Record<string, THREE.Texture | null> }) {
+  const frame = useSurface()('dark_wood', { repeat: [0.5, 0.7], tint: '#4a3020', roughness: 0.55 })
   const atlas = atlases[decadeOf(poster.album)] ?? null
   const texture = useMemo(
     () => posterTexture(poster.album, poster.year, poster.decadeLabel, atlas, atlasUV(poster.album.id)),
@@ -438,7 +455,7 @@ export function Poster({ poster, atlases }: { poster: PosterSpot; atlases: Recor
     <group position={[poster.x, 1.75, poster.z]} rotation-y={poster.rotationY}>
       <mesh position={[0, 0, -0.01]}>
         <boxGeometry args={[0.66, 0.96, 0.02]} />
-        <meshStandardMaterial color="#1f150d" roughness={0.6} />
+        <primitive object={frame} attach="material" />
       </mesh>
       <mesh position={[0, 0, 0.002]}>
         <planeGeometry args={[0.6, 0.9]} />
@@ -473,13 +490,14 @@ export function VinylRug({ x, z }: { x: number; z: number }) {
 
 /** Discos dorados enmarcados en la pared del fondo (decoración, sin certificaciones inventadas). */
 export function WallRecords({ z }: { z: number }) {
+  const frame = useSurface()('dark_wood', { repeat: [0.5, 0.7], tint: '#4a3020', roughness: 0.55 })
   return (
     <group>
       {[-2.25, 2.25].map((x) => (
         <group key={x} position={[x, 1.9, z + 0.03]}>
           <mesh>
             <boxGeometry args={[0.62, 0.78, 0.03]} />
-            <meshStandardMaterial color="#1f150d" roughness={0.6} />
+            <primitive object={frame} attach="material" />
           </mesh>
           <mesh position={[0, 0.06, 0.02]} rotation-x={Math.PI / 2}>
             <cylinderGeometry args={[0.24, 0.24, 0.01, 48]} />
