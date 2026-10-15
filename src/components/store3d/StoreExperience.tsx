@@ -21,6 +21,7 @@ import { loadAtlas } from './atlas'
 import { buildDecorLayout } from './decorLayout'
 import { buildCollectionUnit, buildStoreLayout, ENTER, START, UNIT_WIDTH, WALL_X, type DecadeInput, type UnitLayout } from './layout'
 import { createNavState, LOOK_SENSITIVITY, MAX_PITCH, NAV_KEYS } from './navigation'
+import { AddRecordPanel } from './AddRecordPanel'
 import { HeldPanel } from './HeldPanel'
 import { HeldRecord, type HeldState, type HoldControl } from './HeldRecord'
 import { AdaptivePerformance } from './AdaptivePerformance'
@@ -119,6 +120,12 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   }
   const [fonts, setFonts] = useState(false)
   const [current, setCurrent] = useState<string | null>(null)
+  // Ventana «Añadir a tu colección» abierta desde el hueco «+» de la estantería.
+  const [adding, setAdding] = useState(false)
+  const closeAdding = useCallback(() => {
+    setAdding(false)
+    wrapperRef.current?.focus({ preventScroll: true })
+  }, [])
   const reducedMotion = useMemo(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches, [])
   const drag = useRef<{ x: number; y: number; id: number } | null>(null)
   const playerOpen = player.album !== null && player.status !== 'idle'
@@ -460,6 +467,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             onTurntable={entered ? onTurntable : () => undefined}
             onJukebox={entered && !held ? onJukebox : () => undefined}
             onHint={entered ? setHint : () => undefined}
+            onAddRecord={entered && !held ? () => setAdding(true) : () => undefined}
           />
           {held && (
             <HeldRecord
@@ -538,6 +546,9 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
           </Link>
         </div>
       </div>
+
+      {/* ---------- Añadir un disco a la colección ---------- */}
+      {adding && !held && <AddRecordPanel onClose={closeAdding} />}
 
       {/* ---------- Cartela del disco en la mano ---------- */}
       {held && !leaving && (

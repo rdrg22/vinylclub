@@ -23,7 +23,7 @@ import { InteriorEnvironment } from './Lighting'
 import type { Quality } from './quality'
 import { SurfacesProvider, useSurface } from './surfaces'
 import { coverUrlFor } from '@/services/coverArt'
-import { labelCardTexture, loadRemoteTexture, placeholderTexture, signTexture, sleeveFor, storeSignTexture, yearTagTexture } from './textures'
+import { addSlotTexture, labelCardTexture, loadRemoteTexture, placeholderTexture, signTexture, sleeveFor, storeSignTexture, yearTagTexture } from './textures'
 
 const CEILING = 3.3
 
@@ -49,6 +49,8 @@ interface SceneProps {
   onTurntable: () => void
   onJukebox: () => void
   onHint: (hint: string | null) => void
+  /** Pulsar el hueco «+» de la colección. */
+  onAddRecord: () => void
   quality: Quality
 }
 
@@ -66,7 +68,16 @@ export function StoreScene(props: SceneProps) {
       <StaticShadows version={`${Object.keys(atlases).length}|${takenIds.join(',')}|${units.at(-1)?.slots.length ?? 0}`} />
       <Room units={units} quality={props.quality} />
       {units.map((unit) => (
-        <ShelfUnit key={unit.decade} unit={unit} atlas={atlases[unit.decade] ?? null} takenIds={takenIds} onHover={onHover} onSelect={onSelect} />
+        <ShelfUnit
+          key={unit.decade}
+          unit={unit}
+          atlas={atlases[unit.decade] ?? null}
+          takenIds={takenIds}
+          onHover={onHover}
+          onSelect={onSelect}
+          onHint={onHint}
+          onAddRecord={props.onAddRecord}
+        />
       ))}
       <CounterArea
         layout={decor}
@@ -287,7 +298,9 @@ function Room({ units, quality }: { units: UnitLayout[]; quality: Quality }) {
 
 // ---------------------------------------------------------------- muebles
 
-function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect }: { unit: UnitLayout; atlas: THREE.Texture | null } & Pick<SceneProps, 'onHover' | 'onSelect' | 'takenIds'>) {
+type ShelfUnitProps = { unit: UnitLayout; atlas: THREE.Texture | null } & Pick<SceneProps, 'onHover' | 'onSelect' | 'takenIds' | 'onHint' | 'onAddRecord'>
+
+function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect, onHint, onAddRecord }: ShelfUnitProps) {
   const surface = useSurface()
   const isCollection = unit.decade === COLLECTION_KEY
   // Con atlas: todas las portadas en una sola instancia. Sueltas solo las que no tienen recorte
@@ -308,7 +321,7 @@ function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect }: { unit: UnitLay
     return signTexture(unit.label, span)
   }, [unit, isCollection])
   const emptyCard = useMemo(
-    () => (isCollection && unit.slots.length === 0 ? labelCardTexture('Tu colección está vacía', 'Registra tus vinilos en «Mi colección»') : null),
+    () => (isCollection && unit.slots.length === 0 ? labelCardTexture('Tu colección está vacía', 'Pulsa + para añadir tu primer disco') : null),
     [isCollection, unit.slots.length],
   )
 
@@ -355,6 +368,7 @@ function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect }: { unit: UnitLay
       {looseSlots.map((slot) => (
         <Cover key={slot.album.id} slot={slot} remote={isCollection} hidden={takenIds.includes(slot.album.id)} onHover={onHover} onSelect={onSelect} />
       ))}
+      {unit.addSlot && <AddSlot x={unit.addSlot.x} y={unit.addSlot.y} onHint={onHint} onClick={onAddRecord} />}
       {emptyCard && (
         <mesh position={[0, ROW_Y[2], 0.1]} rotation-x={-0.1}>
           <planeGeometry args={[0.9, 0.28]} />
@@ -376,6 +390,44 @@ function YearTag({ year, x, y }: { year: number; x: number; y: number }) {
 }
 
 const plainCoverGeometry = new THREE.PlaneGeometry(COVER_SIZE, COVER_SIZE)
+
+const addSlotMap = { current: null as THREE.Texture | null }
+
+/** Hueco de la colección con un «+»: abre el buscador para añadir un disco. */
+function AddSlot({ x, y, onHint, onClick }: { x: number; y: number; onHint: SceneProps['onHint']; onClick: () => void }) {
+  const [hovered, setHovered] = useState(false)
+  const map = useMemo(() => (addSlotMap.current ??= addSlotTexture()), [])
+  return (
+    <mesh
+      geometry={plainCoverGeometry}
+      position={[x, y + (hovered ? 0.03 : 0), hovered ? 0.18 : 0.12]}
+      rotation-x={hovered ? 0 : -0.1}
+      scale={hovered ? 1.06 : 1}
+      onPointerOver={(e: ThreeEvent<PointerEvent>) => {
+        e.stopPropagation()
+        setHovered(true)
+        onHint('Añadir un disco a tu colección')
+        document.body.style.cursor = 'pointer'
+      }}
+      onPointerOut={() => {
+        setHovered(false)
+        onHint(null)
+        document.body.style.cursor = ''
+      }}
+      onClick={(e: ThreeEvent<MouseEvent>) => {
+        e.stopPropagation()
+        if (e.delta > 6) return
+        setHovered(false)
+        onHint(null)
+        document.body.style.cursor = ''
+        onClick()
+      }}
+    >
+      {/* Se ilumina un poco al pasar por encima, como un hueco señalado. */}
+      <meshStandardMaterial map={map} roughness={0.8} emissive="#e8c98f" emissiveIntensity={hovered ? 0.25 : 0.06} emissiveMap={map} />
+    </mesh>
+  )
+}
 
 interface CoverProps extends Pick<SceneProps, 'onHover' | 'onSelect'> {
   slot: CoverSlot

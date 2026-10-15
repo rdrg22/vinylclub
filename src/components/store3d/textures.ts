@@ -384,6 +384,31 @@ export function labelCardTexture(text: string, sub?: string) {
   })
 }
 
+/** Hueco vacío de la colección: funda punteada con un «+». */
+export function addSlotTexture() {
+  return canvasTexture(256, 256, (ctx) => {
+    ctx.fillStyle = 'rgba(28, 18, 10, 0.92)'
+    ctx.fillRect(0, 0, 256, 256)
+    ctx.strokeStyle = '#e8c98f'
+    ctx.lineWidth = 5
+    ctx.setLineDash([16, 10])
+    ctx.strokeRect(12, 12, 232, 232)
+    ctx.setLineDash([])
+    ctx.lineCap = 'round'
+    ctx.lineWidth = 14
+    ctx.beginPath()
+    ctx.moveTo(128, 50)
+    ctx.lineTo(128, 140)
+    ctx.moveTo(83, 95)
+    ctx.lineTo(173, 95)
+    ctx.stroke()
+    ctx.fillStyle = '#f3e4c3'
+    ctx.textAlign = 'center'
+    ctx.font = '700 38px "IBM Plex Mono", monospace'
+    ctx.fillText('AÑADIR', 128, 206)
+  })
+}
+
 /** Rejilla de altavoz. */
 export function grilleTexture() {
   const texture = canvasTexture(128, 128, (ctx) => {

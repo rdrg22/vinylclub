@@ -61,14 +61,18 @@ describe('mueble de colección', () => {
   const album = (i: number) => ({ id: `id-${i}`, source: 'musicbrainz' as const, title: `Disco ${i}`, artist: 'Artista' })
 
   it('empieza por la balda a la altura de los ojos, centrado', () => {
+    expect(buildCollectionUnit(8, []).addSlot).toEqual({ x: 0, y: ROW_Y[1] })
     const unit = buildCollectionUnit(8, [album(1)])
     expect(unit.decade).toBe(COLLECTION_KEY)
-    expect(unit.slots).toEqual([{ album: album(1), x: 0, y: ROW_Y[1] }])
+    // El disco y el hueco «+» quedan centrados juntos.
+    expect(unit.slots).toEqual([{ album: album(1), x: -0.16, y: ROW_Y[1] }])
+    expect(unit.addSlot).toEqual({ x: 0.16, y: ROW_Y[1] })
   })
 
   it('llena 20 por balda y no pasa de su capacidad', () => {
     const unit = buildCollectionUnit(8, Array.from({ length: 130 }, (_, i) => album(i)))
     expect(unit.slots).toHaveLength(COLLECTION_CAPACITY)
+    expect(unit.addSlot).toBeUndefined()
     expect(unit.slots.filter((s) => s.y === ROW_Y[1])).toHaveLength(20)
     expect(Math.max(...unit.slots.map((s) => Math.abs(s.x)))).toBeLessThan(UNIT_WIDTH / 2)
   })

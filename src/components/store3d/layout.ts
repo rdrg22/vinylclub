@@ -61,6 +61,8 @@ export interface UnitLayout {
   yearTags: YearTag[]
   /** Desde dónde se ve el mueble entero al «ir» a esa década. */
   viewpoint: { position: [number, number, number]; yaw: number }
+  /** Solo en la colección: hueco libre con un «+» para añadir un disco (si cabe otro). */
+  addSlot?: { x: number; y: number }
 }
 
 export interface DecadeInput {
@@ -118,18 +120,23 @@ export function buildStoreLayout(decades: DecadeInput[]): UnitLayout[] {
  * Mueble «Colección» con los discos del visitante, a continuación de las décadas
  * (al fondo, junto al DJ). Siempre existe, aunque esté vacío, para que la tienda no
  * cambie de forma al entrar o salir de la cuenta. Se llena empezando por la balda a la
- * altura de los ojos, con los discos centrados, 20 por balda.
+ * altura de los ojos, con los discos centrados, 20 por balda. Tras el último disco queda
+ * un hueco con un «+» para añadir otro.
  */
 export function buildCollectionUnit(index: number, albums: Album[]): UnitLayout {
   const perRow = PER_HALF * 2
   const list = albums.slice(0, COLLECTION_CAPACITY)
-  const slots = list.map((album, i) => {
+  // El hueco «+» va justo después del último disco y cuenta para centrar la balda.
+  const places = Math.min(list.length + 1, COLLECTION_CAPACITY)
+  const at = (i: number) => {
     const row = Math.floor(i / perRow)
     const k = i % perRow
-    const inRow = Math.min(perRow, list.length - row * perRow)
-    return { album, x: (k - (inRow - 1) / 2) * COVER_PITCH, y: ROW_Y[COLLECTION_ROW_ORDER[row]!]! }
-  })
-  return { decade: COLLECTION_KEY, label: 'Colección', ...placement(index), slots, yearTags: [] }
+    const inRow = Math.min(perRow, places - row * perRow)
+    return { x: (k - (inRow - 1) / 2) * COVER_PITCH, y: ROW_Y[COLLECTION_ROW_ORDER[row]!]! }
+  }
+  const slots = list.map((album, i) => ({ album, ...at(i) }))
+  const addSlot = list.length < COLLECTION_CAPACITY ? at(list.length) : undefined
+  return { decade: COLLECTION_KEY, label: 'Colección', ...placement(index), slots, yearTags: [], addSlot }
 }
 
 /** Límites del pasillo por los que se puede caminar. */

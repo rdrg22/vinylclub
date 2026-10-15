@@ -25,7 +25,13 @@ interface Query {
   value: string
 }
 
-export function AddRecord() {
+interface AddRecordProps {
+  /** `page`: sección de «Mi colección». `panel`: dentro de la ventana de la tienda 3D. */
+  variant?: 'page' | 'panel'
+}
+
+export function AddRecord({ variant = 'page' }: AddRecordProps) {
+  const inPanel = variant === 'panel'
   const [mode, setMode] = useState<Mode>('barcode')
   const [text, setText] = useState('')
   const [query, setQuery] = useState<Query | null>(null)
@@ -53,11 +59,13 @@ export function AddRecord() {
   }
 
   return (
-    <section aria-labelledby="add-title" className="border-t-2 border-ink pt-6">
+    <section aria-labelledby={inPanel ? undefined : 'add-title'} aria-label={inPanel ? 'Añadir un disco' : undefined} className={inPanel ? undefined : 'border-t-2 border-ink pt-6'}>
       <div className="flex flex-wrap items-baseline justify-between gap-4">
-        <h2 id="add-title" className="font-display text-3xl font-medium tracking-tight">
-          Añadir un disco
-        </h2>
+        {!inPanel && (
+          <h2 id="add-title" className="font-display text-3xl font-medium tracking-tight">
+            Añadir un disco
+          </h2>
+        )}
         <div role="tablist" aria-label="Buscar por" className="flex gap-5">
           {(
             [
@@ -90,6 +98,7 @@ export function AddRecord() {
             value={text}
             onChange={(e) => setText(e.target.value)}
             inputMode={mode === 'barcode' ? 'numeric' : 'search'}
+            autoFocus={inPanel}
             autoComplete="off"
             placeholder={mode === 'barcode' ? 'p. ej. 5099902987613' : 'p. ej. Pink Floyd The Wall'}
             className="mt-1 w-full border-b border-ink/40 bg-transparent py-2 text-lg tabular-nums placeholder:text-ink-faint focus:border-ink focus:outline-none"
@@ -147,7 +156,7 @@ export function AddRecord() {
               <p className="label-mono text-ink-faint">
                 {results.data.length === 1 ? '1 edición' : `${results.data.length} ediciones`} · elige la tuya
               </p>
-              <ul className="mt-2 divide-y divide-rule border-y border-rule">
+              <ul className={cn('mt-2 divide-y divide-rule border-y border-rule', inPanel && 'max-h-[42vh] overflow-y-auto overscroll-contain pr-1')}>
                 {results.data.map((release) => (
                   <ResultRow key={release.id} release={release} />
                 ))}
