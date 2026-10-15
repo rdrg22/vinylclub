@@ -6,7 +6,7 @@
   # Misma versión que en desarrollo (Vite 8 y TypeScript 7 necesitan Node moderno).
   NODE_VERSION = "24"
 
-# SPA: cualquier ruta (/buscar, /artista/…, /estanteria/…) la resuelve React Router.
+# SPA: todo se sirve desde index.html; las rutas antiguas (/buscar, /coleccion…) redirigen a la tienda.
 [[redirects]]
   from = "/*"
   to = "/index.html"
