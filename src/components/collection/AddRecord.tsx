@@ -31,9 +31,11 @@ interface AddRecordProps {
   variant?: 'page' | 'panel'
   /** Búsqueda por título ya hecha al abrir (p. ej. «Ya lo tengo» desde la lista de deseos). */
   initialQuery?: string
+  /** Al añadir una edición (p. ej. para sacar de «Lo quiero» el disco del que se partió). */
+  onAdded?: (release: Release) => void
 }
 
-export function AddRecord({ variant = 'page', initialQuery }: AddRecordProps) {
+export function AddRecord({ variant = 'page', initialQuery, onAdded }: AddRecordProps) {
   const inPanel = variant === 'panel'
   const [mode, setMode] = useState<Mode>(initialQuery ? 'title' : 'barcode')
   const [text, setText] = useState(initialQuery ?? '')
@@ -161,7 +163,7 @@ export function AddRecord({ variant = 'page', initialQuery }: AddRecordProps) {
               </p>
               <ul className={cn('mt-2 divide-y divide-rule border-y border-rule', inPanel && 'max-h-[42vh] overflow-y-auto overscroll-contain pr-1 [scrollbar-color:rgb(232_201_143/0.45)_transparent] [scrollbar-width:thin]')}>
                 {results.data.map((release) => (
-                  <ResultRow key={release.id} release={release} />
+                  <ResultRow key={release.id} release={release} onAdded={onAdded} />
                 ))}
               </ul>
             </>
@@ -172,7 +174,7 @@ export function AddRecord({ variant = 'page', initialQuery }: AddRecordProps) {
   )
 }
 
-function ResultRow({ release }: { release: Release }) {
+function ResultRow({ release, onAdded }: { release: Release; onAdded?: (release: Release) => void }) {
   const collection = useCollection()
   const wishlist = useWishlist()
   const [busy, setBusy] = useState(false)
@@ -211,6 +213,7 @@ function ResultRow({ release }: { release: Release }) {
             setError(error)
             // Si estaba en «Lo quiero», ya no hace falta: ahora lo tienes.
             if (!error && wishlist.has(release.album.id)) wishlist.toggle(release.album)
+            if (!error) onAdded?.(release)
             setBusy(false)
           }}
           className={buttonClass('primary', 'shrink-0 px-4 py-2')}

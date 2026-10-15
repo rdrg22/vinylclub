@@ -5,6 +5,8 @@
 import { useAuth } from '@/components/auth/authContext'
 import { AddRecord } from '@/components/collection/AddRecord'
 import { useCollection } from '@/components/collection/collectionContext'
+import { useWishlist } from '@/components/favorites/favoritesContext'
+import type { Album } from '@/types/music'
 import { StoreWindow, storeButtonPrimary } from './StoreWindow'
 
 interface Props {
@@ -13,9 +15,12 @@ interface Props {
   onSignIn: () => void
   /** Búsqueda ya hecha al abrir (al pasar un disco de «Lo quiero» a la colección). */
   initialQuery?: string
+  /** Disco de «Lo quiero» del que se partió («Ya lo tengo»): sale de la lista al añadir una edición. */
+  fromWish?: Album
 }
 
-export function AddRecordPanel({ onClose, onSignIn, initialQuery }: Props) {
+export function AddRecordPanel({ onClose, onSignIn, initialQuery, fromWish }: Props) {
+  const wishlist = useWishlist()
   const auth = useAuth()
   const { items, where } = useCollection()
   const signedOut = auth.state.status === 'signed-out'
@@ -42,7 +47,13 @@ export function AddRecordPanel({ onClose, onSignIn, initialQuery }: Props) {
       ) : auth.state.status === 'loading' ? (
         <p className="label-mono text-[#e8c98f]/80">Comprobando tu sesión…</p>
       ) : (
-        <AddRecord variant="panel" initialQuery={initialQuery} />
+        <AddRecord
+          variant="panel"
+          initialQuery={initialQuery}
+          // MusicBrainz a veces tiene el mismo disco dos veces (dos «release groups»): no basta con
+          // comparar ids, se quita el disco del que se partió.
+          onAdded={() => fromWish && wishlist.has(fromWish.id) && wishlist.toggle(fromWish)}
+        />
       )}
     </StoreWindow>
   )

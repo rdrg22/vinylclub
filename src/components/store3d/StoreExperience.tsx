@@ -26,7 +26,9 @@ import { AccountWindow, displayName, ProfileAvatar } from './AccountWindow'
 import { AddRecordPanel } from './AddRecordPanel'
 import { FavoritesWindow } from './FavoritesWindow'
 import { SearchWindow } from './SearchWindow'
+import { PlaysWindow } from './PlaysWindow'
 import { SettingsWindow } from './SettingsWindow'
+import { usePlayHistory } from './usePlayHistory'
 import { HeldPanel } from './HeldPanel'
 import { HeldRecord, type HeldState, type HoldControl } from './HeldRecord'
 import { AdaptivePerformance } from './AdaptivePerformance'
@@ -93,6 +95,8 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   const auth = useAuth()
   const { items: owned } = useCollection()
   const wishlist = useWishlist()
+  // Lo que ha sonado en el tocadiscos: lo apunta el DJ en su pizarra.
+  const playHistory = usePlayHistory()
   const wrapperRef = useRef<HTMLDivElement>(null)
   const [entered, setEntered] = useState(readEntered)
   const nav = useRef(createNavState(!entered)).current
@@ -139,10 +143,12 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   // Ventanas del menú de la tienda (y la de «Añadir», desde el hueco «+» de la colección).
   // Búsqueda ya hecha al abrir «Añadir» desde «Ya lo tengo».
   const [addQuery, setAddQuery] = useState<string | undefined>(undefined)
-  const [openWindow, setOpenWindow] = useState<'search' | 'favorites' | 'account' | 'settings' | 'add' | null>(null)
+  const [addFromWish, setAddFromWish] = useState<Album | undefined>(undefined)
+  const [openWindow, setOpenWindow] = useState<'search' | 'favorites' | 'account' | 'settings' | 'add' | 'plays' | null>(null)
   const closeWindow = useCallback(() => {
     setOpenWindow(null)
     setAddQuery(undefined)
+    setAddFromWish(undefined)
     wrapperRef.current?.focus({ preventScroll: true })
   }, [])
   const reducedMotion = useMemo(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches, [])
@@ -277,12 +283,13 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
     if (toTurntable && held) {
       setTurntableRecord(held.album)
       if (!isPlaying(held.album)) togglePreview(held.album)
+      playHistory.record(held.album)
     }
     setToTurntable(null)
     setHeld(null)
     setLeaving(false)
     nav.locked = false
-  }, [nav, toTurntable, held, togglePreview, player])
+  }, [nav, toTurntable, held, togglePreview, player, playHistory])
 
   const onTurntable = useCallback(() => {
     if (held) return placeOnTurntable()
@@ -483,6 +490,8 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             onHint={entered ? setHint : () => undefined}
             onAddRecord={entered && !held ? () => setOpenWindow('add') : () => undefined}
             prices={ownedPrices}
+            plays={playHistory.plays}
+            onOpenPlays={entered && !held ? () => setOpenWindow('plays') : () => undefined}
             spots={spots}
             currentSpot={current ?? ENTRANCE_SPOT}
             spotsDisabled={!entered || !!held || openWindow !== null}
@@ -570,6 +579,9 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
           }}
         />
       )}
+      {!held && openWindow === 'plays' && (
+        <PlaysWindow plays={playHistory.plays} saved={auth.state.status === 'signed-in'} onPick={pickUpFromView} onClose={closeWindow} />
+      )}
       {!held && openWindow === 'settings' && (
         <SettingsWindow
           quality={quality}
@@ -584,7 +596,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
           onClose={closeWindow}
         />
       )}
-      {!held && openWindow === 'add' && <AddRecordPanel onClose={closeWindow} onSignIn={() => setOpenWindow('account')} initialQuery={addQuery} />}
+      {!held && openWindow === 'add' && <AddRecordPanel onClose={closeWindow} onSignIn={() => setOpenWindow('account')} initialQuery={addQuery} fromWish={addFromWish} />}
 
       {/* ---------- Cartela del disco en la mano ---------- */}
       {held && !leaving && (
@@ -600,6 +612,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             onOwnIt={() => {
               // Se devuelve el disco y se abre «Añadir» con él ya buscado para elegir la edición.
               setAddQuery(`${held.album.artist} ${held.album.title}`)
+              setAddFromWish(held.album)
               setOpenWindow('add')
               putBack()
             }}

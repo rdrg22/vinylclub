@@ -17,6 +17,8 @@ import {
 import { stepNavigation, type NavState } from './navigation'
 import { atlasUV } from './atlas'
 import { CoverInstances } from './CoverInstances'
+import { DjBoard } from './DjBoard'
+import type { Play } from '@/services/plays/plays'
 import { FloorSpots } from './FloorSpots'
 import type { FloorSpot } from './spots'
 import { CounterArea, Crate, Jukebox, NeonSign, Poster, VinylRug, WallRecords } from './Decor'
@@ -58,6 +60,9 @@ interface SceneProps {
   onAddRecord: () => void
   /** Lo que te costó cada disco de tu colección (por id del disco): pegatina en la funda. */
   prices: Record<string, number>
+  /** Lo que ha sonado en el tocadiscos (pizarra del DJ) y abrir su lista. */
+  plays: Play[]
+  onOpenPlays: () => void
   /** Marcas del suelo (los sitios a los que se puede ir) y en cuál se está. */
   spots: FloorSpot[]
   currentSpot: string | null
@@ -127,6 +132,7 @@ export function StoreScene(props: SceneProps) {
       <NeonSign z={decor.crates[0]?.z ?? 2} />
       <VinylRug x={decor.rug.x} z={decor.rug.z} />
       <WallRecords z={backWallZ(units)} />
+      <DjBoard position={[-1.6, 1.88, backWallZ(units) + 0.04]} plays={props.plays} onOpen={props.onOpenPlays} onHint={onHint} />
     </SurfacesProvider>
   )
 }
@@ -305,8 +311,9 @@ function Room({ units, quality }: { units: UnitLayout[]; quality: Quality }) {
         <planeGeometry args={[width, CEILING]} />
       </mesh>
       <Storefront z={frontZ} wood={trim} />
+      {/* Cartel algo más estrecho que la pared: a los lados, la pizarra del DJ y el disco de oro. */}
       <mesh position={[0, 1.9, backZ + 0.02]}>
-        <planeGeometry args={[3.6, 1.35]} />
+        <planeGeometry args={[2.4, 0.9]} />
         <meshStandardMaterial map={storeSign} roughness={0.7} />
       </mesh>
       {lampZs.map((z, i) => (

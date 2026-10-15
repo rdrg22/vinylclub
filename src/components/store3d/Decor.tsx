@@ -497,12 +497,12 @@ export function VinylRug({ x, z }: { x: number; z: number }) {
   )
 }
 
-/** Discos dorados enmarcados en la pared del fondo (decoración, sin certificaciones inventadas). */
+/** Disco dorado enmarcado en la pared del fondo (decoración, sin certificaciones inventadas); a la izquierda va la pizarra del DJ. */
 export function WallRecords({ z }: { z: number }) {
   const frame = useSurface()('dark_wood', { repeat: [0.5, 0.7], tint: '#4a3020', roughness: 0.55 })
   return (
     <group>
-      {[-2.25, 2.25].map((x) => (
+      {[1.6].map((x) => (
         <group key={x} position={[x, 1.9, z + 0.03]}>
           <mesh>
             <boxGeometry args={[0.62, 0.78, 0.03]} />

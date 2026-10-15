@@ -434,6 +434,67 @@ export function floorArrowTexture() {
   })
 }
 
+/**
+ * Pizarra del DJ: lo que ha sonado en el tocadiscos, escrito con tiza.
+ * `entries`: «título — artista» y cuándo, de lo más reciente a lo más antiguo.
+ */
+export function chalkboardTexture(entries: Array<{ title: string; artist: string; when: string }>) {
+  return canvasTexture(512, 640, (ctx) => {
+    // Pizarra verde oscuro con manchas de borrador.
+    ctx.fillStyle = '#1f2a24'
+    ctx.fillRect(0, 0, 512, 640)
+    for (let i = 0; i < 18; i++) {
+      ctx.fillStyle = `rgba(230, 236, 225, ${0.015 + (i % 3) * 0.01})`
+      ctx.beginPath()
+      ctx.ellipse((i * 97) % 512, (i * 151) % 640, 90, 30, (i % 5) * 0.6, 0, Math.PI * 2)
+      ctx.fill()
+    }
+    const chalk = 'rgba(241, 236, 225, 0.92)'
+    ctx.fillStyle = chalk
+    ctx.textAlign = 'center'
+    ctx.font = 'italic 600 46px Fraunces, Georgia, serif'
+    ctx.fillText('Ha sonado', 256, 70)
+    ctx.font = '500 20px "IBM Plex Mono", monospace'
+    ctx.fillStyle = 'rgba(241, 236, 225, 0.6)'
+    ctx.fillText('EN EL PLATO', 256, 102)
+    ctx.strokeStyle = 'rgba(241, 236, 225, 0.5)'
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.moveTo(110, 122)
+    ctx.lineTo(402, 122)
+    ctx.stroke()
+
+    ctx.textAlign = 'left'
+    if (entries.length === 0) {
+      ctx.fillStyle = 'rgba(241, 236, 225, 0.75)'
+      ctx.font = 'italic 500 26px Fraunces, Georgia, serif'
+      wrapLines(ctx, 'Pon un disco en el tocadiscos y lo apunto aquí.', 420, 4).forEach((line, i) => ctx.fillText(line, 46, 200 + i * 36))
+      ctx.textAlign = 'right'
+      ctx.fillText('— el DJ', 466, 360)
+      return
+    }
+    entries.slice(0, 7).forEach((entry, i) => {
+      const y = 170 + i * 66
+      ctx.fillStyle = chalk
+      ctx.font = 'italic 600 26px Fraunces, Georgia, serif'
+      let title = entry.title
+      while (ctx.measureText(title).width > 420 && title.length > 4) title = `${title.slice(0, -2)}…`.replace(/……$/, '…')
+      ctx.fillText(title, 46, y)
+      ctx.fillStyle = 'rgba(241, 236, 225, 0.6)'
+      ctx.font = '500 17px "IBM Plex Mono", monospace'
+      let line = `${entry.artist} · ${entry.when}`
+      while (ctx.measureText(line).width > 420 && line.length > 4) line = `${line.slice(0, -2)}…`.replace(/……$/, '…')
+      ctx.fillText(line, 46, y + 24)
+    })
+    if (entries.length > 7) {
+      ctx.textAlign = 'center'
+      ctx.fillStyle = 'rgba(241, 236, 225, 0.55)'
+      ctx.font = '500 17px "IBM Plex Mono", monospace'
+      ctx.fillText(`Y ${entries.length - 7} más · pulsa para verlos`, 256, 622)
+    }
+  })
+}
+
 /** Colores flúor de las pegatinas de precio, como en las tiendas de segunda mano. */
 const STICKER_COLORS = ['#ffd23f', '#ff8a3d', '#ff5d8f', '#b6f05a', '#ffe9a8']
 const stickerCache = new Map<string, THREE.Texture>()
