@@ -16,6 +16,7 @@ import type { Release } from '@/types/music'
 import { cn } from '@/utils/cn'
 import { countryName, formatPartialDate } from '@/utils/format'
 import { BarcodeScanner, canScanBarcodes } from './BarcodeScanner'
+import { useWishlist } from '@/components/favorites/favoritesContext'
 import { useCollection } from './collectionContext'
 
 type Mode = 'barcode' | 'title'
@@ -28,13 +29,15 @@ interface Query {
 interface AddRecordProps {
   /** `page`: sección de «Mi colección». `panel`: dentro de la ventana de la tienda 3D. */
   variant?: 'page' | 'panel'
+  /** Búsqueda por título ya hecha al abrir (p. ej. «Ya lo tengo» desde la lista de deseos). */
+  initialQuery?: string
 }
 
-export function AddRecord({ variant = 'page' }: AddRecordProps) {
+export function AddRecord({ variant = 'page', initialQuery }: AddRecordProps) {
   const inPanel = variant === 'panel'
-  const [mode, setMode] = useState<Mode>('barcode')
-  const [text, setText] = useState('')
-  const [query, setQuery] = useState<Query | null>(null)
+  const [mode, setMode] = useState<Mode>(initialQuery ? 'title' : 'barcode')
+  const [text, setText] = useState(initialQuery ?? '')
+  const [query, setQuery] = useState<Query | null>(initialQuery ? { mode: 'title', value: initialQuery } : null)
   const [scanning, setScanning] = useState(false)
   const [scanSupported] = useState(canScanBarcodes)
 
@@ -171,6 +174,7 @@ export function AddRecord({ variant = 'page' }: AddRecordProps) {
 
 function ResultRow({ release }: { release: Release }) {
   const collection = useCollection()
+  const wishlist = useWishlist()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const owned = collection.has(release.id)
@@ -203,7 +207,10 @@ function ResultRow({ release }: { release: Release }) {
           disabled={busy}
           onClick={async () => {
             setBusy(true)
-            setError(await collection.add(release))
+            const error = await collection.add(release)
+            setError(error)
+            // Si estaba en «Lo quiero», ya no hace falta: ahora lo tienes.
+            if (!error && wishlist.has(release.album.id)) wishlist.toggle(release.album)
             setBusy(false)
           }}
           className={buttonClass('primary', 'shrink-0 px-4 py-2')}

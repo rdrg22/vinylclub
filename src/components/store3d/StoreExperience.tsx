@@ -11,7 +11,7 @@ import { useAlbumDetail } from '@/components/album/albumDetailContext'
 import { useAuth } from '@/components/auth/authContext'
 import { useCollection } from '@/components/collection/collectionContext'
 import { albumOf } from '@/services/collection/collection'
-import { useFavorites } from '@/components/favorites/favoritesContext'
+import { useFavorites, useWishlist } from '@/components/favorites/favoritesContext'
 import { usePreviewPlayer } from '@/components/player/previewPlayerContext'
 import { useAsyncResource } from '@/hooks/useAsyncResource'
 import { formatLength, getAlbumBack, type AlbumBack } from '@/services/albumBack'
@@ -19,7 +19,7 @@ import type { Album } from '@/types/music'
 import { cn } from '@/utils/cn'
 import { loadAtlas } from './atlas'
 import { buildDecorLayout } from './decorLayout'
-import { buildCollectionUnit, buildStoreLayout, COLLECTION_KEY, ENTER, START, UNIT_WIDTH, WALL_X, type DecadeInput, type UnitLayout } from './layout'
+import { buildCollectionUnit, buildStoreLayout, buildWishlistUnit, COLLECTION_KEY, ENTER, START, UNIT_WIDTH, WALL_X, type DecadeInput, type UnitLayout } from './layout'
 import { createNavState, LOOK_SENSITIVITY, MAX_PITCH } from './navigation'
 import { buildFloorSpots, ENTRANCE_SPOT, type FloorSpot } from './spots'
 import { AccountWindow, displayName, ProfileAvatar } from './AccountWindow'
@@ -92,6 +92,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   const { albums: favorites } = useFavorites()
   const auth = useAuth()
   const { items: owned } = useCollection()
+  const wishlist = useWishlist()
   const wrapperRef = useRef<HTMLDivElement>(null)
   const [entered, setEntered] = useState(readEntered)
   const nav = useRef(createNavState(!entered)).current
@@ -104,8 +105,13 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
     return owned.map(albumOf).filter((a) => !seen.has(a.id) && seen.add(a.id))
   }, [owned])
   const units = useMemo(
-    () => [...decadeUnits, buildCollectionUnit(decadeUnits.length, ownedAlbums)],
-    [decadeUnits, ownedAlbums],
+    () => [
+      ...decadeUnits,
+      buildCollectionUnit(decadeUnits.length, ownedAlbums),
+      // Enfrente de la colección: los que quieres y aún no tienes.
+      buildWishlistUnit(decadeUnits.length + 1, wishlist.albums),
+    ],
+    [decadeUnits, ownedAlbums, wishlist.albums],
   )
   const decor = useMemo(
     () => buildDecorLayout(units, Object.fromEntries(decades.map((d) => [d.decade, d.albums.map((a) => a.album)]))),
@@ -125,9 +131,12 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   const [fonts, setFonts] = useState(false)
   const [current, setCurrent] = useState<string | null>(null)
   // Ventanas del menú de la tienda (y la de «Añadir», desde el hueco «+» de la colección).
+  // Búsqueda ya hecha al abrir «Añadir» desde «Ya lo tengo».
+  const [addQuery, setAddQuery] = useState<string | undefined>(undefined)
   const [openWindow, setOpenWindow] = useState<'search' | 'favorites' | 'account' | 'settings' | 'add' | null>(null)
   const closeWindow = useCallback(() => {
     setOpenWindow(null)
+    setAddQuery(undefined)
     wrapperRef.current?.focus({ preventScroll: true })
   }, [])
   const reducedMotion = useMemo(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches, [])
@@ -568,7 +577,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
           onClose={closeWindow}
         />
       )}
-      {!held && openWindow === 'add' && <AddRecordPanel onClose={closeWindow} onSignIn={() => setOpenWindow('account')} />}
+      {!held && openWindow === 'add' && <AddRecordPanel onClose={closeWindow} onSignIn={() => setOpenWindow('account')} initialQuery={addQuery} />}
 
       {/* ---------- Cartela del disco en la mano ---------- */}
       {held && !leaving && (
@@ -581,6 +590,12 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             onReturn={putBack}
             onTurntable={placeOnTurntable}
             onDetails={() => openAlbum(held.album)}
+            onOwnIt={() => {
+              // Se devuelve el disco y se abre «Añadir» con él ya buscado para elegir la edición.
+              setAddQuery(`${held.album.artist} ${held.album.title}`)
+              setOpenWindow('add')
+              putBack()
+            }}
           />
         </div>
       )}

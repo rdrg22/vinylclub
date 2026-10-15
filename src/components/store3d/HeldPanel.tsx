@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useCollection } from '@/components/collection/collectionContext'
 import { FavoriteButton } from '@/components/favorites/FavoriteButton'
+import { useWishlist } from '@/components/favorites/favoritesContext'
 import { ListenLinks } from '@/components/listen/ListenLinks'
 import { PlayButton } from '@/components/player/PlayButton'
 import { usePreviewPlayer } from '@/components/player/previewPlayerContext'
@@ -17,17 +18,21 @@ interface HeldPanelProps {
   onReturn: () => void
   onTurntable: () => void
   onDetails: () => void
+  /** «Ya lo tengo»: pasar un disco de la lista de deseos a la colección. */
+  onOwnIt: () => void
 }
 
 const button =
   'label-mono rounded-sm border border-[#e8c98f]/50 px-3 py-2 text-[#f3e4c3] transition-colors hover:border-[#e8c98f] hover:bg-[#e8c98f]/10'
 
 /** Cartela del disco que se tiene en la mano, con el estilo de los carteles de la tienda. */
-export function HeldPanel({ album, flipped, backNote, onFlip, onReturn, onTurntable, onDetails }: HeldPanelProps) {
+export function HeldPanel({ album, flipped, backNote, onFlip, onReturn, onTurntable, onDetails, onOwnIt }: HeldPanelProps) {
   const { state } = usePreviewPlayer()
   const collection = useCollection()
   // Ediciones de este disco en tu colección (normalmente una).
   const owned = collection.items.filter((i) => i.albumId === album.id)
+  const wishlist = useWishlist()
+  const wanted = wishlist.has(album.id)
   const [confirmRemove, setConfirmRemove] = useState(false)
   const [removeError, setRemoveError] = useState<string | null>(null)
   const current = state.album?.id === album.id
@@ -99,6 +104,25 @@ export function HeldPanel({ album, flipped, backNote, onFlip, onReturn, onTurnta
           <button type="button" onClick={onDetails} className={button}>
             Ficha completa
           </button>
+          {owned.length === 0 && (
+            <button
+              type="button"
+              onClick={() => wishlist.toggle(album)}
+              aria-pressed={wanted}
+              className={cn(button, wanted && 'border-[#e8c98f] bg-[#e8c98f]/15')}
+              title={wanted ? 'Quitar de tu lista de deseos' : 'Apuntarlo en tu lista de deseos'}
+            >
+              <span aria-hidden className={wanted ? 'text-signal' : undefined}>
+                {wanted ? '♥' : '♡'}
+              </span>{' '}
+              {wanted ? 'En tu lista' : 'Lo quiero'}
+            </button>
+          )}
+          {owned.length === 0 && wanted && (
+            <button type="button" onClick={onOwnIt} className={button}>
+              Ya lo tengo →
+            </button>
+          )}
           {owned.length > 0 &&
             (confirmRemove ? (
               <button

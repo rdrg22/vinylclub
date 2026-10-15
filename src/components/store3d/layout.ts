@@ -44,13 +44,15 @@ export interface YearTag {
 
 /** Clave del mueble con la colección del visitante (no es una década). */
 export const COLLECTION_KEY = 'coleccion'
+/** Clave del mueble «Lo quiero» (lista de deseos), enfrente de la colección. */
+export const WISHLIST_KEY = 'deseos'
 /** Huecos del mueble de colección: cinco baldas de 20 discos. */
 export const COLLECTION_CAPACITY = ROW_Y.length * PER_HALF * 2
 /** Orden de llenado de las baldas: ojos, debajo, arriba y las de abajo. */
 const COLLECTION_ROW_ORDER = [1, 2, 0, 3, 4] as const
 
 export interface UnitLayout {
-  decade: Decade | typeof COLLECTION_KEY
+  decade: Decade | typeof COLLECTION_KEY | typeof WISHLIST_KEY
   label: string
   side: 'left' | 'right'
   /** Centro del mueble en el mundo (a ras de suelo). */
@@ -124,10 +126,19 @@ export function buildStoreLayout(decades: DecadeInput[]): UnitLayout[] {
  * un hueco con un «+» para añadir otro.
  */
 export function buildCollectionUnit(index: number, albums: Album[]): UnitLayout {
+  return personalUnit(index, albums, COLLECTION_KEY, 'Colección', true)
+}
+
+/** Mueble «Lo quiero»: los discos de la lista de deseos, igual que la colección pero sin hueco «+». */
+export function buildWishlistUnit(index: number, albums: Album[]): UnitLayout {
+  return personalUnit(index, albums, WISHLIST_KEY, 'Lo quiero', false)
+}
+
+function personalUnit(index: number, albums: Album[], key: UnitLayout['decade'], label: string, withAddSlot: boolean): UnitLayout {
   const perRow = PER_HALF * 2
   const list = albums.slice(0, COLLECTION_CAPACITY)
   // El hueco «+» va justo después del último disco y cuenta para centrar la balda.
-  const places = Math.min(list.length + 1, COLLECTION_CAPACITY)
+  const places = Math.min(list.length + (withAddSlot ? 1 : 0), COLLECTION_CAPACITY)
   const at = (i: number) => {
     const row = Math.floor(i / perRow)
     const k = i % perRow
@@ -135,8 +146,8 @@ export function buildCollectionUnit(index: number, albums: Album[]): UnitLayout 
     return { x: (k - (inRow - 1) / 2) * COVER_PITCH, y: ROW_Y[COLLECTION_ROW_ORDER[row]!]! }
   }
   const slots = list.map((album, i) => ({ album, ...at(i) }))
-  const addSlot = list.length < COLLECTION_CAPACITY ? at(list.length) : undefined
-  return { decade: COLLECTION_KEY, label: 'Colección', ...placement(index), slots, yearTags: [], addSlot }
+  const addSlot = withAddSlot && list.length < COLLECTION_CAPACITY ? at(list.length) : undefined
+  return { decade: key, label, ...placement(index), slots, yearTags: [], addSlot }
 }
 
 /** Límites del pasillo por los que se puede caminar. */

@@ -4,7 +4,7 @@ rules_version = '2';
 // Cómo aplicarlas: consola de Firebase → Firestore Database → Reglas → pegar → Publicar.
 //
 // Cada usuario tiene su colección en users/{uid}/collection/{MBID de la edición} y sus
-// favoritos en users/{uid}/favorites/{id del disco}. Solo el propio usuario puede
+// favoritos y su lista de deseos en users/{uid}/favorites|wishlist/{id del disco}. Solo el propio usuario puede
 // leerlos, añadir y quitar. Nadie puede leer los de otro. Todo lo demás está cerrado.
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -18,6 +18,13 @@ service cloud.firestore {
 
     // Favoritos de cada usuario: users/{uid}/favorites/{id del disco}.
     match /users/{userId}/favorites/{albumId} {
+      allow read, delete: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId && validFavorite(albumId);
+      allow update: if false;
+    }
+
+    // Lista de deseos («Lo quiero»): users/{uid}/wishlist/{id del disco}, como los favoritos.
+    match /users/{userId}/wishlist/{albumId} {
       allow read, delete: if request.auth != null && request.auth.uid == userId;
       allow create: if request.auth != null && request.auth.uid == userId && validFavorite(albumId);
       allow update: if false;

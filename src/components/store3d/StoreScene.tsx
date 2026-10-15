@@ -5,6 +5,7 @@ import type { Album } from '@/types/music'
 import {
   backWallZ,
   COLLECTION_KEY,
+  WISHLIST_KEY,
   COVER_SIZE,
   ROW_Y,
   UNIT_WIDTH,
@@ -72,7 +73,7 @@ export function StoreScene(props: SceneProps) {
       <hemisphereLight args={['#ffe2b8', '#2a1a0e', 0.35]} />
       <ambientLight intensity={0.08} color="#ffd9a8" />
       <CameraRig nav={nav} bounds={bounds} reducedMotion={reducedMotion} />
-      <StaticShadows version={`${Object.keys(atlases).length}|${takenIds.join(',')}|${units.at(-1)?.slots.length ?? 0}`} />
+      <StaticShadows version={`${Object.keys(atlases).length}|${takenIds.join(',')}|${units.map((u) => u.slots.length).join('.')}`} />
       <Room units={units} quality={props.quality} />
       {units.map((unit) => (
         <ShelfUnit
@@ -318,27 +319,33 @@ type ShelfUnitProps = { unit: UnitLayout; atlas: THREE.Texture | null } & Pick<S
 function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect, onHint, onAddRecord }: ShelfUnitProps) {
   const surface = useSurface()
   const isCollection = unit.decade === COLLECTION_KEY
+  const isWishlist = unit.decade === WISHLIST_KEY
+  // Muebles del visitante: portadas descargadas al momento, no de los atlas de década.
+  const isPersonal = isCollection || isWishlist
   // Con atlas: todas las portadas en una sola instancia. Sueltas solo las que no tienen recorte
   // (o todas, con su color de funda, mientras el atlas carga).
-  const looseSlots = useMemo(() => (atlas ? unit.slots.filter((s) => !atlasUV(s.album.id)) : unit.slots), [atlas, unit.slots])
+  const looseSlots = useMemo(() => (atlas && !isPersonal ? unit.slots.filter((s) => !atlasUV(s.album.id)) : unit.slots), [atlas, isPersonal, unit.slots])
 
   const back = surface('dark_wood', { repeat: [UNIT_WIDTH / 1.6, 2.6 / 1.6], tint: '#8a6a52' })
   const wood = surface('dark_wood', { repeat: [0.4, 2.2] })
   const ledge = surface('dark_wood', { repeat: [UNIT_WIDTH / 1.4, 0.25] })
 
   const sign = useMemo(() => {
-    if (isCollection) {
+    if (isPersonal) {
       const n = unit.slots.length
-      return signTexture(unit.label, n === 0 ? 'Tus discos, aquí' : n === 1 ? '1 disco · Tu colección' : `${n} discos · Tu colección`)
+      const what = isCollection ? 'Tu colección' : 'Tu lista de deseos'
+      return signTexture(unit.label, n === 0 ? (isCollection ? 'Tus discos, aquí' : 'Los que te faltan') : `${n === 1 ? '1 disco' : `${n} discos`} · ${what}`)
     }
     const years = unit.yearTags.map((t) => t.year)
     const span = years.length ? `${Math.min(...years)}–${Math.max(...years)} · Top 10 Billboard` : ''
     return signTexture(unit.label, span)
-  }, [unit, isCollection])
-  const emptyCard = useMemo(
-    () => (isCollection && unit.slots.length === 0 ? labelCardTexture('Tu colección está vacía', 'Pulsa + para añadir tu primer disco') : null),
-    [isCollection, unit.slots.length],
-  )
+  }, [unit, isCollection, isPersonal])
+  const emptyCard = useMemo(() => {
+    if (unit.slots.length > 0) return null
+    if (isCollection) return labelCardTexture('Tu colección está vacía', 'Pulsa + para añadir tu primer disco')
+    if (isWishlist) return labelCardTexture('Aún no quieres ninguno', 'Coge un disco y pulsa «Lo quiero»')
+    return null
+  }, [isCollection, isWishlist, unit.slots.length])
 
   return (
     <group position={unit.center} rotation-y={unit.rotationY}>
@@ -379,9 +386,9 @@ function ShelfUnit({ unit, atlas, takenIds, onHover, onSelect, onHint, onAddReco
       {unit.yearTags.map((tag) => (
         <YearTag key={tag.year} year={tag.year} x={tag.x} y={tag.y - COVER_SIZE / 2 - 0.035} />
       ))}
-      {atlas && <CoverInstances slots={unit.slots} atlas={atlas} takenIds={takenIds} onHover={onHover} onSelect={onSelect} />}
+      {atlas && !isPersonal && <CoverInstances slots={unit.slots} atlas={atlas} takenIds={takenIds} onHover={onHover} onSelect={onSelect} />}
       {looseSlots.map((slot) => (
-        <Cover key={slot.album.id} slot={slot} remote={isCollection} hidden={takenIds.includes(slot.album.id)} onHover={onHover} onSelect={onSelect} />
+        <Cover key={slot.album.id} slot={slot} remote={isPersonal} hidden={takenIds.includes(slot.album.id)} onHover={onHover} onSelect={onSelect} />
       ))}
       {unit.addSlot && <AddSlot x={unit.addSlot.x} y={unit.addSlot.y} onHint={onHint} onClick={onAddRecord} />}
       {emptyCard && (
@@ -478,8 +485,9 @@ function Cover({ slot, hidden, remote = false, onHover, onSelect }: CoverProps) 
   const { album } = slot
   const [hovered, setHovered] = useState(false)
   const hasCover = useMemo(() => atlasUV(album.id) !== null, [album.id])
-  const photo = useRemoteCover(album, remote && !hasCover)
-  const placeholder = useMemo(() => (hasCover ? null : placeholderTexture(album)), [hasCover, album])
+  const photo = useRemoteCover(album, remote)
+  // Sin hueco en los atlas (o en los muebles del visitante, mientras llega la foto): funda tipográfica.
+  const placeholder = useMemo(() => (hasCover && !remote ? null : placeholderTexture(album)), [hasCover, remote, album])
 
   return (
     <mesh

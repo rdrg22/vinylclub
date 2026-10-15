@@ -1,5 +1,6 @@
 /**
- * Favoritos guardados en la cuenta: users/{uid}/favorites/{id del disco} en Firestore.
+ * Listas de discos guardadas en la cuenta: favoritos (users/{uid}/favorites/{id del disco})
+ * y lista de deseos «Lo quiero» (users/{uid}/wishlist/{id del disco}) en Firestore.
  *
  * Se guarda una copia mínima del disco. Al leerlos, si el disco está en el catálogo de
  * la tienda se usa el del catálogo (con todos sus datos y puestos en la lista); si no
@@ -53,6 +54,9 @@ export function albumFromFavorite(data: Omit<FavoriteDoc, 'addedAt'>, catalog: R
   }
 }
 
+/** Nombre de la subcolección de Firestore de cada lista. */
+export type AlbumListName = 'favorites' | 'wishlist'
+
 export interface FavoritesStore {
   /** En el orden en que se marcaron. */
   list(): Promise<Album[]>
@@ -60,8 +64,8 @@ export interface FavoritesStore {
   remove(albumId: string): Promise<void>
 }
 
-export function firestoreFavorites(db: Firestore, uid: string, catalog: ReadonlyMap<string, Album>): FavoritesStore {
-  const items = collection(db, 'users', uid, 'favorites')
+export function firestoreAlbumList(db: Firestore, uid: string, list: AlbumListName, catalog: ReadonlyMap<string, Album>): FavoritesStore {
+  const items = collection(db, 'users', uid, list)
   return {
     async list() {
       const snap = await getDocs(query(items, orderBy('addedAt', 'asc')))

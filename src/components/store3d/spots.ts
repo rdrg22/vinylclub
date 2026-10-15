@@ -6,7 +6,7 @@
  * izquierda) y −π/2 a +X (pared derecha).
  */
 import type { DecorLayout } from './decorLayout'
-import { COLLECTION_KEY, EYE_HEIGHT, START, type UnitLayout } from './layout'
+import { COLLECTION_KEY, EYE_HEIGHT, START, WISHLIST_KEY, type UnitLayout } from './layout'
 
 export interface FloorSpot {
   id: string
@@ -71,7 +71,7 @@ export function buildFloorSpots(units: UnitLayout[], decor: DecorLayout): FloorS
     const left = unit.side === 'left'
     spots.push({
       id: unit.decade,
-      label: unit.decade === COLLECTION_KEY ? 'Tu colección' : unit.label,
+      label: unit.decade === COLLECTION_KEY ? 'Tu colección' : unit.decade === WISHLIST_KEY ? 'Lo quiero' : unit.label,
       x: left ? -AISLE_OFFSET : AISLE_OFFSET,
       z: unit.center[2],
       facing: left ? Math.PI / 2 : -Math.PI / 2,

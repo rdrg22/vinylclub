@@ -11,9 +11,11 @@ interface Props {
   onClose: () => void
   /** Sin sesión: abrir la ventana de la cuenta. */
   onSignIn: () => void
+  /** Búsqueda ya hecha al abrir (al pasar un disco de «Lo quiero» a la colección). */
+  initialQuery?: string
 }
 
-export function AddRecordPanel({ onClose, onSignIn }: Props) {
+export function AddRecordPanel({ onClose, onSignIn, initialQuery }: Props) {
   const auth = useAuth()
   const { items, where } = useCollection()
   const signedOut = auth.state.status === 'signed-out'
@@ -40,7 +42,7 @@ export function AddRecordPanel({ onClose, onSignIn }: Props) {
       ) : auth.state.status === 'loading' ? (
         <p className="label-mono text-[#e8c98f]/80">Comprobando tu sesión…</p>
       ) : (
-        <AddRecord variant="panel" />
+        <AddRecord variant="panel" initialQuery={initialQuery} />
       )}
     </StoreWindow>
   )

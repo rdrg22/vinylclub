@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Album } from '@/types/music'
-import { albumFromFavorite, toFavoriteDoc } from './favorites'
+import { albumFromFavorite, toFavoriteDoc } from './albumLists'
 
 const fromSearch: Album = {
   id: '33333333-3333-3333-3333-333333333333',

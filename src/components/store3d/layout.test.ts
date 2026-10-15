@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Album } from '@/types/music'
-import { buildCollectionUnit, buildStoreLayout, COLLECTION_CAPACITY, COLLECTION_KEY, COVER_SIZE, PER_HALF, ROW_Y, UNIT_WIDTH, walkBounds } from './layout'
+import { buildCollectionUnit, buildStoreLayout, buildWishlistUnit, WISHLIST_KEY, COLLECTION_CAPACITY, COLLECTION_KEY, COVER_SIZE, PER_HALF, ROW_Y, UNIT_WIDTH, walkBounds } from './layout'
 
 const album = (id: string): Album => ({ id, source: 'musicbrainz', title: id, artist: 'x' })
 const decade = (years: number[], perYear = 10) =>
@@ -80,5 +80,19 @@ describe('mueble de colección', () => {
   it('va a continuación de las décadas, alternando pared', () => {
     expect(buildCollectionUnit(8, []).side).toBe('left')
     expect(buildCollectionUnit(9, []).side).toBe('right')
+  })
+})
+
+describe('mueble «Lo quiero»', () => {
+  const album = (i: number) => ({ id: `w-${i}`, source: 'musicbrainz' as const, title: `Deseo ${i}`, artist: 'Artista' })
+
+  it('va enfrente de la colección y no tiene hueco «+»', () => {
+    const unit = buildWishlistUnit(9, [album(1), album(2)])
+    expect(unit.decade).toBe(WISHLIST_KEY)
+    expect(unit.side).toBe('right')
+    expect(unit.center[2]).toBe(buildCollectionUnit(8, []).center[2])
+    expect(unit.addSlot).toBeUndefined()
+    // Dos discos centrados en la balda de los ojos.
+    expect(unit.slots.map((s) => s.x)).toEqual([-0.16, 0.16])
   })
 })
