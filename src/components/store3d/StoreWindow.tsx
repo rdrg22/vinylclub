@@ -6,17 +6,10 @@
  * (ink, paper, rule…). Aquí se redefinen esas variables solo dentro de la ventana,
  * así que se ven con la paleta de la tienda sin duplicarlos.
  */
-import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
+import { STORE_FRAME, STORE_THEME } from '@/components/ui/storeTheme'
 
-export const STORE_THEME = {
-  '--color-ink': '#f3e4c3',
-  '--color-ink-soft': 'rgb(243 228 195 / 0.82)',
-  '--color-ink-faint': 'rgb(232 201 143 / 0.7)',
-  '--color-paper': '#2a1a0e',
-  '--color-paper-deep': '#3e2716',
-  '--color-rule': 'rgb(232 201 143 / 0.25)',
-  '--color-signal-deep': '#ff8a6b',
-} as CSSProperties
+export { STORE_THEME }
 
 export const storeButton =
   'label-mono rounded-sm border border-[#e8c98f]/50 px-3 py-2 text-[#f3e4c3] transition-colors hover:border-[#e8c98f] hover:bg-[#e8c98f]/10'
@@ -77,7 +70,7 @@ export function StoreWindow({ title, subtitle, badge, footer, onClose, children 
           if (e.key === 'Escape' && !nestedDialogOpen()) onClose()
         }}
         onKeyUp={(e) => e.stopPropagation()}
-        className="pointer-events-auto flex max-h-[92dvh] w-full max-w-3xl animate-[bar-in_420ms_var(--ease-out-soft)] flex-col overflow-hidden rounded-sm border-2 border-[#e8c98f] bg-[#3e2716]/95 p-4 text-[#f3e4c3] shadow-[0_30px_80px_-20px_rgb(0_0_0/0.85)] backdrop-blur-sm focus:outline-none sm:p-5"
+        className={`pointer-events-auto flex max-h-[92dvh] w-full max-w-3xl animate-[bar-in_420ms_var(--ease-out-soft)] flex-col overflow-hidden p-4 focus:outline-none sm:p-5 ${STORE_FRAME}`}
       >
         <div className="flex items-start gap-4">
           <span aria-hidden className="grid size-14 shrink-0 -rotate-6 place-items-center rounded-full bg-signal font-display text-2xl text-paper shadow-md">
