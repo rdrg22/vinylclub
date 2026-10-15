@@ -20,7 +20,7 @@ import { CounterArea, Crate, Jukebox, NeonSign, Poster, VinylRug, WallRecords } 
 import type { DecorLayout } from './decorLayout'
 import type { ScreenState } from './jukeboxScreen'
 import { InteriorEnvironment } from './Lighting'
-import type { Quality } from './quality'
+import { QUALITY, type Quality } from './quality'
 import { SurfacesProvider, useSurface } from './surfaces'
 import { coverUrlFor } from '@/services/coverArt'
 import { addSlotTexture, labelCardTexture, loadRemoteTexture, placeholderTexture, signTexture, sleeveFor, storeSignTexture, yearTagTexture } from './textures'
@@ -61,7 +61,7 @@ export function StoreScene(props: SceneProps) {
     <SurfacesProvider quality={props.quality}>
       <color attach="background" args={['#120c07']} />
       <fog attach="fog" args={['#120c07', 14, 40]} />
-      <InteriorEnvironment intensity={props.quality === 'high' ? 0.45 : 0.6} />
+      <InteriorEnvironment intensity={QUALITY[props.quality].environment} />
       <hemisphereLight args={['#ffe2b8', '#2a1a0e', 0.35]} />
       <ambientLight intensity={0.08} color="#ffd9a8" />
       <CameraRig nav={nav} bounds={bounds} reducedMotion={reducedMotion} />
@@ -290,7 +290,7 @@ function Room({ units, quality }: { units: UnitLayout[]; quality: Quality }) {
       </mesh>
       {lampZs.map((z, i) => (
         // Sombras solo en una de cada tres lámparas: suficiente para el efecto, sin hundir el rendimiento.
-        <PendantLamp key={z} z={z} shadows={quality === 'high' && i % 3 === 1} />
+        <PendantLamp key={z} z={z} shadows={QUALITY[quality].shadows && i % 3 === 1} />
       ))}
     </group>
   )

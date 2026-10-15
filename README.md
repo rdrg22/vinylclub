@@ -23,7 +23,7 @@ botones ▲ ▼.
 
 Todo ocurre dentro de la tienda: no hay otras páginas. El menú de arriba abre ventanas con el estilo de las cartelas
 (`StoreWindow.tsx`): **Buscar** (discos de la tienda al instante y de MusicBrainz; el elegido aparece delante y se coge
-como los de la balda), **Favoritos**, **Entrar / Tu perfil** (cuenta), calidad gráfica y pantalla completa. Abajo, los
+como los de la balda), **Favoritos**, **Entrar / Tu perfil** (cuenta) y **Ajustes** (calidad gráfica, pantalla completa, rendimiento). Abajo, los
 botones de cada década y de la Colección. Cualquier otra dirección redirige a `/`.
 
 Al pulsar una portada **se coge el disco**: sale de la balda y queda en la mano, se gira arrastrando y se le da la vuelta
@@ -96,9 +96,12 @@ aparece «Quitar de mi colección».
 - Texturas fotográficas PBR (color, relieve y rugosidad) e iluminación HDRI de [Poly Haven](https://polyhaven.com)
   (CC0), en `public/textures` y `public/hdri`. Se descargan con `node scripts/fetch-polyhaven-assets.mjs`; los créditos
   están en `public/textures/CREDITS.md`.
-- Calidad automática (`src/components/store3d/quality.ts`): en «alta», sombras suaves, oclusión ambiental, brillo de
-  bombillas y neones, viñeta y grano (`Lighting.tsx`); en «ligera» (móviles y equipos modestos), solo color y luz
-  básica. Se puede cambiar con el botón «Calidad» de la tienda y se recuerda en el navegador.
+- Calidad gráfica en tres niveles (`src/components/store3d/quality.ts`, tabla `QUALITY`): «ligera» (solo color y luz
+  básica), «media» (texturas con relieve y sombras) y «alta» (además oclusión ambiental, brillo de bombillas y neones,
+  viñeta y grano, `Lighting.tsx`). La tienda **siempre arranca en media**; se cambia en **Ajustes** y dura la visita.
+  Si el equipo no llega a 45 fps, se baja sola la resolución de render dentro de la calidad elegida.
+- Ajustes (`SettingsWindow.tsx`): calidad, pantalla completa y mostrar rendimiento (fps). Cada ajuste es una sección
+  `<Setting>`: añadir uno nuevo es añadir otra.
 
 ## Escuchar y comprar
 

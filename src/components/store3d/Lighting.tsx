@@ -9,7 +9,7 @@ import { BlendFunction, ToneMappingMode } from 'postprocessing'
 import { useEffect } from 'react'
 import * as THREE from 'three'
 import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js'
-import type { Quality } from './quality'
+import { QUALITY, type Quality } from './quality'
 
 const HDRI = `${import.meta.env.BASE_URL}hdri/brown_photostudio_02.hdr`
 
@@ -29,7 +29,7 @@ export function InteriorEnvironment({ intensity = 0.45 }: { intensity?: number }
 }
 
 export function CameraEffects({ quality }: { quality: Quality }) {
-  if (quality !== 'high') return null
+  if (!QUALITY[quality].cameraEffects) return null
   return (
     <EffectComposer multisampling={2}>
       <N8AO aoRadius={0.55} distanceFalloff={0.8} intensity={2.4} color="#1a0f08" halfRes quality="medium" />

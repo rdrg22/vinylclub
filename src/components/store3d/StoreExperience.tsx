@@ -25,12 +25,13 @@ import { AccountWindow } from './AccountWindow'
 import { AddRecordPanel } from './AddRecordPanel'
 import { FavoritesWindow } from './FavoritesWindow'
 import { SearchWindow } from './SearchWindow'
+import { SettingsWindow } from './SettingsWindow'
 import { HeldPanel } from './HeldPanel'
 import { HeldRecord, type HeldState, type HoldControl } from './HeldRecord'
 import { AdaptivePerformance } from './AdaptivePerformance'
 import { debugEnabled, StatsProbe, type FrameStats } from './DebugStats'
 import { CameraEffects } from './Lighting'
-import { detectQuality, hasSavedQuality, saveQuality, type Quality } from './quality'
+import { DEFAULT_QUALITY, QUALITY, type Quality } from './quality'
 import { StoreScene } from './StoreScene'
 import { fontsReady, type BackData } from './textures'
 
@@ -112,21 +113,16 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   // Los atlas son por década: no se recargan al cambiar la colección.
   const { atlases, loaded } = useAtlases(decadeUnits)
   const [hovered, setHovered] = useState<Album | null>(null)
-  const [quality, setQuality] = useState<Quality>(detectQuality)
-  const [debug] = useState(debugEnabled)
+  // Siempre se arranca en calidad media; se cambia en Ajustes y dura la visita.
+  const [quality, setQuality] = useState<Quality>(DEFAULT_QUALITY)
+  const profile = QUALITY[quality]
+  // Panel de rendimiento: con ?debug en la dirección o desde Ajustes.
+  const [debug, setDebug] = useState(debugEnabled)
   const [stats, setStats] = useState<FrameStats | null>(null)
-  // Calidad elegida a mano: se respeta. Detectada sola: puede bajar si el equipo no llega.
-  const [autoQuality, setAutoQuality] = useState(() => !hasSavedQuality())
-  const switchQuality = () => {
-    const next = quality === 'high' ? 'low' : 'high'
-    saveQuality(next)
-    setAutoQuality(false)
-    setQuality(next)
-  }
   const [fonts, setFonts] = useState(false)
   const [current, setCurrent] = useState<string | null>(null)
   // Ventanas del menú de la tienda (y la de «Añadir», desde el hueco «+» de la colección).
-  const [openWindow, setOpenWindow] = useState<'search' | 'favorites' | 'account' | 'add' | null>(null)
+  const [openWindow, setOpenWindow] = useState<'search' | 'favorites' | 'account' | 'settings' | 'add' | null>(null)
   const closeWindow = useCallback(() => {
     setOpenWindow(null)
     wrapperRef.current?.focus({ preventScroll: true })
@@ -424,6 +420,12 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
     if (document.fullscreenElement) void document.exitFullscreen()
     else void wrapperRef.current?.requestFullscreen?.()
   }
+  const [fullscreen, setFullscreen] = useState(() => !!document.fullscreenElement)
+  useEffect(() => {
+    const onChange = () => setFullscreen(!!document.fullscreenElement)
+    document.addEventListener('fullscreenchange', onChange)
+    return () => document.removeEventListener('fullscreenchange', onChange)
+  }, [])
 
   const walkButton = (direction: 1 | -1, label: string, symbol: string) => (
     <button
@@ -464,10 +466,10 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
         <Canvas
           // Cambiar de calidad reconstruye el lienzo (sombras y posprocesado se fijan al crearlo).
           key={quality}
-          shadows={quality === 'high' ? 'soft' : false}
-          dpr={quality === 'high' ? [1, 1.5] : [1, 1.25]}
+          shadows={profile.shadows ? 'soft' : false}
+          dpr={profile.dpr}
           camera={{ fov: FOV, near: 0.05, far: 60, position: [nav.x, nav.y, nav.z] }}
-          gl={{ antialias: quality !== 'high', powerPreference: 'high-performance' }}
+          gl={{ antialias: profile.antialias, powerPreference: 'high-performance' }}
           onPointerMissed={() => setHovered(null)}
         >
           <Suspense fallback={null}>
@@ -509,7 +511,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             />
           )}
           <CameraEffects quality={quality} />
-          <AdaptivePerformance onTooSlow={autoQuality && quality === 'high' ? () => setQuality('low') : undefined} />
+          <AdaptivePerformance />
           {debug && <StatsProbe onStats={setStats} />}
           </Suspense>
         </Canvas>
@@ -517,7 +519,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
 
       {debug && stats && (
         <pre className="pointer-events-none absolute top-16 left-3 z-40 rounded bg-black/75 p-2 font-mono text-[11px] leading-tight text-lime-300">
-          {`${stats.fps} fps · peor ${stats.frameMs} ms\n${stats.calls} dibujos · ${(stats.triangles / 1000).toFixed(0)}k triáng.\n${stats.lights} luces · ${stats.programs} shaders · ${stats.textures} texturas\ncalidad ${quality}`}
+          {`${stats.fps} fps · peor ${stats.frameMs} ms\n${stats.calls} dibujos · ${(stats.triangles / 1000).toFixed(0)}k triáng.\n${stats.lights} luces · ${stats.programs} shaders · ${stats.textures} texturas\ncalidad ${profile.label.toLowerCase()}`}
         </pre>
       )}
 
@@ -575,6 +577,20 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
           }}
         />
       )}
+      {!held && openWindow === 'settings' && (
+        <SettingsWindow
+          quality={quality}
+          onQuality={setQuality}
+          fullscreen={fullscreen}
+          onToggleFullscreen={toggleFullscreen}
+          showStats={debug}
+          onShowStats={(show) => {
+            setDebug(show)
+            if (!show) setStats(null)
+          }}
+          onClose={closeWindow}
+        />
+      )}
       {!held && openWindow === 'add' && <AddRecordPanel onClose={closeWindow} onSignIn={() => setOpenWindow('account')} />}
 
       {/* ---------- Cartela del disco en la mano ---------- */}
@@ -626,16 +642,8 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
           >
             {auth.state.status === 'signed-out' ? 'Entrar' : 'Tu perfil'}
           </button>
-          <button
-            type="button"
-            onClick={switchQuality}
-            className={cn(chip, chipIdle, 'hidden sm:block')}
-            title="Alta: texturas con relieve, sombras y luces que brillan. Ligera: más fluida en equipos modestos."
-          >
-            Calidad: {quality === 'high' ? 'alta' : 'ligera'}
-          </button>
-          <button type="button" onClick={toggleFullscreen} className={cn(chip, chipIdle, 'hidden sm:block')}>
-            Pantalla completa
+          <button type="button" onClick={() => setOpenWindow('settings')} disabled={!!held} className={cn(chip, chipIdle)}>
+            <span aria-hidden>⚙</span> Ajustes
           </button>
         </nav>
       </div>

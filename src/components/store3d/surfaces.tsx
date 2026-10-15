@@ -6,7 +6,7 @@
 import { useLoader } from '@react-three/fiber'
 import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import * as THREE from 'three'
-import type { Quality } from './quality'
+import { QUALITY, type Quality } from './quality'
 
 export const SURFACES = ['wood_floor_worn', 'dark_wood', 'wood_table_worn', 'beige_wall_001', 'plastered_wall'] as const
 export type SurfaceId = (typeof SURFACES)[number]
@@ -36,7 +36,7 @@ export function useSurface(): MakeSurface {
 
 /** Carga las texturas una vez (suspende hasta tenerlas) y ofrece materiales con la repetición pedida. */
 export function SurfacesProvider({ quality, children }: { quality: Quality; children: ReactNode }) {
-  const maps = quality === 'high' ? MAPS : (['color'] as const)
+  const maps = QUALITY[quality].detailedSurfaces ? MAPS : (['color'] as const)
   const urls = useMemo(() => SURFACES.flatMap((id) => maps.map((map) => url(id, map))), [maps])
   const textures = useLoader(THREE.TextureLoader, urls)
 

@@ -1,46 +1,61 @@
 /**
- * Calidad gráfica de la tienda 3D.
- * - `high`: texturas con relieve, sombras, oclusión ambiental, brillo de las luces.
- * - `low`: solo color y luz básica, para móviles y equipos modestos.
- * Se detecta sola y el visitante puede cambiarla (se recuerda en este navegador).
+ * Calidad gráfica de la tienda 3D. La tienda siempre arranca en `medium`; se cambia en
+ * la ventana Ajustes y el cambio dura lo que dure la visita.
+ *
+ * Todo lo que depende de la calidad está en `QUALITY`: la escena solo lee estos valores.
  */
-export type Quality = 'high' | 'low'
+export type Quality = 'low' | 'medium' | 'high'
 
-const KEY = 'vinylclub:quality'
+export const DEFAULT_QUALITY: Quality = 'medium'
 
-interface NavigatorHints {
-  deviceMemory?: number
-  connection?: { saveData?: boolean }
+export interface QualityProfile {
+  label: string
+  description: string
+  /** Texturas con relieve y brillo (normal y roughness), no solo color. */
+  detailedSurfaces: boolean
+  /** Sombras (se calculan una vez; algunas lámparas las proyectan). */
+  shadows: boolean
+  /** Posprocesado de cámara: oclusión ambiental, brillo de luces, viñeta y grano. */
+  cameraEffects: boolean
+  /** Resolución de render respecto a la pantalla [mínima, máxima]. */
+  dpr: [number, number]
+  /** Antialiasing del propio WebGL (con posprocesado lo hace el compositor). */
+  antialias: boolean
+  /** Intensidad de la luz ambiental del HDRI. */
+  environment: number
 }
 
-export function detectQuality(): Quality {
-  try {
-    const saved = localStorage.getItem(KEY)
-    if (saved === 'high' || saved === 'low') return saved
-  } catch {
-    // Sin almacenamiento: se decide por el dispositivo.
-  }
-  const nav = navigator as Navigator & NavigatorHints
-  const touchSmall = window.matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) < 820
-  const lowMemory = (nav.deviceMemory ?? 8) <= 4
-  const fewCores = (nav.hardwareConcurrency ?? 8) <= 4
-  const saveData = nav.connection?.saveData === true
-  return touchSmall || lowMemory || fewCores || saveData ? 'low' : 'high'
+export const QUALITY: Record<Quality, QualityProfile> = {
+  low: {
+    label: 'Ligera',
+    description: 'Solo color y luz básica. La más fluida, para móviles y equipos modestos.',
+    detailedSurfaces: false,
+    shadows: false,
+    cameraEffects: false,
+    dpr: [1, 1],
+    antialias: true,
+    environment: 0.6,
+  },
+  medium: {
+    label: 'Media',
+    description: 'Madera y suelo con relieve y sombras, sin efectos de cámara. Equilibrio entre aspecto y fluidez.',
+    detailedSurfaces: true,
+    shadows: true,
+    cameraEffects: false,
+    dpr: [1, 1.25],
+    antialias: true,
+    environment: 0.55,
+  },
+  high: {
+    label: 'Alta',
+    description: 'Todo lo anterior y además oclusión ambiental, brillo de las luces, viñeta y grano. Para equipos potentes.',
+    detailedSurfaces: true,
+    shadows: true,
+    cameraEffects: true,
+    dpr: [1, 1.5],
+    antialias: false,
+    environment: 0.45,
+  },
 }
 
-/** El visitante eligió la calidad a mano (entonces no se cambia sola). */
-export function hasSavedQuality() {
-  try {
-    return localStorage.getItem(KEY) !== null
-  } catch {
-    return false
-  }
-}
-
-export function saveQuality(quality: Quality) {
-  try {
-    localStorage.setItem(KEY, quality)
-  } catch {
-    // Sin almacenamiento: el cambio dura hasta recargar.
-  }
-}
+export const QUALITY_ORDER: Quality[] = ['low', 'medium', 'high']
