@@ -19,6 +19,8 @@ export interface AuthApi {
   state: AuthState
   /** Devuelve un mensaje de error en español, o null si ha ido bien. */
   signIn: (email: string, password: string) => Promise<string | null>
+  /** Entrar (o crear la cuenta) con Google en una ventana emergente. */
+  signInWithGoogle: () => Promise<string | null>
   /** `confirm`: hay que confirmar el email antes de entrar. */
   signUp: (email: string, password: string) => Promise<{ error: string | null; confirm: boolean }>
   sendPasswordReset: (email: string) => Promise<string | null>

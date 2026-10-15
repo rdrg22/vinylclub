@@ -18,8 +18,9 @@ npm run dev
 
 La portada (`/`) es una tienda de discos en 3D a pantalla completa (three.js + React Three Fiber,
 `src/components/store3d/`), con pantalla de entrada: un pasillo con un mueble por década, carteles pintados y etiquetas
-de año en las baldas. Se camina con WASD/flechas, se mira arrastrando y la rueda avanza; en móvil, arrastrar y los
-botones ▲ ▼.
+de año en las baldas. No se camina libremente: se va de un sitio a otro pulsando las **marcas translúcidas del suelo**
+(`FloorSpots.tsx`, sitios en `spots.ts`: entrada, gramola, cubetas, cada estantería, la Colección y el mostrador) o los
+botones de abajo; arrastrando se mira alrededor.
 
 Todo ocurre dentro de la tienda: no hay otras páginas. El menú de arriba abre ventanas con el estilo de las cartelas
 (`StoreWindow.tsx`): **Buscar** (discos de la tienda al instante y de MusicBrainz; el elegido aparece delante y se coge
@@ -48,7 +49,7 @@ la página (`src/components/favorites/`).
 
 ## Cuentas y «Mi colección»
 
-Con una cuenta (Firebase Auth, email y contraseña; ventana **Entrar** del menú) cada visitante registra los discos que
+Con una cuenta (Firebase Auth: **Google** o email y contraseña; ventana **Entrar** del menú) cada visitante registra los discos que
 tiene en casa pulsando el hueco **«+»** de la estantería «Colección», al fondo de la tienda:
 
 - **Por código de barras**: se escribe el número de la funda (se aceptan espacios y guiones; UPC-A de 12 cifras y
@@ -69,7 +70,8 @@ aparece «Quitar de mi colección».
 
 1. En la [consola de Firebase](https://console.firebase.google.com) crea un proyecto y, en *Configuración del
    proyecto → Tus apps*, añade una **app web** (`</>`). Copia los valores de `firebaseConfig`.
-2. **Authentication → Comenzar → Método de acceso → Correo electrónico/contraseña → Habilitar.**
+2. **Authentication → Comenzar → Método de acceso**: habilita **Correo electrónico/contraseña** y **Google** (este pide
+   elegir un email de asistencia).
    `localhost` ya está en *Settings → Dominios autorizados*; si publicas la web, añade su dominio ahí.
 3. **Firestore Database → Crear base de datos** (modo producción, ubicación `eur3` u otra cercana).
    En la pestaña **Reglas**, pega el contenido de `firestore.rules` y pulsa **Publicar**.

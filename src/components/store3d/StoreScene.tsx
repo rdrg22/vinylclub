@@ -16,6 +16,8 @@ import {
 import { stepNavigation, type NavState } from './navigation'
 import { atlasUV } from './atlas'
 import { CoverInstances } from './CoverInstances'
+import { FloorSpots } from './FloorSpots'
+import type { FloorSpot } from './spots'
 import { CounterArea, Crate, Jukebox, NeonSign, Poster, VinylRug, WallRecords } from './Decor'
 import type { DecorLayout } from './decorLayout'
 import type { ScreenState } from './jukeboxScreen'
@@ -51,6 +53,11 @@ interface SceneProps {
   onHint: (hint: string | null) => void
   /** Pulsar el hueco «+» de la colección. */
   onAddRecord: () => void
+  /** Marcas del suelo (los sitios a los que se puede ir) y en cuál se está. */
+  spots: FloorSpot[]
+  currentSpot: string | null
+  spotsDisabled: boolean
+  onSpot: (spot: FloorSpot) => void
   quality: Quality
 }
 
@@ -79,6 +86,14 @@ export function StoreScene(props: SceneProps) {
           onAddRecord={props.onAddRecord}
         />
       ))}
+      <FloorSpots
+        spots={props.spots}
+        currentId={props.currentSpot}
+        disabled={props.spotsDisabled}
+        reducedMotion={reducedMotion}
+        onGo={props.onSpot}
+        onHint={onHint}
+      />
       <CounterArea
         layout={decor}
         record={props.turntableRecord}

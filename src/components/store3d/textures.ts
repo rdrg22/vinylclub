@@ -17,7 +17,7 @@ const SLEEVES = [
 
 export const sleeveFor = (album: Pick<Album, 'id' | 'title'>) => SLEEVES[hashString(album.id + album.title) % SLEEVES.length] ?? SLEEVES[0]
 
-function canvasTexture(width: number, height: number, draw: (ctx: CanvasRenderingContext2D) => void) {
+function canvasTexture(width: number, height: number, draw: (ctx: CanvasRenderingContext2D) => void, anisotropy = 4) {
   const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height
@@ -25,7 +25,7 @@ function canvasTexture(width: number, height: number, draw: (ctx: CanvasRenderin
   if (ctx) draw(ctx)
   const texture = new THREE.CanvasTexture(canvas)
   texture.colorSpace = THREE.SRGBColorSpace
-  texture.anisotropy = 4
+  texture.anisotropy = anisotropy
   return texture
 }
 
@@ -381,6 +381,56 @@ export function labelCardTexture(text: string, sub?: string) {
       ctx.fillStyle = '#6b6258'
       ctx.fillText(sub.toUpperCase(), 256, 120)
     }
+  })
+}
+
+/**
+ * Marca del suelo: rectángulo translúcido con borde de latón y el nombre del sitio.
+ * Fondo transparente: se ve la madera del suelo a través.
+ */
+export function floorSpotTexture(label: string) {
+  return canvasTexture(512, 256, (ctx) => {
+    const r = 34
+    ctx.beginPath()
+    ctx.roundRect(10, 10, 492, 236, r)
+    ctx.fillStyle = 'rgba(243, 228, 195, 0.24)'
+    ctx.fill()
+    ctx.lineWidth = 11
+    ctx.strokeStyle = 'rgba(243, 222, 170, 1)'
+    ctx.stroke()
+    // Filete interior fino, como los carteles de la tienda.
+    ctx.beginPath()
+    ctx.roundRect(26, 26, 460, 204, r - 14)
+    ctx.lineWidth = 3
+    ctx.strokeStyle = 'rgba(232, 201, 143, 0.6)'
+    ctx.stroke()
+    ctx.fillStyle = '#f3e4c3'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    const text = label.toUpperCase()
+    let size = 58
+    do {
+      ctx.font = `600 ${size}px "IBM Plex Mono", monospace`
+      size -= 2
+    } while (ctx.measureText(text).width > 420 && size > 24)
+    ctx.fillText(text, 256, 132)
+  }, 16)
+}
+
+/** Flecha de la marca del suelo (apunta hacia arriba en la textura). */
+export function floorArrowTexture() {
+  return canvasTexture(128, 128, (ctx) => {
+    ctx.fillStyle = 'rgba(243, 228, 195, 0.95)'
+    ctx.beginPath()
+    ctx.moveTo(64, 14)
+    ctx.lineTo(116, 74)
+    ctx.lineTo(86, 74)
+    ctx.lineTo(86, 114)
+    ctx.lineTo(42, 114)
+    ctx.lineTo(42, 74)
+    ctx.lineTo(12, 74)
+    ctx.closePath()
+    ctx.fill()
   })
 }
 

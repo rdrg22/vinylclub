@@ -20,7 +20,8 @@ import { cn } from '@/utils/cn'
 import { loadAtlas } from './atlas'
 import { buildDecorLayout } from './decorLayout'
 import { buildCollectionUnit, buildStoreLayout, COLLECTION_KEY, ENTER, START, UNIT_WIDTH, WALL_X, type DecadeInput, type UnitLayout } from './layout'
-import { createNavState, LOOK_SENSITIVITY, MAX_PITCH, NAV_KEYS } from './navigation'
+import { createNavState, LOOK_SENSITIVITY, MAX_PITCH } from './navigation'
+import { buildFloorSpots, ENTRANCE_SPOT, type FloorSpot } from './spots'
 import { AccountWindow } from './AccountWindow'
 import { AddRecordPanel } from './AddRecordPanel'
 import { FavoritesWindow } from './FavoritesWindow'
@@ -36,6 +37,8 @@ import { StoreScene } from './StoreScene'
 import { fontsReady, type BackData } from './textures'
 
 const FOV = 62
+/** Sitio «virtual» tras entrar: unos pasos dentro, sin marca propia. */
+const ARRIVAL = 'llegada'
 /** No más lejos que el borde de los muebles de enfrente. */
 const MAX_VIEW_DISTANCE = WALL_X * 2 - 1.2
 const ENTERED_KEY = 'vinylclub:entered'
@@ -304,56 +307,29 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
     fontsReady().then(() => setFonts(true))
   }, [])
 
-  // Teclado: solo cuando la tienda tiene el foco.
+  // Teclado: solo acciones del disco en la mano. No se camina libremente: se va de un
+  // sitio a otro con las marcas del suelo o los botones de abajo.
   useEffect(() => {
     const el = wrapperRef.current
     if (!el) return
     const down = (e: KeyboardEvent) => {
-      if (nav.locked) {
-        if (e.code === 'Escape') putBackRef.current()
-        if (e.code === 'KeyF' || e.code === 'Space') {
-          e.preventDefault()
-          flipRef.current()
-        }
-        return
+      if (!nav.locked) return
+      if (e.code === 'Escape') putBackRef.current()
+      if (e.code === 'KeyF' || e.code === 'Space') {
+        e.preventDefault()
+        flipRef.current()
       }
-      if (!NAV_KEYS.has(e.code) || nav.intro) return
-      e.preventDefault()
-      nav.fly = null
-      nav.keys.add(e.code)
     }
-    const up = (e: KeyboardEvent) => nav.keys.delete(e.code)
-    const blur = () => nav.keys.clear()
     el.addEventListener('keydown', down)
-    el.addEventListener('keyup', up)
-    el.addEventListener('blur', blur)
-    return () => {
-      el.removeEventListener('keydown', down)
-      el.removeEventListener('keyup', up)
-      el.removeEventListener('blur', blur)
-    }
-  }, [nav])
-
-  // Rueda: avanzar y retroceder por el pasillo.
-  useEffect(() => {
-    const el = wrapperRef.current
-    if (!el) return
-    const wheel = (e: WheelEvent) => {
-      e.preventDefault()
-      if (nav.intro) return
-      nav.fly = null
-      const step = Math.max(-0.6, Math.min(0.6, -e.deltaY * 0.004))
-      nav.x += -Math.sin(nav.yaw) * step
-      nav.z += -Math.cos(nav.yaw) * step
-    }
-    el.addEventListener('wheel', wheel, { passive: false })
-    return () => el.removeEventListener('wheel', wheel)
+    return () => el.removeEventListener('keydown', down)
   }, [nav])
 
   const enter = () => {
     nav.intro = false
     const [x, y, z] = ENTER.position
     nav.fly = { x, y, z, yaw: ENTER.yaw }
+    // Recién entrado se está unos pasos dentro: la marca de la entrada queda a la espalda.
+    setCurrent(ARRIVAL)
     setEntered(true)
     try {
       sessionStorage.setItem(ENTERED_KEY, '1')
@@ -416,6 +392,21 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
     [nav, units, viewX],
   )
 
+  // ---------- marcas del suelo
+  const spots = useMemo(() => buildFloorSpots(units, decor), [units, decor])
+  const goToSpot = useCallback(
+    (spot: FloorSpot) => {
+      if (spot.target.kind === 'entrance') return goTo(null)
+      if (spot.target.kind === 'decade') return goTo(spot.target.decade)
+      const { x, y, z, yaw, pitch } = spot.target
+      setCurrent(spot.id)
+      nav.intro = false
+      nav.fly = { x, y, z, yaw, pitch }
+      wrapperRef.current?.focus({ preventScroll: true })
+    },
+    [goTo, nav],
+  )
+
   const toggleFullscreen = () => {
     if (document.fullscreenElement) void document.exitFullscreen()
     else void wrapperRef.current?.requestFullscreen?.()
@@ -427,23 +418,6 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
     return () => document.removeEventListener('fullscreenchange', onChange)
   }, [])
 
-  const walkButton = (direction: 1 | -1, label: string, symbol: string) => (
-    <button
-      type="button"
-      aria-label={label}
-      onPointerDown={(e) => {
-        e.preventDefault()
-        nav.fly = null
-        nav.walk = direction
-      }}
-      onPointerUp={() => (nav.walk = 0)}
-      onPointerLeave={() => (nav.walk = 0)}
-      onPointerCancel={() => (nav.walk = 0)}
-      className="grid size-12 place-items-center rounded-full bg-[#f3e4c3]/90 text-xl text-[#1b130c] shadow-lg active:bg-signal active:text-paper"
-    >
-      {symbol}
-    </button>
-  )
 
   const chip = 'label-mono rounded px-3 py-2 whitespace-nowrap backdrop-blur-sm transition-colors'
   const chipIdle = 'bg-[#1b130c]/75 text-[#f3e4c3] hover:bg-[#3e2716]'
@@ -493,6 +467,10 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             onJukebox={entered && !held ? onJukebox : () => undefined}
             onHint={entered ? setHint : () => undefined}
             onAddRecord={entered && !held ? () => setOpenWindow('add') : () => undefined}
+            spots={spots}
+            currentSpot={current ?? ENTRANCE_SPOT}
+            spotsDisabled={!entered || !!held || openWindow !== null}
+            onSpot={goToSpot}
           />
           {held && (
             <HeldRecord
@@ -558,8 +536,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
               Entrar en la tienda
             </button>
             <p className="label-mono mt-4 text-[#f3e4c3]/60">
-              <span className="hidden sm:inline">WASD o flechas para caminar · arrastra para mirar</span>
-              <span className="sm:hidden">Arrastra para mirar · ▲ ▼ para caminar</span>
+              Pulsa las marcas del suelo para ir de un sitio a otro · arrastra para mirar
             </p>
           </div>
         </div>
@@ -715,10 +692,6 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             ))}
           </ul>
         </nav>
-        <div className="flex shrink-0 flex-col gap-2 [@media(hover:hover)]:hidden">
-          {walkButton(1, 'Caminar hacia delante', '▲')}
-          {walkButton(-1, 'Caminar hacia atrás', '▼')}
-        </div>
       </div>
     </div>
   )

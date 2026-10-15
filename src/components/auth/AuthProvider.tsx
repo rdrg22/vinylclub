@@ -3,10 +3,12 @@
  * sesión en este navegador y la renueva sola. Sin Firebase configurado, estado `demo`.
  */
 import {
+  GoogleAuthProvider,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   updatePassword,
   type User,
@@ -39,11 +41,20 @@ export function authMessage(error: unknown): string {
     case 'auth/network-request-failed':
       return 'No hay conexión con el servidor de cuentas.'
     case 'auth/operation-not-allowed':
-      return 'El acceso con email y contraseña no está activado en Firebase.'
+      return 'Ese método de acceso no está activado en Firebase.'
     case 'auth/requires-recent-login':
       return 'Por seguridad, vuelve a entrar antes de cambiar la contraseña.'
     case 'auth/user-disabled':
       return 'Esta cuenta está desactivada.'
+    case 'auth/popup-blocked':
+      return 'El navegador ha bloqueado la ventana de Google. Permite las ventanas emergentes y vuelve a probar.'
+    case 'auth/popup-closed-by-user':
+    case 'auth/cancelled-popup-request':
+      return ''
+    case 'auth/unauthorized-domain':
+      return 'Esta dirección no está autorizada en Firebase para entrar con Google.'
+    case 'auth/account-exists-with-different-credential':
+      return 'Ya hay una cuenta con ese email. Entra con tu contraseña.'
   }
   return 'No se ha podido completar. Inténtalo de nuevo.'
 }
@@ -68,6 +79,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return null
         } catch (error) {
           return authMessage(error)
+        }
+      },
+      async signInWithGoogle() {
+        if (!auth) return NOT_ENABLED
+        try {
+          const provider = new GoogleAuthProvider()
+          provider.setCustomParameters({ prompt: 'select_account' })
+          await signInWithPopup(auth, provider)
+          return null
+        } catch (error) {
+          // Cerrar la ventana de Google no es un error que haya que enseñar.
+          return authMessage(error) || null
         }
       },
       async signUp(email, password) {
