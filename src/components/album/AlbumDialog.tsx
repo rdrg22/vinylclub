@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { RELEASE_TYPE_LABEL } from '@/config/shelfFilters'
 import type { Album } from '@/types/music'
 import { SourceNote } from '@/components/ui/SourceNote'
+import { AlbumBackCover } from './AlbumBackCover'
 import { AlbumCover } from './AlbumCover'
 import { AlbumDemo } from './AlbumDemo'
 import { AlbumMetadata } from './AlbumMetadata'
@@ -39,7 +40,11 @@ export function AlbumDialog({ album, onClose }: AlbumDialogProps) {
     >
       {album && (
         <div className="grid md:grid-cols-2">
-          <AlbumCover album={album} eager size={500} className="w-full border-b-2 border-[#e8c98f] md:sticky md:top-0 md:self-start md:border-r-2 md:border-b-0" />
+          {/* Portada y, debajo, la contraportada: la funda entera, por delante y por detrás. */}
+          <div className="border-b-2 border-[#e8c98f] md:border-r-2 md:border-b-0">
+            <AlbumCover album={album} eager size={500} className="w-full" />
+            <AlbumBackCover key={album.id} album={album} className="w-full border-t-2 border-[#e8c98f]" />
+          </div>
 
           <div className="flex flex-col gap-6 p-6 md:p-8">
             <div className="flex items-start justify-between gap-4">
