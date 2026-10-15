@@ -1,5 +1,4 @@
 import { lazy, Suspense, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { DECADE_OPTIONS } from '@/config/shelfFilters'
 import { CHART_ALBUMS, decadeOf, firstChartYear } from '@/data/charts/chartCatalog'
 import type { DecadeInput } from './layout'
@@ -52,11 +51,7 @@ export function Store3D() {
         <p className="label-mono text-[#e8c98f]">Tienda 3D no disponible</p>
         <p className="mt-3 font-display text-2xl">Tu navegador no permite gráficos 3D (WebGL).</p>
         <p className="mt-2 text-[#f3e4c3]/75">
-          Puedes recorrer los mismos discos en{' '}
-          <Link to="/estanterias" className="underline underline-offset-2">
-            las estanterías en lista
-          </Link>
-          .
+          Prueba con un navegador actualizado (Chrome, Edge, Firefox o Safari) o activa la aceleración por hardware.
         </p>
       </Poster>
     )

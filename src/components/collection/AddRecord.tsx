@@ -156,7 +156,7 @@ export function AddRecord({ variant = 'page' }: AddRecordProps) {
               <p className="label-mono text-ink-faint">
                 {results.data.length === 1 ? '1 edición' : `${results.data.length} ediciones`} · elige la tuya
               </p>
-              <ul className={cn('mt-2 divide-y divide-rule border-y border-rule', inPanel && 'max-h-[42vh] overflow-y-auto overscroll-contain pr-1')}>
+              <ul className={cn('mt-2 divide-y divide-rule border-y border-rule', inPanel && 'max-h-[42vh] overflow-y-auto overscroll-contain pr-1 [scrollbar-color:rgb(232_201_143/0.45)_transparent] [scrollbar-width:thin]')}>
                 {results.data.map((release) => (
                   <ResultRow key={release.id} release={release} />
                 ))}

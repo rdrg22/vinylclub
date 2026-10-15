@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { useCollection } from '@/components/collection/collectionContext'
 import { FavoriteButton } from '@/components/favorites/FavoriteButton'
 import { ListenLinks } from '@/components/listen/ListenLinks'
 import { PlayButton } from '@/components/player/PlayButton'
@@ -23,6 +25,11 @@ const button =
 /** Cartela del disco que se tiene en la mano, con el estilo de los carteles de la tienda. */
 export function HeldPanel({ album, flipped, backNote, onFlip, onReturn, onTurntable, onDetails }: HeldPanelProps) {
   const { state } = usePreviewPlayer()
+  const collection = useCollection()
+  // Ediciones de este disco en tu colección (normalmente una).
+  const owned = collection.items.filter((i) => i.albumId === album.id)
+  const [confirmRemove, setConfirmRemove] = useState(false)
+  const [removeError, setRemoveError] = useState<string | null>(null)
   const current = state.album?.id === album.id
   const status = current ? state.status : 'idle'
   const chart = album.charts?.[0]
@@ -92,6 +99,26 @@ export function HeldPanel({ album, flipped, backNote, onFlip, onReturn, onTurnta
           <button type="button" onClick={onDetails} className={button}>
             Ficha completa
           </button>
+          {owned.length > 0 &&
+            (confirmRemove ? (
+              <button
+                type="button"
+                onClick={async () => {
+                  let error: string | null = null
+                  for (const item of owned) error = (await collection.remove(item.id)) ?? error
+                  setRemoveError(error)
+                  if (!error) onReturn()
+                }}
+                className={cn(button, 'border-signal text-[#ff8a6b]')}
+              >
+                ¿Seguro? Quitar
+              </button>
+            ) : (
+              <button type="button" onClick={() => setConfirmRemove(true)} className={button}>
+                Quitar de mi colección
+              </button>
+            ))}
+          {removeError && <p className="label-mono self-center text-[#ff8a6b]">{removeError}</p>}
         </div>
         <p className="label-mono max-w-xs text-right text-[0.6rem] text-[#f3e4c3]/55">
           Arrastra para girarlo

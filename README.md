@@ -18,8 +18,13 @@ npm run dev
 
 La portada (`/`) es una tienda de discos en 3D a pantalla completa (three.js + React Three Fiber,
 `src/components/store3d/`), con pantalla de entrada: un pasillo con un mueble por década, carteles pintados y etiquetas
-de año en las baldas. La misma selección en lista está en `/estanterias`. Se camina con WASD/flechas, se mira arrastrando y
-la rueda avanza; en móvil, arrastrar y los botones ▲ ▼.
+de año en las baldas. Se camina con WASD/flechas, se mira arrastrando y la rueda avanza; en móvil, arrastrar y los
+botones ▲ ▼.
+
+Todo ocurre dentro de la tienda: no hay otras páginas. El menú de arriba abre ventanas con el estilo de las cartelas
+(`StoreWindow.tsx`): **Buscar** (discos de la tienda al instante y de MusicBrainz; el elegido aparece delante y se coge
+como los de la balda), **Favoritos**, **Entrar / Tu perfil** (cuenta), calidad gráfica y pantalla completa. Abajo, los
+botones de cada década y de la Colección. Cualquier otra dirección redirige a `/`.
 
 Al pulsar una portada **se coge el disco**: sale de la balda y queda en la mano, se gira arrastrando y se le da la vuelta
 (botón o tecla F). El reverso es la contraportada original si Cover Art Archive la tiene; si no, se compone con la lista
@@ -38,13 +43,13 @@ colores, casete con lápiz, consola portátil y cascos.
 
 ## Favoritos
 
-La estrella de cada disco lo guarda en `/favoritos`. De momento son temporales: viven en memoria y se borran al recargar
+La estrella de cada disco lo guarda en la ventana **Favoritos**. De momento son temporales: viven en memoria y se borran al recargar
 la página (`src/components/favorites/`).
 
 ## Cuentas y «Mi colección»
 
-Con una cuenta (Firebase Auth, email y contraseña) cada visitante registra los discos que tiene en casa en
-`/coleccion`:
+Con una cuenta (Firebase Auth, email y contraseña; ventana **Entrar** del menú) cada visitante registra los discos que
+tiene en casa pulsando el hueco **«+»** de la estantería «Colección», al fondo de la tienda:
 
 - **Por código de barras**: se escribe el número de la funda (se aceptan espacios y guiones; UPC-A de 12 cifras y
   EAN-13 se prueban como equivalentes) o se **escanea con la cámara** donde el navegador tiene `BarcodeDetector`
@@ -57,7 +62,8 @@ guardado es un documento `users/{uid}/collection/{MBID de la edición}` en Fires
 edición dos veces.
 
 En la tienda 3D, al fondo junto al DJ, aparece el mueble **«Colección»** con tus discos (portadas reales de Cover Art
-Archive): se cogen, se les da la vuelta y suena su demo como en el resto de la tienda.
+Archive): se cogen, se les da la vuelta y suena su demo como en el resto de la tienda. Con uno de tus discos en la mano
+aparece «Quitar de mi colección».
 
 ### Configurar Firebase
 
@@ -169,4 +175,4 @@ src/
   utils/        Funciones puras (resumen de filtros, hash, clases)
 ```
 
-Rutas: `/` (tienda 3D), `/estanterias` (lista), `/favoritos`, `/buscar?q=&tipo=artistas|ediciones&page=`, `/artista/:mbid`, `/estanteria/:id`.
+Ruta única: `/` (tienda 3D).

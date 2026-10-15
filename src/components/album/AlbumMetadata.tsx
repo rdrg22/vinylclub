@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
 import { chartSourceUrl } from '@/data/charts/chartCatalog'
 import { useAlbumDetails } from '@/hooks/useAlbums'
 import { describeMusicBrainzError } from '@/services/musicbrainz/client'
@@ -49,9 +48,7 @@ export function AlbumMetadata({ album }: { album: Album }) {
             {album.artists.map((artist, i) => (
               <span key={artist.id}>
                 {i > 0 && ', '}
-                <Link to={`/artista/${artist.id}`} className="underline decoration-rule underline-offset-2 hover:text-signal">
-                  {artist.name}
-                </Link>
+                {artist.name}
               </span>
             ))}
           </Row>

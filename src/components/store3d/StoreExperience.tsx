@@ -19,9 +19,12 @@ import type { Album } from '@/types/music'
 import { cn } from '@/utils/cn'
 import { loadAtlas } from './atlas'
 import { buildDecorLayout } from './decorLayout'
-import { buildCollectionUnit, buildStoreLayout, ENTER, START, UNIT_WIDTH, WALL_X, type DecadeInput, type UnitLayout } from './layout'
+import { buildCollectionUnit, buildStoreLayout, COLLECTION_KEY, ENTER, START, UNIT_WIDTH, WALL_X, type DecadeInput, type UnitLayout } from './layout'
 import { createNavState, LOOK_SENSITIVITY, MAX_PITCH, NAV_KEYS } from './navigation'
+import { AccountWindow } from './AccountWindow'
 import { AddRecordPanel } from './AddRecordPanel'
+import { FavoritesWindow } from './FavoritesWindow'
+import { SearchWindow } from './SearchWindow'
 import { HeldPanel } from './HeldPanel'
 import { HeldRecord, type HeldState, type HoldControl } from './HeldRecord'
 import { AdaptivePerformance } from './AdaptivePerformance'
@@ -89,6 +92,8 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   const [entered, setEntered] = useState(readEntered)
   const nav = useRef(createNavState(!entered)).current
   const decadeUnits = useMemo(() => buildStoreLayout(decades), [decades])
+  // Todos los discos de las estanterías, para el buscador.
+  const catalog = useMemo(() => decades.flatMap((d) => d.albums.map((a) => a.album)), [decades])
   // Tus discos (una vez cada uno aunque tengas varias ediciones), en el mueble del fondo.
   const ownedAlbums = useMemo(() => {
     const seen = new Set<string>()
@@ -120,10 +125,10 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
   }
   const [fonts, setFonts] = useState(false)
   const [current, setCurrent] = useState<string | null>(null)
-  // Ventana «Añadir a tu colección» abierta desde el hueco «+» de la estantería.
-  const [adding, setAdding] = useState(false)
-  const closeAdding = useCallback(() => {
-    setAdding(false)
+  // Ventanas del menú de la tienda (y la de «Añadir», desde el hueco «+» de la colección).
+  const [openWindow, setOpenWindow] = useState<'search' | 'favorites' | 'account' | 'add' | null>(null)
+  const closeWindow = useCallback(() => {
+    setOpenWindow(null)
     wrapperRef.current?.focus({ preventScroll: true })
   }, [])
   const reducedMotion = useMemo(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches, [])
@@ -186,6 +191,24 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
       wrapperRef.current?.focus({ preventScroll: true })
     },
     [held, control, nav],
+  )
+  /**
+   * Coger un disco elegido en Buscar o Favoritos: aparece desde abajo, delante de la
+   * cámara, y sube a la mano con la misma transición que los de la balda. Al devolverlo
+   * vuelve a bajar y desaparece.
+   */
+  const pickUpFromView = useCallback(
+    (album: Album) => {
+      setOpenWindow(null)
+      const forward = new THREE.Vector3(-Math.sin(nav.yaw), 0, -Math.cos(nav.yaw))
+      const origin = new THREE.Object3D()
+      origin.position.set(nav.x, nav.y - 0.95, nav.z).addScaledVector(forward, 0.9)
+      // Tumbado hacia atrás, como si se sacara de una caja a los pies.
+      origin.quaternion.setFromEuler(new THREE.Euler(-1.1, nav.yaw, 0, 'YXZ'))
+      origin.updateMatrixWorld()
+      pickUp(album, origin)
+    },
+    [nav, pickUp],
   )
   const putBack = useCallback(() => {
     if (!held) return
@@ -467,7 +490,7 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             onTurntable={entered ? onTurntable : () => undefined}
             onJukebox={entered && !held ? onJukebox : () => undefined}
             onHint={entered ? setHint : () => undefined}
-            onAddRecord={entered && !held ? () => setAdding(true) : () => undefined}
+            onAddRecord={entered && !held ? () => setOpenWindow('add') : () => undefined}
           />
           {held && (
             <HeldRecord
@@ -537,18 +560,22 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
               <span className="sm:hidden">Arrastra para mirar · ▲ ▼ para caminar</span>
             </p>
           </div>
-          <Link
-            to="/estanterias"
-            tabIndex={entered ? -1 : 0}
-            className="label-mono mt-5 inline-block text-[#f3e4c3]/80 underline decoration-[#f3e4c3]/30 underline-offset-4 hover:text-[#f3e4c3]"
-          >
-            o ver las estanterías en lista
-          </Link>
         </div>
       </div>
 
-      {/* ---------- Añadir un disco a la colección ---------- */}
-      {adding && !held && <AddRecordPanel onClose={closeAdding} />}
+      {/* ---------- Ventanas del menú ---------- */}
+      {!held && openWindow === 'search' && <SearchWindow catalog={catalog} onPick={pickUpFromView} onClose={closeWindow} />}
+      {!held && openWindow === 'favorites' && <FavoritesWindow onPick={pickUpFromView} onClose={closeWindow} />}
+      {!held && openWindow === 'account' && (
+        <AccountWindow
+          onClose={closeWindow}
+          onGoToCollection={() => {
+            closeWindow()
+            goTo(COLLECTION_KEY)
+          }}
+        />
+      )}
+      {!held && openWindow === 'add' && <AddRecordPanel onClose={closeWindow} onSignIn={() => setOpenWindow('account')} />}
 
       {/* ---------- Cartela del disco en la mano ---------- */}
       {held && !leaving && (
@@ -584,20 +611,21 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
           </span>
         </Link>
         <nav aria-label="Tienda" className="pointer-events-auto flex gap-1.5">
-          <Link to="/buscar" className={cn(chip, chipIdle)}>
-            Buscar
-          </Link>
-          <Link to="/estanterias" className={cn(chip, chipIdle)}>
-            Lista
-          </Link>
-          <Link to={auth.state.status === 'signed-out' ? '/entrar' : '/coleccion'} className={cn(chip, chipIdle)}>
-            {auth.state.status === 'signed-out' ? 'Entrar' : 'Mi colección'}
-            {owned.length > 0 && <span className="ml-1 rounded-full bg-[#f3e4c3] px-1.5 text-[#1b130c]">{owned.length}</span>}
-          </Link>
-          <Link to="/favoritos" className={cn(chip, chipIdle)}>
+          <button type="button" onClick={() => setOpenWindow('search')} disabled={!!held} className={cn(chip, chipIdle)}>
+            <span aria-hidden>⌕</span> Buscar
+          </button>
+          <button type="button" onClick={() => setOpenWindow('favorites')} disabled={!!held} className={cn(chip, chipIdle)}>
             <span aria-hidden className="text-[#f2b01e]">★</span> Favoritos
             {favorites.length > 0 && <span className="ml-1 rounded-full bg-signal px-1.5 text-paper">{favorites.length}</span>}
-          </Link>
+          </button>
+          <button
+            type="button"
+            onClick={() => setOpenWindow('account')}
+            disabled={!!held}
+            className={cn(chip, auth.state.status === 'signed-out' ? 'bg-signal text-paper hover:bg-signal-deep' : chipIdle)}
+          >
+            {auth.state.status === 'signed-out' ? 'Entrar' : 'Tu perfil'}
+          </button>
           <button
             type="button"
             onClick={switchQuality}
