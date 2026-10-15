@@ -10,12 +10,12 @@ interface Props {
 }
 
 export function FavoritesWindow({ onPick, onClose }: Props) {
-  const { albums } = useFavorites()
+  const { albums, saved } = useFavorites()
   return (
     <StoreWindow
       title="Favoritos"
       badge="★"
-      subtitle={`${albums.length === 1 ? '1 disco' : `${albums.length} discos`} · se borran al recargar`}
+      subtitle={`${albums.length === 1 ? '1 disco' : `${albums.length} discos`} · ${saved ? 'guardados en tu cuenta' : 'entra en tu cuenta para no perderlos'}`}
       onClose={onClose}
     >
       {albums.length === 0 ? (

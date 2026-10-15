@@ -6,6 +6,8 @@ export interface FavoritesApi {
   albums: Album[]
   isFavorite: (albumId: string) => boolean
   toggle: (album: Album) => void
+  /** Guardados en la cuenta (true) o temporales hasta recargar (false). */
+  saved: boolean
 }
 
 export const FavoritesContext = createContext<FavoritesApi | null>(null)

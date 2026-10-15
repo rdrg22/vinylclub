@@ -22,7 +22,7 @@ import { buildDecorLayout } from './decorLayout'
 import { buildCollectionUnit, buildStoreLayout, COLLECTION_KEY, ENTER, START, UNIT_WIDTH, WALL_X, type DecadeInput, type UnitLayout } from './layout'
 import { createNavState, LOOK_SENSITIVITY, MAX_PITCH } from './navigation'
 import { buildFloorSpots, ENTRANCE_SPOT, type FloorSpot } from './spots'
-import { AccountWindow } from './AccountWindow'
+import { AccountWindow, displayName, ProfileAvatar } from './AccountWindow'
 import { AddRecordPanel } from './AddRecordPanel'
 import { FavoritesWindow } from './FavoritesWindow'
 import { SearchWindow } from './SearchWindow'
@@ -617,7 +617,18 @@ export default function StoreExperience({ decades }: { decades: DecadeInput[] })
             disabled={!!held}
             className={cn(chip, auth.state.status === 'signed-out' ? 'bg-signal text-paper hover:bg-signal-deep' : chipIdle)}
           >
-            {auth.state.status === 'signed-out' ? 'Entrar' : 'Tu perfil'}
+            {auth.state.status === 'signed-in' ? (
+              <span className="flex items-center gap-2">
+                <span className="block size-5 shrink-0 overflow-hidden rounded-full bg-signal text-[0.65rem] text-paper">
+                  <ProfileAvatar user={auth.state.user} />
+                </span>
+                <span className="max-w-32 truncate normal-case">{displayName(auth.state.user)}</span>
+              </span>
+            ) : auth.state.status === 'signed-out' ? (
+              'Entrar'
+            ) : (
+              'Tu perfil'
+            )}
           </button>
           <button type="button" onClick={() => setOpenWindow('settings')} disabled={!!held} className={cn(chip, chipIdle)}>
             <span aria-hidden>⚙</span> Ajustes

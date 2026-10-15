@@ -18,6 +18,7 @@ const SUBMIT: Record<Mode, string> = {
 export function AuthForm() {
   const auth = useAuth()
   const [mode, setMode] = useState<Mode>('entrar')
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -42,7 +43,7 @@ export function AuthForm() {
         const error = await auth.signIn(email, password)
         if (error) setNotice({ tone: 'error', text: error })
       } else if (mode === 'registro') {
-        const { error, confirm } = await auth.signUp(email, password)
+        const { error, confirm } = await auth.signUp(email, password, name)
         if (error) setNotice({ tone: 'error', text: error })
         else if (confirm) setNotice({ tone: 'ok', text: `Te hemos enviado un email a ${email.trim()}. Abre el enlace para activar tu cuenta.` })
       } else {
@@ -96,6 +97,10 @@ export function AuthForm() {
         </div>
       ) : (
         <p className="label-mono text-ink-soft">Recuperar contraseña</p>
+      )}
+
+      {mode === 'registro' && (
+        <Field label="Tu nombre (opcional)" type="text" name="name" autoComplete="given-name" maxLength={40} value={name} onChange={(e) => setName(e.target.value)} />
       )}
 
       <Field label="Email" type="email" name="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />

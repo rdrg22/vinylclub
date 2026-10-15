@@ -44,8 +44,16 @@ colores, casete con lápiz, consola portátil y cascos.
 
 ## Favoritos
 
-La estrella de cada disco lo guarda en la ventana **Favoritos**. De momento son temporales: viven en memoria y se borran al recargar
-la página (`src/components/favorites/`).
+La estrella de cada disco lo guarda en la ventana **Favoritos**. Con la sesión iniciada se guardan en tu cuenta
+(`users/{uid}/favorites/{id del disco}` en Firestore) y están en todos tus dispositivos; sin sesión son temporales y se
+borran al recargar. Al entrar, los marcados antes se suman a los de la cuenta (`src/components/favorites/`).
+
+## Tu perfil
+
+Ventana del menú (botón con tu foto y tu nombre): saludo con el nombre y la foto de Google o el nombre que elijas (se
+puede cambiar), estadísticas de la colección (`src/services/collection/stats.ts`: discos, vinilos y CD, nº 1 de
+Billboard, décadas en barras, artistas con más discos, el más antiguo y el más reciente), cuántos favoritos tienes,
+«Ir a mi colección» y «Cerrar sesión» (la estantería Colección se vacía al salir).
 
 ## Cuentas y «Mi colección»
 

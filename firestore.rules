@@ -3,9 +3,9 @@ rules_version = '2';
 // Reglas de Firestore de VINYL CLUB.
 // Cómo aplicarlas: consola de Firebase → Firestore Database → Reglas → pegar → Publicar.
 //
-// Cada usuario tiene su colección en users/{uid}/collection/{MBID de la edición}.
-// Solo el propio usuario puede leerla, añadir y quitar discos. Nadie puede leer
-// la colección de otro. Todo lo demás está cerrado.
+// Cada usuario tiene su colección en users/{uid}/collection/{MBID de la edición} y sus
+// favoritos en users/{uid}/favorites/{id del disco}. Solo el propio usuario puede
+// leerlos, añadir y quitar. Nadie puede leer los de otro. Todo lo demás está cerrado.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -16,24 +16,47 @@ service cloud.firestore {
       allow update: if false;
     }
 
+    // Favoritos de cada usuario: users/{uid}/favorites/{id del disco}.
+    match /users/{userId}/favorites/{albumId} {
+      allow read, delete: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId && validFavorite(albumId);
+      allow update: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
-  }
-}
 
-function validItem(releaseId) {
-  let d = request.resource.data;
-  return d.keys().hasOnly(['releaseId', 'albumId', 'title', 'artist', 'date', 'country', 'formats', 'labels', 'barcode', 'addedAt'])
-    && d.keys().hasAll(['releaseId', 'albumId', 'title', 'artist', 'formats', 'labels', 'addedAt'])
-    && d.releaseId == releaseId
-    && d.albumId is string && d.albumId.size() == 36
-    && d.title is string && d.title.size() > 0 && d.title.size() <= 500
-    && d.artist is string && d.artist.size() > 0 && d.artist.size() <= 500
-    && (!('date' in d) || (d.date is string && d.date.size() <= 10))
-    && (!('country' in d) || (d.country is string && d.country.size() <= 10))
-    && (!('barcode' in d) || (d.barcode is string && d.barcode.matches('^[0-9]{1,20}$')))
-    && d.formats is list && d.formats.size() <= 20
-    && d.labels is list && d.labels.size() <= 20
-    && d.addedAt == request.time;
+    function validItem(releaseId) {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['releaseId', 'albumId', 'title', 'artist', 'date', 'country', 'formats', 'labels', 'barcode', 'addedAt'])
+        && d.keys().hasAll(['releaseId', 'albumId', 'title', 'artist', 'formats', 'labels', 'addedAt'])
+        && d.releaseId == releaseId
+        && d.albumId is string && d.albumId.size() == 36
+        && d.title is string && d.title.size() > 0 && d.title.size() <= 500
+        && d.artist is string && d.artist.size() > 0 && d.artist.size() <= 500
+        && (!('date' in d) || (d.date is string && d.date.size() <= 10))
+        && (!('country' in d) || (d.country is string && d.country.size() <= 10))
+        && (!('barcode' in d) || (d.barcode is string && d.barcode.matches('^[0-9]{1,20}$')))
+        && d.formats is list && d.formats.size() <= 20
+        && d.labels is list && d.labels.size() <= 20
+        && d.addedAt == request.time;
+    }
+
+    function validFavorite(albumId) {
+      let d = request.resource.data;
+      return albumId.size() <= 64
+        && d.keys().hasOnly(['albumId', 'source', 'title', 'artist', 'year', 'firstReleaseDate', 'chartYear', 'chartRank', 'addedAt'])
+        && d.keys().hasAll(['albumId', 'source', 'title', 'artist', 'addedAt'])
+        && d.albumId == albumId
+        && d.source in ['musicbrainz', 'chart']
+        && d.title is string && d.title.size() > 0 && d.title.size() <= 500
+        && d.artist is string && d.artist.size() > 0 && d.artist.size() <= 500
+        && (!('year' in d) || d.year is int)
+        && (!('firstReleaseDate' in d) || (d.firstReleaseDate is string && d.firstReleaseDate.size() <= 10))
+        && (!('chartYear' in d) || d.chartYear is int)
+        && (!('chartRank' in d) || d.chartRank is int)
+        && d.addedAt == request.time;
+    }
+  }
 }

@@ -3,6 +3,10 @@ import { createContext, useContext } from 'react'
 export interface AccountUser {
   id: string
   email: string
+  /** Nombre visible (el de Google o el que elija el usuario). */
+  name?: string
+  /** Foto de la cuenta de Google, si la hay. */
+  photoUrl?: string
 }
 
 /**
@@ -22,7 +26,9 @@ export interface AuthApi {
   /** Entrar (o crear la cuenta) con Google en una ventana emergente. */
   signInWithGoogle: () => Promise<string | null>
   /** `confirm`: hay que confirmar el email antes de entrar. */
-  signUp: (email: string, password: string) => Promise<{ error: string | null; confirm: boolean }>
+  signUp: (email: string, password: string, name?: string) => Promise<{ error: string | null; confirm: boolean }>
+  /** Cambiar el nombre visible. */
+  updateName: (name: string) => Promise<string | null>
   sendPasswordReset: (email: string) => Promise<string | null>
   /** Nueva contraseña (al volver del enlace de recuperación, con sesión ya iniciada). */
   updatePassword: (password: string) => Promise<string | null>

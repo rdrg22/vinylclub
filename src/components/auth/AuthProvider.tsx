@@ -11,6 +11,7 @@ import {
   signInWithPopup,
   signOut,
   updatePassword,
+  updateProfile,
   type User,
 } from 'firebase/auth'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
@@ -18,7 +19,19 @@ import { auth } from '@/services/firebase'
 import { AuthContext, type AuthApi, type AuthState } from './authContext'
 
 const stateFrom = (user: User | null): AuthState =>
-  user ? { status: 'signed-in', user: { id: user.uid, email: user.email ?? '' } } : { status: 'signed-out' }
+  user
+    ? {
+        status: 'signed-in',
+        user: {
+          id: user.uid,
+          email: user.email ?? '',
+          name: user.displayName?.trim() || undefined,
+          photoUrl: user.photoURL ?? undefined,
+        },
+      }
+    : { status: 'signed-out' }
+
+export const MAX_NAME = 40
 
 /** Errores de Firebase Auth traducidos; los desconocidos, genéricos (sin detalles internos). */
 export function authMessage(error: unknown): string {
@@ -93,11 +106,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return authMessage(error) || null
         }
       },
-      async signUp(email, password) {
+      async signUp(email, password, name) {
         if (!auth) return { error: NOT_ENABLED, confirm: false }
         try {
           // Firebase inicia sesión directamente al crear la cuenta.
-          await createUserWithEmailAndPassword(auth, email.trim(), password)
+          const { user } = await createUserWithEmailAndPassword(auth, email.trim(), password)
+          const clean = name?.trim().slice(0, MAX_NAME)
+          if (clean) {
+            await updateProfile(user, { displayName: clean })
+            setState(stateFrom(user))
+          }
           return { error: null, confirm: false }
         } catch (error) {
           return { error: authMessage(error), confirm: false }
@@ -113,6 +131,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const message = authMessage(error)
           // No se revela si el email tiene cuenta o no.
           return message === 'Email o contraseña incorrectos.' ? null : message
+        }
+      },
+      async updateName(name) {
+        const user = auth?.currentUser
+        if (!user) return NOT_ENABLED
+        const clean = name.trim().slice(0, MAX_NAME)
+        if (!clean) return 'Escribe un nombre.'
+        try {
+          await updateProfile(user, { displayName: clean })
+          // Firebase no avisa de este cambio: se refresca a mano.
+          setState(stateFrom(user))
+          return null
+        } catch (error) {
+          return authMessage(error)
         }
       },
       async updatePassword(password) {
